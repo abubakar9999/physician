@@ -893,8 +893,8 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
                             style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
                           const SizedBox(width: 5,),
-                          Stack(
-                            children:[
+                          // Stack(
+                          //   children:[
                               SizedBox(
                                 height: 28,
                                 width: 160,
@@ -912,7 +912,7 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
                                     ),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 8,),
                                   ),
-                                  hint: const Text("Non Execution", style: TextStyle(fontSize: 14,color: Colors.black)),
+                                  hint: const Text("", style: TextStyle(fontSize: 14,color: Colors.black)),
                                   value: causeData.isEmpty ? null : causeData,
                                   items: CauseForNonExecution.map((value) {
                                     return DropdownMenuItem<String>(
@@ -957,13 +957,13 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
                                   },
                                 ),
                               ),
-                              const Positioned(
-                                top: 8,
-                                right: 30,
-                                child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                              ),
-                            ]
-                          ),
+                          //     const Positioned(
+                          //       top: 8,
+                          //       right: 30,
+                          //       child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
+                          //     ),
+                          //   ]
+                          // ),
                         ],
                       ),
                     ),
