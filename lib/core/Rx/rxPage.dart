@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -33,7 +34,6 @@ import 'package:image/image.dart' as img;
 import 'doctorListfromHive.dart';
 import 'dxDrawer.dart';
 import 'medicin_list_screen.dart';
-
 
 var quantity = "";
 
@@ -65,6 +65,7 @@ class RxPage extends StatefulWidget {
   String weight;
   String heightFeet;
   String heightInch;
+  String branch_id;
   List<MedicineListModel> draftRxMedicinItem;
 
   RxPage({
@@ -80,23 +81,24 @@ class RxPage extends StatefulWidget {
     required this.address,
     required this.image1,
     required this.draftRxMedicinItem,
-  required this.phnNum,
-  required this.patientName,
-  required this.gender,
-  required this.dob,
-  required this.stripWastage,
-  required this.systemName,
-  required this.disease,
-  required this.patientTemperament,
-  required this.beforeDiabetes,
-  required this.afterDiabetes,
-  required this.bloodSystolic,
-  required this.bloodDiastolic,
-  required this.oxygenLevel,
-  required this.bodyTemperature,
-  required this.weight,
-  required this.heightFeet,
-  required this.heightInch
+    required this.phnNum,
+    required this.patientName,
+    required this.gender,
+    required this.dob,
+    required this.stripWastage,
+    required this.systemName,
+    required this.disease,
+    required this.patientTemperament,
+    required this.beforeDiabetes,
+    required this.afterDiabetes,
+    required this.bloodSystolic,
+    required this.bloodDiastolic,
+    required this.oxygenLevel,
+    required this.bodyTemperature,
+    required this.weight,
+    required this.heightFeet,
+    required this.heightInch,
+    required this.branch_id,
   }) : super(key: key);
 
   @override
@@ -104,14 +106,11 @@ class RxPage extends StatefulWidget {
 }
 
 class _RxPageState extends State<RxPage> {
-
-
-
   Map<String, TextEditingController> controllers = {};
   final TextEditingController phnNumberController = TextEditingController();
   final TextEditingController patientNameController = TextEditingController();
-  final TextEditingController dobController=TextEditingController();
-   bool isDateSelected = false;
+  final TextEditingController dobController = TextEditingController();
+  bool isDateSelected = false;
 
   String address = "";
 
@@ -165,7 +164,7 @@ class _RxPageState extends State<RxPage> {
 
   ////Gift//Sample//PPM////
   List<DcrGSPDataModel> addedDcrGSPList = [];
-  bool isPromotional=false;
+  bool isPromotional = false;
   bool isGiftSync = false;
   bool isSampleSync = false;
   bool isPPMSync = false;
@@ -177,14 +176,15 @@ class _RxPageState extends State<RxPage> {
 
   String itemString1 = '';
 
+  String? branchId;
 
   List<String> rxTypeList = [];
 
   String? selectedSalesType;
   List<String> salesTypelist = [];
 
-  String? selectedPatientType ;
-  List<String> patientTypeList=[];
+  String? selectedPatientType;
+  List<String> patientTypeList = [];
 
   String finalImage = '';
   final databox = Boxes.allData();
@@ -193,14 +193,11 @@ class _RxPageState extends State<RxPage> {
   String? selectedStripWastageType;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-   List<String> genderList = ['Male','Female', 'Others'];
-   List<int> stripWastageList = [0,1,2,3,4];
-
-
+  List<String> genderList = ['Male', 'Female', 'Others'];
+  List<int> stripWastageList = [0, 1, 2, 3, 4];
 
   @override
   void initState() {
-
     debugPrint("id ${widget.uniqueId}");
     debugPrint("counterrx $_counterforRx");
     // debugPrint(widget.uniqueId);
@@ -208,10 +205,11 @@ class _RxPageState extends State<RxPage> {
       docId = widget.docId;
       counterForDoctor = widget.uniqueId;
     }
-
-
+    print("Brinch ID : ${widget.branch_id}");
+    branchId = widget.branch_id;
     setState(() {
       ////gift//sample//PPM/////
+
       isGiftSync = databox.get('isGiftSync') ?? false;
       print('gift sync: $isGiftSync');
       isSampleSync = databox.get('isSampleSync') ?? false;
@@ -219,7 +217,6 @@ class _RxPageState extends State<RxPage> {
       isPPMSync = databox.get('isPPMSync') ?? false;
       print('pppm sync: $isPPMSync');
       ///////////
-
 
       isMedicineSync = databox.get('isMedicineSync') ?? false;
       isRxDoctorSync = databox.get('isRxDoctorSync') ?? false;
@@ -243,13 +240,12 @@ class _RxPageState extends State<RxPage> {
       rxTypeList = databox.get("rx_type_list")!;
       print('rxTypeList:$rxTypeList');
 
-      salesTypelist=databox.get('sales_type_list');
+      salesTypelist = databox.get('sales_type_list');
       print('sales type list: $salesTypelist');
 
-      patientTypeList=databox.get('patient_type_list');
+      patientTypeList = databox.get('patient_type_list');
       print('patient type list: $patientTypeList');
 
-      
       dropdownRxTypevalue = widget.dcrGrad.isEmpty ? rxTypeList.first : widget.dcrGrad;
       print('dropdownRxType1:$dropdownRxTypevalue');
       // if (widget.uniqueId == 0) {
@@ -265,24 +261,24 @@ class _RxPageState extends State<RxPage> {
     tempCount = widget.draftRxMedicinItem.length;
     setState(() {});
     if (widget.ck != '') {
-      phnNumberController.text=widget.phnNum;
-      patientNameController.text=widget.patientName;
-      selectedGenderType=widget.gender==""?null:widget.gender;
-      dobController.text=widget.dob;
-      selectedStripWastageType=widget.stripWastage==""?null:widget.stripWastage;
+      phnNumberController.text = widget.phnNum;
+      patientNameController.text = widget.patientName;
+      selectedGenderType = widget.gender == "" ? null : widget.gender;
+      dobController.text = widget.dob;
+      selectedStripWastageType = widget.stripWastage == "" ? null : widget.stripWastage;
       print('patient type from draft: $selectedPatientType');
-      selectedSystem=widget.systemName==""?null:widget.systemName;
-      selectedDisease=widget.disease==""?null:widget.disease;
-      selectedPatientTemperament=widget.patientTemperament==""?null:widget.patientTemperament;
-      beforeDiabetesController.text=widget.beforeDiabetes;
-      afterDiabetesController.text=widget.afterDiabetes;
-      systolicController.text=widget.bloodSystolic;
-      diastolicController.text=widget.bloodDiastolic;
-      oxygenLevelController.text=widget.oxygenLevel;
-      bodyTemperatureController.text=widget.bodyTemperature;
-      weightController.text=widget.weight;
-      feetController.text=widget.heightFeet;
-      inchController.text=widget.heightInch;
+      selectedSystem = widget.systemName == "" ? null : widget.systemName;
+      selectedDisease = widget.disease == "" ? null : widget.disease;
+      selectedPatientTemperament = widget.patientTemperament == "" ? null : widget.patientTemperament;
+      beforeDiabetesController.text = widget.beforeDiabetes;
+      afterDiabetesController.text = widget.afterDiabetes;
+      systolicController.text = widget.bloodSystolic;
+      diastolicController.text = widget.bloodDiastolic;
+      oxygenLevelController.text = widget.oxygenLevel;
+      bodyTemperatureController.text = widget.bodyTemperature;
+      weightController.text = widget.weight;
+      feetController.text = widget.heightFeet;
+      inchController.text = widget.heightInch;
       setState(() {
         _activeCounter = true;
       });
@@ -290,51 +286,52 @@ class _RxPageState extends State<RxPage> {
       int space = widget.image1.indexOf(" ");
       String removeSpace = widget.image1.substring(space + 1, widget.image1.length);
       finalImage = removeSpace.replaceAll("'", '');
-      imagePath =File(finalImage);
+      imagePath = File(finalImage);
 
-      finalDoctorList.add(RxDcrDataModel(
-        uiqueKey: widget.uniqueId,
-        docName: widget.docName,
-        docId: widget.docId,
-        areaId: widget.areaId,
-        areaName: widget.areaName,
-        address: widget.address,
-        presImage: finalImage,
-        dcrGrad: dropdownRxTypevalue,
-        phnNum:widget.phnNum,
-        patientName: widget.patientName,
-        gender:  widget.gender,
-        dob: widget.dob,
-        stripWastage: widget.stripWastage,
-        systemName: widget.systemName,
-        disease: widget.disease,
-        patientTemperament: widget.patientTemperament,
-        diabetesBefore:widget.beforeDiabetes,
-        diabetesAfter: widget.afterDiabetes,
-        bloodSystolic: widget.bloodSystolic,
-        bloodDiastolic: widget.bloodDiastolic,
-        oxygenLevel: widget.oxygenLevel,
-        bodyTemperature: widget.bodyTemperature,
-        weight: widget.weight,
-        heightFeet: widget.heightFeet,
-        heightInch: widget.heightInch,
-      ));
+      finalDoctorList.add(
+        RxDcrDataModel(
+          uiqueKey: widget.uniqueId,
+          docName: widget.docName,
+          docId: widget.docId,
+          areaId: widget.areaId,
+          areaName: widget.areaName,
+          address: widget.address,
+          presImage: finalImage,
+          dcrGrad: dropdownRxTypevalue,
+          phnNum: widget.phnNum,
+          patientName: widget.patientName,
+          gender: widget.gender,
+          dob: widget.dob,
+          stripWastage: widget.stripWastage,
+          systemName: widget.systemName,
+          disease: widget.disease,
+          patientTemperament: widget.patientTemperament,
+          diabetesBefore: widget.beforeDiabetes,
+          diabetesAfter: widget.afterDiabetes,
+          bloodSystolic: widget.bloodSystolic,
+          bloodDiastolic: widget.bloodDiastolic,
+          oxygenLevel: widget.oxygenLevel,
+          bodyTemperature: widget.bodyTemperature,
+          weight: widget.weight,
+          heightFeet: widget.heightFeet,
+          heightInch: widget.heightInch,
+          branchId: branchId,
+        ),
+      );
 
       calculatingTotalitemString1();
-    }
-    else {
-
+    } else {
       phnNumberController.clear();
       patientNameController.clear();
       dobController.clear();
-      selectedGenderType=null;
-      selectedStripWastageType=null;
-      selectedSalesType=null;
-      selectedPatientType=null;
+      selectedGenderType = null;
+      selectedStripWastageType = null;
+      selectedSalesType = null;
+      selectedPatientType = null;
 
-      selectedSystem=null;
-      selectedDisease=null;
-      selectedPatientTemperament=null;
+      selectedSystem = null;
+      selectedDisease = null;
+      selectedPatientTemperament = null;
       beforeDiabetesController.clear();
       afterDiabetesController.clear();
       systolicController.clear();
@@ -350,8 +347,6 @@ class _RxPageState extends State<RxPage> {
       return;
     }
     super.initState();
-
-
   }
 
   // Future<void> checkAndFillPatientData(String phone) async {
@@ -395,25 +390,19 @@ class _RxPageState extends State<RxPage> {
   // }
 
   Future<void> checkAndFillPatientData(String phone) async {
-    try{
-      String url='https://w05.yeapps.com/hamdard_physician_api/api_patient_auto_search/patient_list?cid=$cid&user_id=$userId&user_pass=$userPassword&phone_number=$phone';
-      final response = await http.get(Uri.parse(url,)).timeout(const Duration(seconds: 3),);
+    try {
+      String url = 'https://w05.yeapps.com/hamdard_physician_api/api_patient_auto_search/patient_list?cid=$cid&user_id=$userId&user_pass=$userPassword&phone_number=$phone';
+      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 3));
       print('patient info url:: $url');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print('API Response: $data');
 
-        if (data['status'] == "Success" &&
-            data['patient_info'] != null &&
-            data['patient_info'].isNotEmpty) {
-
+        if (data['status'] == "Success" && data['patient_info'] != null && data['patient_info'].isNotEmpty) {
           List<dynamic> patientList = data['patient_info'];
 
-          final matchedPatient = patientList.firstWhere(
-                (p) => p['phone_number'] == phone,
-            orElse: () => null,
-          );
+          final matchedPatient = patientList.firstWhere((p) => p['phone_number'] == phone, orElse: () => null);
 
           if (matchedPatient != null) {
             setState(() {
@@ -433,16 +422,8 @@ class _RxPageState extends State<RxPage> {
         isDateSelected = false;
       });
       final data = jsonDecode(response.body);
-      Fluttertoast.showToast(
-        msg: data['ret_str'] ?? "No patient found.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-    }
-    on TimeoutException catch (e) {
+      Fluttertoast.showToast(msg: data['ret_str'] ?? "No patient found.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, backgroundColor: Colors.redAccent, textColor: Colors.white, fontSize: 14.0);
+    } on TimeoutException catch (e) {
       print('Timeout Error: $e');
       setState(() {
         patientNameController.clear();
@@ -450,21 +431,11 @@ class _RxPageState extends State<RxPage> {
         selectedGenderType = null;
         isDateSelected = false;
       });
-      Fluttertoast.showToast(
-        msg: "Please try again.",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-    }
-    catch (e) {
+      Fluttertoast.showToast(msg: "Please try again.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, backgroundColor: Colors.redAccent, textColor: Colors.white, fontSize: 14.0);
+    } catch (e) {
       print('Error: $e');
     }
-
   }
-
 
   int _rxCounter() {
     var dt = DateFormat('HH:mm:ssss').format(DateTime.now());
@@ -494,36 +465,34 @@ class _RxPageState extends State<RxPage> {
 
   void _onItemTapped(int index) async {
     if (index == 2) {
-
-      if ((widget.image1 != '' || imagePath != null) &&
-          finalMedicineList.isNotEmpty) {
+      if ((widget.image1 != '' || imagePath != null) && finalMedicineList.isNotEmpty) {
         bool result = await NetworkConnecticity.checkConnectivity();
         if (result == true) {
           if (rx_doc_must == true) {
             if (finalDoctorList[0].docId != "") {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Confirm"),
-                  content:
-                  const Text("Are you sure you want to submit the Prescription?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        // User clicked No, so close the dialog
-                        Navigator.of(context).pop(false);
-                      },
-                      child: const Text("No"),
+                builder:
+                    (context) => AlertDialog(
+                      title: const Text("Confirm"),
+                      content: const Text("Are you sure you want to submit the Prescription?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            // User clicked No, so close the dialog
+                            Navigator.of(context).pop(false);
+                          },
+                          child: const Text("No"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                            rxImageUpload();
+                          },
+                          child: const Text("Yes"),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                        rxImageUpload();
-                      },
-                      child: const Text("Yes"),
-                    ),
-                  ],
-                ),
               );
             } else {
               _submitToastforDoctor();
@@ -534,25 +503,25 @@ class _RxPageState extends State<RxPage> {
           } else {
             showDialog(
               context: context,
-              builder: (_) => AlertDialog(
-                title: const Text("Confirm"),
-                content: const Text("Are you sure want to submit Prescription?"),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: const Text("No"),
+              builder:
+                  (_) => AlertDialog(
+                    title: const Text("Confirm"),
+                    content: const Text("Are you sure want to submit Prescription?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text("No"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          rxImageUpload();
+                        },
+                        child: const Text("Yes"),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () {
-
-                      rxImageUpload();
-                    },
-                    child: const Text("Yes"),
-                  ),
-                ],
-              ),
             );
           }
         } else {
@@ -578,7 +547,6 @@ class _RxPageState extends State<RxPage> {
       print('aaaaa');
       if (imagePath != null || widget.image1 != '') {
         putAddedRxData();
-
       } else {
         _submitToastforphoto();
       }
@@ -648,18 +616,17 @@ class _RxPageState extends State<RxPage> {
       //   _isLoading = false;
       // });
       // orderSubmit();
-      if ((widget.image1 != '' || imagePath != null) &&
-          (finalMedicineList.isNotEmpty && phnNumberController.text.isNotEmpty && patientNameController.text.isNotEmpty
-          && selectedGenderType!=null && dobController.text.isNotEmpty && selectedSalesType!=null && selectedPatientType!=null)) {
+      if ((widget.image1 != '' || imagePath != null) && (finalMedicineList.isNotEmpty && phnNumberController.text.isNotEmpty && patientNameController.text.isNotEmpty && selectedGenderType != null && dobController.text.isNotEmpty && selectedSalesType != null && selectedPatientType != null)) {
         bool result = await NetworkConnecticity.checkConnectivity();
 
         if (result == true) {
           // if (rx_doc_must == true) {
           //   if (finalDoctorList[0].docId != "") {
           //     // _rxImageSubmit();
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
+          showDialog(
+            context: context,
+            builder:
+                (_) => AlertDialog(
                   title: const Text("Confirm"),
                   content: const Text("Are you sure want to submit Prescription?"),
                   actions: [
@@ -682,7 +649,7 @@ class _RxPageState extends State<RxPage> {
                     ),
                   ],
                 ),
-              );
+          );
           //   } else {
           //     _submitToastforDoctor();
           //     setState(() {
@@ -721,8 +688,7 @@ class _RxPageState extends State<RxPage> {
             _isLoading = true;
           });
         }
-      }
-      else {
+      } else {
         setState(() {
           _isLoading = true;
         });
@@ -739,13 +705,14 @@ class _RxPageState extends State<RxPage> {
       if (imagePath != null || widget.image1 != '') {
         putAddedRxData();
         Fluttertoast.showToast(
-            msg: 'Save Drafts',
-            // msg: 'Please Take Image and Select Medicine',
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.grey,
-            textColor: Colors.white,
-            fontSize: 16.0);
+          msg: 'Save Drafts',
+          // msg: 'Please Take Image and Select Medicine',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.grey,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       } else {
         _submitToastforphoto();
       }
@@ -769,17 +736,10 @@ class _RxPageState extends State<RxPage> {
   }
 
   void _submitToastforOrder3() {
-    Fluttertoast.showToast(
-        msg: 'No Internet Connection\nPlease check your internet connection.',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    Fluttertoast.showToast(msg: 'No Internet Connection\nPlease check your internet connection.', toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.SNACKBAR, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
   }
 
-
-////////Gift//Sample//PPM//////
+  ////////Gift//Sample//PPM//////
 
   Future<void> getGitSamplePpmData() async {
     if (isGiftSync == true && isSampleSync == true && isPPMSync == true) {
@@ -788,10 +748,7 @@ class _RxPageState extends State<RxPage> {
       var mymap2 = Hive.box('dcrPpmListData').values.toList();
 
       if (mymap.isEmpty && mymap1.isEmpty && mymap2.isEmpty) {
-        Fluttertoast.showToast(
-          msg: "No Data Found",
-          backgroundColor: Colors.red,
-        );
+        Fluttertoast.showToast(msg: "No Data Found", backgroundColor: Colors.red);
         doctorGiftlist.add('empty');
         doctorSamplelist.add('empty');
         doctorPpmlist.add('empty');
@@ -804,12 +761,7 @@ class _RxPageState extends State<RxPage> {
       setState(() {});
       _scaffoldKey.currentState?.openEndDrawer();
     } else {
-      Fluttertoast.showToast(
-        msg: 'Please sync',
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      Fluttertoast.showToast(msg: 'Please sync', backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
     }
   }
 
@@ -833,19 +785,13 @@ class _RxPageState extends State<RxPage> {
 
   ///////////////////
 
-
   @override
   Widget build(BuildContext context) {
-
     List<MergedItem> combinedList1 = [];
 
-    combinedList1.addAll(
-      finalMedicineList.map((e) => MergedItem(type: 'medicine', item: e)).toList(),
-    );
+    combinedList1.addAll(finalMedicineList.map((e) => MergedItem(type: 'medicine', item: e)).toList());
 
-    combinedList1.addAll(
-      addedDcrGSPList.map((e) => MergedItem(type: 'promotion', item: e)).toList(),
-    );
+    combinedList1.addAll(addedDcrGSPList.map((e) => MergedItem(type: 'promotion', item: e)).toList());
 
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
@@ -861,1457 +807,1208 @@ class _RxPageState extends State<RxPage> {
         }
         return true;
       },
-      child: _isLoading
-          ? Scaffold(
-        key: _scaffoldKey,
-        drawer:  const Dxdrawer(),
-        endDrawer:  PromotionalDrawer(
-          uniqueId: widget.uniqueId,
-          //uniqueId: _counter,
-          //doctorGiftlist: doctorGiftlist,
-          tempList: addedDcrGSPList,
-          tempListFunc: (value) {
-            addedDcrGSPList = value;
-            calculatingTotalitemString1();
+      child:
+          _isLoading
+              ? Scaffold(
+                key: _scaffoldKey,
+                drawer: const Dxdrawer(),
+                endDrawer: PromotionalDrawer(
+                  uniqueId: widget.uniqueId,
+                  //uniqueId: _counter,
+                  //doctorGiftlist: doctorGiftlist,
+                  tempList: addedDcrGSPList,
+                  tempListFunc: (value) {
+                    addedDcrGSPList = value;
+                    calculatingTotalitemString1();
 
-            setState(() {});
-          },
-          //doctorSamplelist: doctorSamplelist,
-          tempList1: addedDcrGSPList,
+                    setState(() {});
+                  },
+                  //doctorSamplelist: doctorSamplelist,
+                  tempList1: addedDcrGSPList,
 
-          //doctorPpmlist: doctorPpmlist,
-          tempList2: addedDcrGSPList,
-
-        ),
-        endDrawerEnableOpenDragGesture: false,
-        appBar: AppBar(
-          actions: const [
-            SizedBox.shrink()
-          ],
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          automaticallyImplyLeading: false,
-          title: const Text('Prescription Capture'),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    //flex: 7,
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      elevation: 5,
-                      child: Container(
-                        height: screenHeight / 3.2,
-                        decoration: const BoxDecoration(
-                          color: Colors.grey,
-                        ),
-                        child: widget.image1 != ''
-                            ?
-                        InkWell(
-                          onDoubleTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ZoomForRxDraftImage(finalImage),
-                              ),
-                            );
-                          },
-                          child: Hero(
-                            tag: "imageForDraft",
-                            child: Image.file(
-                              File(finalImage),
-                            ),
-                          ),
-                        ) : file == null ?
-                        Column(
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Image.asset(
-                                'assets/images/default_document.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Expanded(
-                              // flex: 4,
-                                child: Container(
-                                  width: screenWidth / 1.8,
-                                  color: Colors.white,
-                                  child: const Center(
-                                    child: Text(
-                                      "Double tap to zoom",
-                                      style:
-                                      TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                ))
-                          ],
-                        )
-                            :
-                        InkWell(
-                          onDoubleTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ZoomForRxImage(imagePath),
-                              ),
-                            );
-                          },
-                          child: Hero(
-                            tag: "img",
-                            child: Image.file(imagePath!,fit: BoxFit.fill,),
-                          ),
-                        ),),
-                    ),
+                  //doctorPpmlist: doctorPpmlist,
+                  tempList2: addedDcrGSPList,
+                ),
+                endDrawerEnableOpenDragGesture: false,
+                appBar: AppBar(
+                  actions: const [SizedBox.shrink()],
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  Expanded(
-                    // flex: 7,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2,vertical: 8),
-                      child: Column(
+                  automaticallyImplyLeading: false,
+                  title: const Text('Prescription Capture'),
+                ),
+                body: SafeArea(
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                height: 38,
-                                child: TextField(
-                                  controller: phnNumberController,
-                                  keyboardType: TextInputType.phone,
-                                  decoration: InputDecoration(
-                                    hintText: 'Phone Number',
-                                    hintStyle: const TextStyle(fontSize: 14),
-                                    suffixIcon: const Icon(Icons.star_sharp,color: Colors.red,size: 12,),
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  // onChanged: (value) {
-                                  //   if (!value.startsWith('88')) {
-                                  //     phnNumberController.text = '88';
-                                  //     phnNumberController.selection = TextSelection.fromPosition(
-                                  //       TextPosition(offset: phnNumberController.text.length),
-                                  //     );
-                                  //   }
-                                  // },
-                                  onTap: () {
-                                    if (phnNumberController.text.isEmpty) {
-                                      phnNumberController.text = '88';
-                                      phnNumberController.selection = TextSelection.fromPosition(
-                                        TextPosition(offset: phnNumberController.text.length),
-                                      );
-                                    }
-                                  },
-                                  onChanged: (value) async {
-                                    if (!value.startsWith('88')) {
-                                      phnNumberController.text = '88';
-                                      phnNumberController.selection = TextSelection.fromPosition(
-                                        TextPosition(offset: phnNumberController.text.length),
-                                      );
-                                      return;
-                                    }
-
-                                    if (value.length == 13) {
-                                      await checkAndFillPatientData(value);
-                                    } else {
-
-                                      patientNameController.clear();
-                                      dobController.clear();
-                                      selectedGenderType = null;
-                                      isDateSelected = false;
-                                      setState(() {});
-                                    }
-                                  },
-
-                                ),
-                              ),
-                              const SizedBox(height: 5,),
-                              SizedBox(
-                                height: 38,
-                                child: TextField(
-                                  controller: patientNameController,
-                                  decoration: InputDecoration(
-                                      hintText: 'Patient Name',
-                                      hintStyle: const TextStyle(fontSize: 14),
-                                      suffixIcon: const Icon(Icons.star_sharp,color: Colors.red,size: 12,),
-                                      contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              width: 2,
-                                              color: Colors.grey
-                                          ),
-                                          borderRadius: BorderRadius.circular(10)),
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      border: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            width: 2,
-                                            color: Colors.grey
+                          Expanded(
+                            //flex: 7,
+                            child: Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              elevation: 5,
+                              child: Container(
+                                height: screenHeight / 3.2,
+                                decoration: const BoxDecoration(color: Colors.grey),
+                                child:
+                                    widget.image1 != ''
+                                        ? InkWell(
+                                          onDoubleTap: () {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => ZoomForRxDraftImage(finalImage)));
+                                          },
+                                          child: Hero(tag: "imageForDraft", child: Image.file(File(finalImage))),
+                                        )
+                                        : file == null
+                                        ? Column(
+                                          children: [
+                                            Expanded(flex: 4, child: Image.asset('assets/images/default_document.png', fit: BoxFit.cover)),
+                                            Expanded(
+                                              // flex: 4,
+                                              child: Container(width: screenWidth / 1.8, color: Colors.white, child: const Center(child: Text("Double tap to zoom", style: TextStyle(fontSize: 18)))),
+                                            ),
+                                          ],
+                                        )
+                                        : InkWell(
+                                          onDoubleTap: () {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => ZoomForRxImage(imagePath)));
+                                          },
+                                          child: Hero(tag: "img", child: Image.file(imagePath!, fit: BoxFit.fill)),
                                         ),
-                                        borderRadius: BorderRadius.circular(10),),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              width: 2,
-                                              color: Colors.grey
-                                          ),
-                                          borderRadius: BorderRadius.circular(10))
-                                  ),
-                                ),
                               ),
-                              const SizedBox(height: 5,),
-                              Row(
+                            ),
+                          ),
+                          Expanded(
+                            // flex: 7,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
+                              child: Column(
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      SizedBox(
+                                        height: 38,
+                                        child: TextField(
+                                          controller: phnNumberController,
+                                          keyboardType: TextInputType.phone,
+                                          decoration: InputDecoration(
+                                            hintText: 'Phone Number',
+                                            hintStyle: const TextStyle(fontSize: 14),
+                                            suffixIcon: const Icon(Icons.star_sharp, color: Colors.red, size: 12),
+                                            contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                            enabledBorder: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            border: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                          ),
+                                          // onChanged: (value) {
+                                          //   if (!value.startsWith('88')) {
+                                          //     phnNumberController.text = '88';
+                                          //     phnNumberController.selection = TextSelection.fromPosition(
+                                          //       TextPosition(offset: phnNumberController.text.length),
+                                          //     );
+                                          //   }
+                                          // },
+                                          onTap: () {
+                                            if (phnNumberController.text.isEmpty) {
+                                              phnNumberController.text = '88';
+                                              phnNumberController.selection = TextSelection.fromPosition(TextPosition(offset: phnNumberController.text.length));
+                                            }
+                                          },
+                                          onChanged: (value) async {
+                                            if (!value.startsWith('88')) {
+                                              phnNumberController.text = '88';
+                                              phnNumberController.selection = TextSelection.fromPosition(TextPosition(offset: phnNumberController.text.length));
+                                              return;
+                                            }
+
+                                            if (value.length == 13) {
+                                              await checkAndFillPatientData(value);
+                                            } else {
+                                              patientNameController.clear();
+                                              dobController.clear();
+                                              selectedGenderType = null;
+                                              isDateSelected = false;
+                                              setState(() {});
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      SizedBox(
+                                        height: 38,
+                                        child: TextField(
+                                          controller: patientNameController,
+                                          decoration: InputDecoration(
+                                            hintText: 'Patient Name',
+                                            hintStyle: const TextStyle(fontSize: 14),
+                                            suffixIcon: const Icon(Icons.star_sharp, color: Colors.red, size: 12),
+                                            contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                            enabledBorder: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            border: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Row(
+                                        children: [
+                                          // Expanded(
+                                          //   child: SizedBox(
+                                          //     height: 35,
+                                          //     child: TextField(
+                                          //       readOnly: true,
+                                          //       controller: dobController,
+                                          //       onTap: () async {
+                                          //         DateTime? pickedDate = await showDatePicker(
+                                          //           context: context,
+                                          //           initialDate: DateTime.now(),
+                                          //           firstDate: DateTime(1900),
+                                          //           lastDate: DateTime.now(),
+                                          //         );
+                                          //
+                                          //         if (pickedDate != null) {
+                                          //           //String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+                                          //           String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                          //           setState(() {
+                                          //             dobController.text = formattedDate;
+                                          //             isDateSelected = true;
+                                          //           });
+                                          //         }
+                                          //         print('dob::${dobController.text.toString()}');
+                                          //       },
+                                          //       decoration: InputDecoration(
+                                          //         hintText: 'DOB',
+                                          //         hintStyle: const TextStyle(fontSize: 13),
+                                          //         suffixIcon: isDateSelected
+                                          //             ? null
+                                          //             : const Icon(
+                                          //           Icons.star_sharp,
+                                          //           color: Colors.red,
+                                          //           size: 12,
+                                          //         ),
+                                          //         contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                          //         enabledBorder: OutlineInputBorder(
+                                          //           borderSide: const BorderSide(width: 2, color: Colors.grey),
+                                          //           borderRadius: BorderRadius.circular(10),
+                                          //         ),
+                                          //         filled: true,
+                                          //         fillColor: Colors.white,
+                                          //         border: OutlineInputBorder(
+                                          //           borderSide: const BorderSide(width: 2, color: Colors.grey),
+                                          //           borderRadius: BorderRadius.circular(10),
+                                          //         ),
+                                          //         focusedBorder: OutlineInputBorder(
+                                          //           borderSide: const BorderSide(width: 2, color: Colors.grey),
+                                          //           borderRadius: BorderRadius.circular(10),
+                                          //         ),
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          Expanded(
+                                            flex: 3,
+                                            child: SizedBox(
+                                              height: 35,
+                                              child: TextField(
+                                                readOnly: true,
+                                                controller: dobController,
+                                                scrollPhysics: const BouncingScrollPhysics(),
+                                                maxLines: 1,
+                                                onTap: () async {
+                                                  DateTime? pickedDate = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime.now());
+
+                                                  if (pickedDate != null) {
+                                                    DateTime today = DateTime.now();
+
+                                                    int years = today.year - pickedDate.year;
+                                                    int months = today.month - pickedDate.month;
+                                                    int days = today.day - pickedDate.day;
+
+                                                    if (days < 0) {
+                                                      months -= 1;
+                                                      days += DateTime(today.year, today.month, 0).day;
+                                                    }
+
+                                                    if (months < 0) {
+                                                      years -= 1;
+                                                      months += 12;
+                                                    }
+
+                                                    String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+                                                    setState(() {
+                                                      dobController.text = "$years years, $months months, $days days";
+                                                      isDateSelected = true;
+                                                    });
+                                                    print('dob::${dobController.text.toString()}');
+                                                  }
+                                                },
+                                                decoration: InputDecoration(
+                                                  hintText: 'DOB',
+                                                  hintStyle: const TextStyle(fontSize: 13),
+                                                  suffixIcon: isDateSelected ? null : const Icon(Icons.star_sharp, color: Colors.red, size: 12),
+                                                  contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                                  enabledBorder: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  border: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                                  focusedBorder: OutlineInputBorder(borderSide: const BorderSide(width: 2, color: Colors.grey), borderRadius: BorderRadius.circular(10)),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                              height: 35,
+                                              decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(10)),
+                                              child: Stack(
+                                                children: [
+                                                  DropdownButton<String>(
+                                                    // value: selectedGenderType,
+                                                    value: genderList.contains(selectedGenderType) ? selectedGenderType : null,
+                                                    hint: const Center(child: Padding(padding: EdgeInsets.only(left: 4), child: Text('Gender', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)))),
+                                                    isExpanded: true,
+                                                    underline: const SizedBox(),
+                                                    items:
+                                                        genderList.map((String value) {
+                                                          return DropdownMenuItem<String>(value: value, child: Center(child: Padding(padding: const EdgeInsets.only(left: 4), child: Text(value, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)))));
+                                                        }).toList(),
+                                                    onChanged: (newValue) {
+                                                      //if (newValue != null) {
+                                                      setState(() {
+                                                        selectedGenderType = newValue;
+                                                        //items=items;
+                                                      });
+                                                    },
+                                                    // },
+                                                  ),
+                                                  const Positioned(top: 1, right: 2, child: Icon(Icons.star_sharp, color: Colors.red, size: 12)),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 3),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Container(
+                                              height: 35,
+                                              decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(10)),
+                                              child: DropdownButton<String>(
+                                                // value: selectedStripWastageType,
+                                                value: stripWastageList.map((e) => e.toString()).contains(selectedStripWastageType) ? selectedStripWastageType : null,
+                                                hint: const Center(child: Text('Strip Wastage', style: TextStyle(fontSize: 13))),
+                                                padding: const EdgeInsets.only(left: 2),
+                                                isExpanded: true,
+                                                underline: const SizedBox(),
+                                                items:
+                                                    stripWastageList.map((int value) {
+                                                      return DropdownMenuItem<String>(value: value.toString(), child: Center(child: Text(value.toString(), style: const TextStyle(fontSize: 14))));
+                                                    }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    selectedStripWastageType = newValue!;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // Scaffold.of(context).openEndDrawer();
+                                            _scaffoldKey.currentState?.openDrawer();
+                                          },
+
+                                          // onTap: (){
+                                          //   if (imagePath != null || (widget.image1 != "" && widget.image1.isNotEmpty)) {
+                                          //     _scaffoldKey.currentState?.openDrawer();
+                                          //   }
+                                          //   else{
+                                          //     Fluttertoast.showToast(
+                                          //         msg: 'Please Take Image First ',
+                                          //         toastLength: Toast.LENGTH_SHORT,
+                                          //         gravity: ToastGravity.CENTER,
+                                          //         backgroundColor: Colors.red,
+                                          //         textColor: Colors.white,
+                                          //         fontSize: 16.0);
+                                          //   }
+                                          // },
+                                          child: Stack(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(3),
+                                                child: Image.asset(
+                                                  // height: 60,
+                                                  // width: 60,
+                                                  'assets/images/diagnosis.png',
+                                                  // color: Colors.teal,
+                                                  // width: screenWidth / 9,
+                                                  //height: screenWidth /9,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+
+                                              const Positioned(top: -1, left: -2, child: Icon(Icons.star_sharp, color: Colors.red, size: 12)),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (isMedicineSync == true) {
+                                              debugPrint(imagePath.toString());
+                                              setState(() {});
+
+                                              if (imagePath != null) {
+                                                if (widget.uniqueId >= 0 && finalDoctorList.isNotEmpty) {
+                                                  getMedicine();
+                                                  // debugPrint(widget.uniqueId);
+                                                } else if (_activeCounter == false) {
+                                                  // debugPrint('activeCounter:$_activeCounter');
+                                                  _rxCounter();
+                                                  getMedicine();
+                                                  // debugPrint('test:${widget.uniqueId}');
+                                                  setState(() {
+                                                    _activeCounter = true;
+                                                  });
+                                                } else if (_activeCounter == true) {
+                                                  getMedicine();
+                                                }
+                                              } else if (widget.image1 != "") {
+                                                if (widget.uniqueId >= 0 && finalDoctorList.isNotEmpty) {
+                                                  getMedicine();
+                                                  // debugPrint(widget.uniqueId);
+                                                } else if (_activeCounter == false) {
+                                                  // debugPrint('activeCounter:$_activeCounter');
+                                                  _rxCounter();
+                                                  getMedicine();
+                                                  // debugPrint('test:${widget.uniqueId}');
+                                                  setState(() {
+                                                    _activeCounter = true;
+                                                  });
+                                                } else if (_activeCounter == true) {
+                                                  getMedicine();
+                                                }
+                                              } else {
+                                                Fluttertoast.showToast(msg: 'Please Take Image First ', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                                              }
+                                            } else {
+                                              Fluttertoast.showToast(msg: 'Please Sync Medicine', backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                                            }
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(3),
+                                                child: Image.asset(
+                                                  'assets/images/medicine.png',
+                                                  // color: Colors.teal,
+                                                  //width: screenWidth / 8,
+                                                  //height: screenWidth /9,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+
+                                              const Positioned(top: 0, left: -3, child: Icon(Icons.star_sharp, color: Colors.red, size: 12)),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // setState(() {
+                                            //   isPromotional=true;
+                                            // });
+                                            //Navigator.push(context, MaterialPageRoute(builder: (context) =>  PromotionalScreen(uniqueId:widget.uniqueId,),));
+
+                                            //_scaffoldKey.currentState?.openEndDrawer();
+
+                                            setState(() {
+                                              getGitSamplePpmData();
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(3),
+                                            child: Image.asset(
+                                              'assets/images/items.png',
+                                              // color: Colors.teal,
+                                              height: screenHeight / 12,
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      ///*********************************doctor info******************************************///
+                      SizedBox(
+                        height: screenHeight / 11,
+                        child: Card(
+                          color: const Color(0xffDDEBF7),
+                          elevation: 10,
+                          shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.white70, width: 1)),
+                          child: Container(
+                            height: 70,
+                            width: double.infinity,
+                            decoration: const BoxDecoration(color: Color(0xffDDEBF7)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Row(
                                 children: [
                                   // Expanded(
-                                  //   child: SizedBox(
-                                  //     height: 35,
-                                  //     child: TextField(
-                                  //       readOnly: true,
-                                  //       controller: dobController,
-                                  //       onTap: () async {
-                                  //         DateTime? pickedDate = await showDatePicker(
-                                  //           context: context,
-                                  //           initialDate: DateTime.now(),
-                                  //           firstDate: DateTime(1900),
-                                  //           lastDate: DateTime.now(),
-                                  //         );
-                                  //
-                                  //         if (pickedDate != null) {
-                                  //           //String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
-                                  //           String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                  //           setState(() {
-                                  //             dobController.text = formattedDate;
-                                  //             isDateSelected = true;
-                                  //           });
-                                  //         }
-                                  //         print('dob::${dobController.text.toString()}');
-                                  //       },
-                                  //       decoration: InputDecoration(
-                                  //         hintText: 'DOB',
-                                  //         hintStyle: const TextStyle(fontSize: 13),
-                                  //         suffixIcon: isDateSelected
-                                  //             ? null
-                                  //             : const Icon(
-                                  //           Icons.star_sharp,
-                                  //           color: Colors.red,
-                                  //           size: 12,
-                                  //         ),
-                                  //         contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                  //         enabledBorder: OutlineInputBorder(
-                                  //           borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                  //           borderRadius: BorderRadius.circular(10),
-                                  //         ),
-                                  //         filled: true,
-                                  //         fillColor: Colors.white,
-                                  //         border: OutlineInputBorder(
-                                  //           borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                  //           borderRadius: BorderRadius.circular(10),
-                                  //         ),
-                                  //         focusedBorder: OutlineInputBorder(
-                                  //           borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                  //           borderRadius: BorderRadius.circular(10),
+                                  //   flex: 5,
+                                  //   child: Column(
+                                  //     crossAxisAlignment:
+                                  //     CrossAxisAlignment.start,
+                                  //     children: [
+                                  //       Text(
+                                  //         '${finalDoctorList[0].docName}'
+                                  //             '(${finalDoctorList[0].docId})',
+                                  //         style: const TextStyle(
+                                  //           color: Colors.black,
+                                  //           fontWeight: FontWeight.bold,
+                                  //           fontSize: 16,
                                   //         ),
                                   //       ),
-                                  //     ),
+                                  //       FittedBox(
+                                  //         child: Text(
+                                  //           '${finalDoctorList[0].areaName}(${finalDoctorList[0].areaId}) , ${finalDoctorList[0].address}',
+                                  //           style: const TextStyle(
+                                  //             color: Colors.black,
+                                  //             // fontSize: 19,
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  //     ],
                                   //   ),
                                   // ),
                                   Expanded(
                                     flex: 3,
-                                    child: SizedBox(
-                                      height: 35,
-                                      child: TextField(
-                                        readOnly: true,
-                                        controller: dobController,
-                                        scrollPhysics: const BouncingScrollPhysics(),
-                                        maxLines: 1,
-                                        onTap: () async {
-                                          DateTime? pickedDate = await showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime(1900),
-                                            lastDate: DateTime.now(),
-                                          );
-
-                                          if (pickedDate != null) {
-                                            DateTime today = DateTime.now();
-
-                                            int years = today.year - pickedDate.year;
-                                            int months = today.month - pickedDate.month;
-                                            int days = today.day - pickedDate.day;
-
-                                            if (days < 0) {
-                                              months -= 1;
-                                              days += DateTime(today.year, today.month, 0).day;
-                                            }
-
-                                            if (months < 0) {
-                                              years -= 1;
-                                              months += 12;
-                                            }
-
-                                            String formattedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-
-                                            setState(() {
-                                              dobController.text = "$years years, $months months, $days days";
-                                              isDateSelected = true;
-                                            });
-                                            print('dob::${dobController.text.toString()}');
-                                          }
-                                        },
-                                        decoration: InputDecoration(
-                                          hintText: 'DOB',
-                                          hintStyle: const TextStyle(fontSize: 13),
-                                          suffixIcon: isDateSelected
-                                              ? null
-                                              : const Icon(
-                                            Icons.star_sharp,
-                                            color: Colors.red,
-                                            size: 12,
-                                          ),
-                                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          filled: true,
-                                          fillColor: Colors.white,
-                                          border: OutlineInputBorder(
-                                            borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(width: 2, color: Colors.grey),
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5,),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                      height: 35,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey,width: 2),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Stack(
-                                          children:[
-                                            DropdownButton<String>(
-                                                // value: selectedGenderType,
-                                                value: genderList.contains(selectedGenderType) ? selectedGenderType : null,
-                                                hint: const Center(
-                                                    child: Padding(padding: EdgeInsets.only(left: 4),
-                                                  child: Text('Gender',textAlign: TextAlign.center,style: TextStyle(fontSize: 12),),
-                                                )),
-                                                isExpanded: true,
-                                                underline: const SizedBox(),
-                                                items: genderList.map((String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Center(child: Padding(
-                                                      padding: const EdgeInsets.only(left: 4),
-                                                      child: Text(value,textAlign: TextAlign.center,style: const TextStyle(fontSize: 12),),
-                                                    )),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  //if (newValue != null) {
-                                                  setState(() {
-                                                    selectedGenderType = newValue;
-                                                    //items=items;
-                                                  });
-                                                }
-                                              // },
-                                            ),
-                                            const Positioned(
-                                              top: 1,
-                                              right: 2,
-                                              child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                                            ),
-                                          ]
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 3,),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Container(
-                                      height:35,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey,width: 2),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: DropdownButton<String>(
-                                        // value: selectedStripWastageType,
-                                        value: stripWastageList.map((e) => e.toString()).contains(selectedStripWastageType)
-                                            ? selectedStripWastageType
-                                            : null,
-                                        hint: const Center(child: Text('Strip Wastage',style:  TextStyle(fontSize: 13),)),
-                                        padding: const EdgeInsets.only(left: 2),
-                                        isExpanded: true,
-                                        underline: const SizedBox(),
-                                        items: stripWastageList.map((int value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value.toString(),
-                                            child: Center(child: Text(value.toString(),style: const TextStyle(fontSize: 14),)),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedStripWastageType = newValue!;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5,),
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // Scaffold.of(context).openEndDrawer();
-                                    _scaffoldKey.currentState?.openDrawer();
-                                  },
-
-                                  // onTap: (){
-                                  //   if (imagePath != null || (widget.image1 != "" && widget.image1.isNotEmpty)) {
-                                  //     _scaffoldKey.currentState?.openDrawer();
-                                  //   }
-                                  //   else{
-                                  //     Fluttertoast.showToast(
-                                  //         msg: 'Please Take Image First ',
-                                  //         toastLength: Toast.LENGTH_SHORT,
-                                  //         gravity: ToastGravity.CENTER,
-                                  //         backgroundColor: Colors.red,
-                                  //         textColor: Colors.white,
-                                  //         fontSize: 16.0);
-                                  //   }
-                                  // },
-
-                                  child: Stack(
-                                      children:[
-                                        Padding(
-                                          padding: const EdgeInsets.all(3),
-                                          child: Image.asset(
-                                            // height: 60,
-                                            // width: 60,
-                                            'assets/images/diagnosis.png',
-                                            // color: Colors.teal,
-                                            // width: screenWidth / 9,
-                                            //height: screenWidth /9,
-                                            fit: BoxFit.cover,
-                                          ),
-
-                                        ),
-
-                                        const Positioned(
-                                          top: -1,
-                                          left: -2,
-                                          child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                                        ),
-                                      ]
-                                  ),
-                                ),
-                              ),
-
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (isMedicineSync == true) {
-                                      debugPrint(imagePath.toString());
-                                      setState(() {});
-
-                                      if (imagePath != null) {
-                                        if (widget.uniqueId >= 0 &&
-                                            finalDoctorList.isNotEmpty) {
-                                          getMedicine();
-                                          // debugPrint(widget.uniqueId);
-                                        } else if (_activeCounter == false) {
-                                          // debugPrint('activeCounter:$_activeCounter');
-                                          _rxCounter();
-                                          getMedicine();
-                                          // debugPrint('test:${widget.uniqueId}');
-                                          setState(() {
-                                            _activeCounter = true;
-                                          });
-                                        } else if (_activeCounter == true) {
-                                          getMedicine();
-                                        }
-                                      }
-                                      else if (widget.image1 != "") {
-                                        if (widget.uniqueId >= 0 &&
-                                            finalDoctorList.isNotEmpty) {
-                                          getMedicine();
-                                          // debugPrint(widget.uniqueId);
-                                        } else if (_activeCounter == false) {
-                                          // debugPrint('activeCounter:$_activeCounter');
-                                          _rxCounter();
-                                          getMedicine();
-                                          // debugPrint('test:${widget.uniqueId}');
-                                          setState(() {
-                                            _activeCounter = true;
-                                          });
-                                        } else if (_activeCounter == true) {
-                                          getMedicine();
-                                        }
-                                      }
-                                      else {
-                                        Fluttertoast.showToast(
-                                            msg: 'Please Take Image First ',
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.CENTER,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0);
-                                      }
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: 'Please Sync Medicine',
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
-                                    }
-                                  },
-                                  child: Stack(
+                                    child: Stack(
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(3),
-                                          child: Image.asset(
-                                            'assets/images/medicine.png',
-                                            // color: Colors.teal,
-                                            //width: screenWidth / 8,
-                                            //height: screenWidth /9,
-                                            fit: BoxFit.cover,
+                                        DropdownButtonFormField(
+                                          decoration: const InputDecoration(enabled: false),
+                                          isExpanded: true,
+                                          // value: selectedSalesType,
+                                          value: salesTypelist.contains(selectedSalesType) ? selectedSalesType : null,
+                                          hint: const Center(
+                                            child: Text(
+                                              'Sales Type',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                // fontSize: 16,
+                                              ),
+                                            ),
                                           ),
-
+                                          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
+                                          items:
+                                              salesTypelist.map((String items) {
+                                                return DropdownMenuItem(
+                                                  value: items,
+                                                  child: Text(
+                                                    items,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      // fontSize: 16,
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              selectedSalesType = newValue!;
+                                            });
+                                          },
                                         ),
-
-                                        const Positioned(
-                                          top: 0,
-                                          left: -3,
-                                          child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                                        ),
-                                      ]
-                                  ),
-                                ),
-                              ),
-
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // setState(() {
-                                    //   isPromotional=true;
-                                    // });
-                                    //Navigator.push(context, MaterialPageRoute(builder: (context) =>  PromotionalScreen(uniqueId:widget.uniqueId,),));
-
-                                    //_scaffoldKey.currentState?.openEndDrawer();
-
-                                    setState(() {
-                                      getGitSamplePpmData();
-                                    });
-
-                                  },
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(3),
-                                      child: Image.asset(
-                                        'assets/images/items.png',
-                                        // color: Colors.teal,
-                                        height: screenHeight /12,
-                                        fit: BoxFit.fill,
-                                      ),
-
+                                        const Positioned(top: 18, right: 20, child: Icon(Icons.star_sharp, color: Colors.red, size: 12)),
+                                      ],
                                     ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  rx_type_must == true
+                                      ?
+                                      // Expanded(
+                                      //   flex: 3,
+                                      //   child: Stack(
+                                      //     children: [
+                                      //       DropdownButtonFormField(
+                                      //         decoration: const InputDecoration(enabled: false),
+                                      //         isExpanded: true,
+                                      //         value: dropdownRxTypevalue,
+                                      //         icon: const Icon(
+                                      //           Icons.keyboard_arrow_down,
+                                      //           color: Colors.black,
+                                      //         ),
+                                      //         // Array list of items
+                                      //         items: rxTypeList.map((String items) {
+                                      //           return DropdownMenuItem(
+                                      //             value: items,
+                                      //             child: Text(
+                                      //               items,
+                                      //               style: const TextStyle(
+                                      //                 color: Colors.black,
+                                      //                 // fontSize: 16,
+                                      //               ),
+                                      //             ),
+                                      //           );
+                                      //         }).toList(),
+                                      //
+                                      //         onChanged:
+                                      //             (String? newValue) {
+                                      //           setState(() {
+                                      //             dropdownRxTypevalue =
+                                      //             newValue!;
+                                      //           });
+                                      //         },
+                                      //       ),
+                                      //       const Positioned(
+                                      //         top: 18,
+                                      //         right: 20,
+                                      //         child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
+                                      //       ),
+                                      //     ],
+                                      //   )
+                                      //
+                                      // )
+                                      Expanded(
+                                        flex: 3,
+                                        child: Stack(
+                                          children: [
+                                            DropdownButtonFormField(
+                                              decoration: const InputDecoration(enabled: false),
+                                              isExpanded: true,
+                                              // value: selectedPatientType,
+                                              value: patientTypeList.contains(selectedPatientType) ? selectedPatientType : null,
+                                              hint: const Center(
+                                                child: Text(
+                                                  'Patient Type',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                    // fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
+                                              items:
+                                                  patientTypeList.map((String items) {
+                                                    return DropdownMenuItem(
+                                                      value: items,
+                                                      child: Text(
+                                                        items,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          // fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
 
-                                ),
-                              ),
-
-
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              ///*********************************doctor info******************************************///
-
-              SizedBox(
-                height: screenHeight / 11,
-                child: Card(
-                  color: const Color(0xffDDEBF7),
-                  elevation: 10,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Colors.white70,
-                        width: 1
-                    ),
-                  ),
-                  child: Container(
-                    height: 70,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xffDDEBF7),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-
-                        children: [
-                          // Expanded(
-                          //   flex: 5,
-                          //   child: Column(
-                          //     crossAxisAlignment:
-                          //     CrossAxisAlignment.start,
-                          //     children: [
-                          //       Text(
-                          //         '${finalDoctorList[0].docName}'
-                          //             '(${finalDoctorList[0].docId})',
-                          //         style: const TextStyle(
-                          //           color: Colors.black,
-                          //           fontWeight: FontWeight.bold,
-                          //           fontSize: 16,
-                          //         ),
-                          //       ),
-                          //       FittedBox(
-                          //         child: Text(
-                          //           '${finalDoctorList[0].areaName}(${finalDoctorList[0].areaId}) , ${finalDoctorList[0].address}',
-                          //           style: const TextStyle(
-                          //             color: Colors.black,
-                          //             // fontSize: 19,
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          Expanded(
-                            flex: 3,
-                            child:  Stack(
-                                children: [
-                                  DropdownButtonFormField(
-                                    decoration: const InputDecoration(enabled: false),
-                                    isExpanded: true,
-                                    // value: selectedSalesType,
-                                    value: salesTypelist.contains(selectedSalesType) ? selectedSalesType : null,
-                                    hint: const Center(child:  Text('Sales Type',style:  TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14
-                                      // fontSize: 16,
-                                    ),)),
-                                    icon: const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: Colors.black,
-                                    ),
-                                    items: salesTypelist.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            // fontSize: 16,
-                                          ),
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  selectedPatientType = newValue!;
+                                                  print('selected patient type: $selectedPatientType');
+                                                });
+                                              },
+                                            ),
+                                            const Positioned(top: 18, right: 20, child: Icon(Icons.star_sharp, color: Colors.red, size: 12)),
+                                          ],
                                         ),
-                                      );
-                                    }).toList(),
-                                    onChanged:
-                                        (String? newValue) {
-                                      setState(() {
-                                        selectedSalesType = newValue!;
-                                      });
-                                    },
-                                  ),
-                                  const Positioned(
-                                    top: 18,
-                                    right: 20,
-                                    child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                                  ),
-                                ]
+                                      )
+                                      : Container(),
+                                ],
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 10,),
-                          rx_type_must == true
-                              ?
-                          // Expanded(
-                          //   flex: 3,
-                          //   child: Stack(
-                          //     children: [
-                          //       DropdownButtonFormField(
-                          //         decoration: const InputDecoration(enabled: false),
-                          //         isExpanded: true,
-                          //         value: dropdownRxTypevalue,
-                          //         icon: const Icon(
-                          //           Icons.keyboard_arrow_down,
-                          //           color: Colors.black,
-                          //         ),
-                          //         // Array list of items
-                          //         items: rxTypeList.map((String items) {
-                          //           return DropdownMenuItem(
-                          //             value: items,
-                          //             child: Text(
-                          //               items,
-                          //               style: const TextStyle(
-                          //                 color: Colors.black,
-                          //                 // fontSize: 16,
-                          //               ),
-                          //             ),
-                          //           );
-                          //         }).toList(),
-                          //
-                          //         onChanged:
-                          //             (String? newValue) {
-                          //           setState(() {
-                          //             dropdownRxTypevalue =
-                          //             newValue!;
-                          //           });
-                          //         },
-                          //       ),
-                          //       const Positioned(
-                          //         top: 18,
-                          //         right: 20,
-                          //         child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                          //       ),
-                          //     ],
-                          //   )
-                          //
-                          // )
-                          Expanded(
-                              flex: 3,
-                              child: Stack(
-                                children: [
-                                  DropdownButtonFormField(
-                                    decoration: const InputDecoration(enabled: false),
-                                    isExpanded: true,
-                                    // value: selectedPatientType,
-                                    value: patientTypeList.contains(selectedPatientType) ? selectedPatientType : null,
-                                    hint: const Center(
-                                        child: Text('Patient Type',style:  TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14
-                                          // fontSize: 16,
-                                        ),)),
-                                    icon: const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: Colors.black,
-                                    ),
-                                    items: patientTypeList.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            // fontSize: 16,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-
-                                    onChanged:
-                                        (String? newValue) {
-                                      setState(() {
-                                        selectedPatientType = newValue!;
-                                        print('selected patient type: $selectedPatientType');
-                                      });
-                                    },
-                                  ),
-                                  const Positioned(
-                                    top: 18,
-                                    right: 20,
-                                    child: Icon(Icons.star_sharp, color: Colors.red, size: 12),
-                                  ),
-                                ],
-                              )
-
-                          )
-                              : Container(),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
 
+                      // ////////////////////////////////medicine List View////////////////
+                      // finalMedicineList.isNotEmpty
+                      //     ? Expanded(
+                      //       child: SingleChildScrollView(
+                      //         child: ListView.builder(
+                      //           shrinkWrap: true,
+                      //           itemCount: finalMedicineList.length,
+                      //           physics: const BouncingScrollPhysics(),
+                      //          // padding: const EdgeInsets.only(bottom: 200.0),
+                      //           itemBuilder: (BuildContext itemBuilder, index) {
+                      //             return Card(
+                      //               elevation: 10,
+                      //               color: const Color.fromARGB(255, 217, 248, 219),
+                      //               shape: RoundedRectangleBorder(
+                      //                 side: const BorderSide(color: Colors.white70, width: 1),
+                      //                 borderRadius: BorderRadius.circular(10),
+                      //               ),
+                      //               child: Container(
+                      //                 height: 70,
+                      //                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
+                      //                 ),
+                      //                 child: Padding(
+                      //                   padding: const EdgeInsets.all(8.0),
+                      //                   child: Column(
+                      //                     crossAxisAlignment:
+                      //                     CrossAxisAlignment.start,
+                      //                     children: [
+                      //                       Row(
+                      //                         children: [
+                      //                           Expanded(
+                      //                             flex: 2,
+                      //                             child: Text(
+                      //                               '${finalMedicineList[index].name} ''(${finalMedicineList[index].itemId})',
+                      //                               style: const TextStyle(
+                      //                                 color: Colors.black,
+                      //                                 // fontWeight:
+                      //                                 // FontWeight.bold,
+                      //                                 fontSize: 14,
+                      //                               ),
+                      //                             ),
+                      //                           ),
+                      //                           // IconButton(
+                      //                           //     onPressed: () {
+                      //                           //       // var x =
+                      //                           //       if (finalMedicineList[
+                      //                           //       index]
+                      //                           //           .quantity >
+                      //                           //           1) {
+                      //                           //         finalMedicineList[
+                      //                           //         index]
+                      //                           //             .quantity--;
+                      //                           //       }
+                      //                           //
+                      //                           //       // calculateRxItemString(
+                      //                           //       //     x.toString());
+                      //                           //       setState(() {});
+                      //                           //     },
+                      //                           //     icon: const Icon(
+                      //                           //         Icons.remove)),
+                      //                           Container(
+                      //                             width: 40,
+                      //                             height: 30,
+                      //                             decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+                      //                             // color: !pressAttention
+                      //                             //     ? Colors.white
+                      //                             //     : Colors.blueAccent,
+                      //                             child: Padding(
+                      //                               padding: const EdgeInsets.all(6),
+                      //                               child: Text(
+                      //                                 textAlign: TextAlign.center,
+                      //                                 finalMedicineList[index].quantity.toString(),
+                      //                               ),
+                      //                             ),
+                      //                           ),
+                      //                           // IconButton(
+                      //                           //   onPressed: () {
+                      //                           //     // var y =
+                      //                           //     finalMedicineList[index]
+                      //                           //         .quantity++;
+                      //                           //     // calculateRxItemString(
+                      //                           //     //     y.toString());
+                      //                           //     setState(() {});
+                      //                           //   },
+                      //                           //   icon: const Icon(Icons.add),
+                      //                           // ),
+                      //                           IconButton(
+                      //                             // color: Colors.red,
+                      //                             onPressed: () {
+                      //                               _showMyDialog(index);
+                      //                             },
+                      //                             icon: const Icon(Icons.clear, color: Colors.grey,
+                      //                             ),
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             );
+                      //           },
+                      //         ),
+                      //       ),
+                      //     )
+                      //     :  Expanded(child: Container()),
+                      //
+                      //
+                      // ////////////////Gift//Sample//PPM/////////
+                      // Expanded(
+                      //   child: SingleChildScrollView(
+                      //     child: ListView.builder(
+                      //       shrinkWrap: true,
+                      //       itemCount: addedDcrGSPList.length,
+                      //       physics: const BouncingScrollPhysics(),
+                      //       itemBuilder: (BuildContext itemBuilder, index) {
+                      //         print('promotional list: ${addedDcrGSPList.length}');
+                      //         print('name: ${addedDcrGSPList[index].giftName}');
+                      //         return Card(
+                      //           color: Colors.white,
+                      //           elevation: 15,
+                      //           shape: RoundedRectangleBorder(
+                      //             side: const BorderSide(color: Colors.white70, width: 1),
+                      //             borderRadius: BorderRadius.circular(10),
+                      //           ),
+                      //           child: Container(
+                      //             height: 90,
+                      //             decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
+                      //             ),
+                      //             child: Padding(
+                      //               padding: const EdgeInsets.all(8.0),
+                      //               child: Column(
+                      //                 mainAxisAlignment: MainAxisAlignment.start,
+                      //                 children: [
+                      //                   Expanded(
+                      //                     flex: 3,
+                      //                     child: Row(
+                      //                       children: [
+                      //                         Expanded(
+                      //                           flex: 10,
+                      //                           child: Row(
+                      //                             mainAxisAlignment:
+                      //                             MainAxisAlignment.spaceBetween,
+                      //                             children: [
+                      //                               Expanded(
+                      //                                 child: Text(
+                      //                                   addedDcrGSPList[index].giftName,
+                      //                                   style: const TextStyle(
+                      //                                       color: Color.fromARGB(255, 9, 38, 61),
+                      //                                       fontWeight: FontWeight.w400,
+                      //                                       fontSize: 16),
+                      //                                 ),
+                      //                               ),
+                      //                               // Text(
+                      //                               //   '(${addedDcrGSPList[index].giftType})',
+                      //                               //   style: const TextStyle(
+                      //                               //       fontSize: 16),
+                      //                               // ),
+                      //                             ],
+                      //                           ),
+                      //                         ),
+                      //                         const SizedBox(
+                      //                           width: 10,
+                      //                         ),
+                      //                         IconButton(
+                      //                           onPressed: () {
+                      //                             _showMyDialog(index);
+                      //                           },
+                      //                           icon: const Icon(Icons.clear, color: Colors.grey,
+                      //                           ),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                   Expanded(
+                      //                     child: Row(
+                      //                       mainAxisAlignment:
+                      //                       MainAxisAlignment.start,
+                      //                       children: [
+                      //                         addedDcrGSPList[index].giftType !=
+                      //                             "Discussion"
+                      //                             ? Row(
+                      //                           children: [
+                      //                             const Text(
+                      //                               'Qt:  ',
+                      //                               style: TextStyle(
+                      //                                   fontSize: 16,
+                      //                                   color: Color.fromARGB(
+                      //                                       255, 9, 38, 61)),
+                      //                             ),
+                      //                             Text(
+                      //                               addedDcrGSPList[index]
+                      //                                   .quantity
+                      //                                   .toString(),
+                      //                               style: const TextStyle(
+                      //                                   color: Color.fromARGB(
+                      //                                       255, 9, 38, 61),
+                      //                                   fontSize: 16,
+                      //                                   fontWeight:
+                      //                                   FontWeight.bold),
+                      //                             ),
+                      //                           ],
+                      //                         )
+                      //                             : const Text(""),
+                      //                         const Spacer(),
+                      //                         Row(
+                      //                           children: [
+                      //                             Text(
+                      //                               '(${addedDcrGSPList[index].giftType})',
+                      //                               style: const TextStyle(
+                      //                                 color: Color.fromARGB(
+                      //                                     255, 9, 38, 61),
+                      //                                 fontSize: 16,
+                      //                               ),
+                      //                             ),
+                      //                           ],
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         );
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
+                      // // Expanded(
+                      // //   child: Row(
+                      // //     crossAxisAlignment: CrossAxisAlignment.start,
+                      // //     children: [
+                      // //       ////////////////////////////////medicine List View////////////////
+                      // //       finalMedicineList.isNotEmpty
+                      // //           ? Expanded(
+                      // //         child: SingleChildScrollView(
+                      // //           child: ListView.builder(
+                      // //             shrinkWrap: true,
+                      // //             itemCount: finalMedicineList.length,
+                      // //             physics: const BouncingScrollPhysics(),
+                      // //             // padding: const EdgeInsets.only(bottom: 200.0),
+                      // //             itemBuilder: (BuildContext itemBuilder, index) {
+                      // //               return Card(
+                      // //                 elevation: 10,
+                      // //                 color: const Color.fromARGB(255, 217, 248, 219),
+                      // //                 shape: RoundedRectangleBorder(
+                      // //                   side: const BorderSide(color: Colors.white70, width: 1),
+                      // //                   borderRadius: BorderRadius.circular(10),
+                      // //                 ),
+                      // //                 child: Container(
+                      // //                   height: 80,
+                      // //                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
+                      // //                   ),
+                      // //                   child: Column(
+                      // //                     crossAxisAlignment:
+                      // //                     CrossAxisAlignment.start,
+                      // //                     children: [
+                      // //                       Row(
+                      // //                         children: [
+                      // //                           Expanded(
+                      // //                             flex: 2,
+                      // //                             child: Text(
+                      // //                               '${finalMedicineList[index].name} ''(${finalMedicineList[index].itemId})',
+                      // //                               style: const TextStyle(
+                      // //                                 color: Colors.black,
+                      // //                                 // fontWeight:
+                      // //                                 // FontWeight.bold,
+                      // //                                 fontSize: 14,
+                      // //                               ),
+                      // //                             ),
+                      // //                           ),
+                      // //                           // IconButton(
+                      // //                           //     onPressed: () {
+                      // //                           //       // var x =
+                      // //                           //       if (finalMedicineList[
+                      // //                           //       index]
+                      // //                           //           .quantity >
+                      // //                           //           1) {
+                      // //                           //         finalMedicineList[
+                      // //                           //         index]
+                      // //                           //             .quantity--;
+                      // //                           //       }
+                      // //                           //
+                      // //                           //       // calculateRxItemString(
+                      // //                           //       //     x.toString());
+                      // //                           //       setState(() {});
+                      // //                           //     },
+                      // //                           //     icon: const Icon(
+                      // //                           //         Icons.remove)),
+                      // //                           Container(
+                      // //                             width: 40,
+                      // //                             height: 30,
+                      // //                             decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+                      // //                             // color: !pressAttention
+                      // //                             //     ? Colors.white
+                      // //                             //     : Colors.blueAccent,
+                      // //                             child: Padding(
+                      // //                               padding: const EdgeInsets.all(6),
+                      // //                               child: Text(
+                      // //                                 textAlign: TextAlign.center,
+                      // //                                 finalMedicineList[index].quantity.toString(),
+                      // //                               ),
+                      // //                             ),
+                      // //                           ),
+                      // //                           // IconButton(
+                      // //                           //   onPressed: () {
+                      // //                           //     // var y =
+                      // //                           //     finalMedicineList[index]
+                      // //                           //         .quantity++;
+                      // //                           //     // calculateRxItemString(
+                      // //                           //     //     y.toString());
+                      // //                           //     setState(() {});
+                      // //                           //   },
+                      // //                           //   icon: const Icon(Icons.add),
+                      // //                           // ),
+                      // //                           IconButton(
+                      // //                             // color: Colors.red,
+                      // //                             onPressed: () {
+                      // //                               _showMyDialog(index);
+                      // //                             },
+                      // //                             icon: const Icon(Icons.clear, color: Colors.grey,
+                      // //                             ),
+                      // //                           ),
+                      // //                         ],
+                      // //                       ),
+                      // //                     ],
+                      // //                   ),
+                      // //                 ),
+                      // //               );
+                      // //             },
+                      // //           ),
+                      // //         ),
+                      // //       )
+                      // //           :  Expanded(child: Container()),
+                      // //
+                      // //       // ////////////////Gift//Sample//PPM/////////
+                      // //       Expanded(
+                      // //         child: SingleChildScrollView(
+                      // //           child: ListView.builder(
+                      // //             shrinkWrap: true,
+                      // //             itemCount: addedDcrGSPList.length,
+                      // //             physics: const BouncingScrollPhysics(),
+                      // //             itemBuilder: (BuildContext itemBuilder, index) {
+                      // //               return Card(
+                      // //                 color: Colors.white,
+                      // //                 elevation: 15,
+                      // //                 shape: RoundedRectangleBorder(
+                      // //                   side: const BorderSide(color: Colors.white70, width: 1),
+                      // //                   borderRadius: BorderRadius.circular(10),
+                      // //                 ),
+                      // //                 child: Container(
+                      // //                   padding: const EdgeInsets.all(6),
+                      // //                   height: 80,
+                      // //                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
+                      // //                   ),
+                      // //                   child: Column(
+                      // //                     mainAxisAlignment: MainAxisAlignment.start,
+                      // //                     children: [
+                      // //                       Expanded(
+                      // //                         flex: 3,
+                      // //                         child: Row(
+                      // //                           children: [
+                      // //                             Expanded(
+                      // //                               flex: 10,
+                      // //                               child: Row(
+                      // //                                 mainAxisAlignment:
+                      // //                                 MainAxisAlignment.spaceBetween,
+                      // //                                 children: [
+                      // //                                   Expanded(
+                      // //                                     child: Text(
+                      // //                                       addedDcrGSPList[index].giftName,
+                      // //                                       style: const TextStyle(
+                      // //                                           color: Color.fromARGB(255, 9, 38, 61),
+                      // //                                           fontWeight: FontWeight.w400,
+                      // //                                           fontSize: 16),
+                      // //                                     ),
+                      // //                                   ),
+                      // //                                   // Text(
+                      // //                                   //   '(${addedDcrGSPList[index].giftType})',
+                      // //                                   //   style: const TextStyle(
+                      // //                                   //       fontSize: 16),
+                      // //                                   // ),
+                      // //                                 ],
+                      // //                               ),
+                      // //                             ),
+                      // //                             const SizedBox(
+                      // //                               width: 10,
+                      // //                             ),
+                      // //                             IconButton(
+                      // //                               onPressed: () {
+                      // //                                 _showMyDialog(index);
+                      // //                               },
+                      // //                               icon: const Icon(Icons.clear, color: Colors.grey,
+                      // //                               ),
+                      // //                             ),
+                      // //                           ],
+                      // //                         ),
+                      // //                       ),
+                      // //                       Expanded(
+                      // //                         child: Row(
+                      // //                           mainAxisAlignment:
+                      // //                           MainAxisAlignment.start,
+                      // //                           children: [
+                      // //                             addedDcrGSPList[index].giftType !=
+                      // //                                 "Discussion"
+                      // //                                 ? Row(
+                      // //                               children: [
+                      // //                                 const Text(
+                      // //                                   'Qt:  ',
+                      // //                                   style: TextStyle(
+                      // //                                       fontSize: 16,
+                      // //                                       color: Color.fromARGB(
+                      // //                                           255, 9, 38, 61)),
+                      // //                                 ),
+                      // //                                 Text(
+                      // //                                   addedDcrGSPList[index]
+                      // //                                       .quantity
+                      // //                                       .toString(),
+                      // //                                   style: const TextStyle(
+                      // //                                       color: Color.fromARGB(
+                      // //                                           255, 9, 38, 61),
+                      // //                                       fontSize: 16,
+                      // //                                       fontWeight:
+                      // //                                       FontWeight.bold),
+                      // //                                 ),
+                      // //                               ],
+                      // //                             )
+                      // //                                 : const Text(""),
+                      // //                             const Spacer(),
+                      // //                             Row(
+                      // //                               children: [
+                      // //                                 Text(
+                      // //                                   '(${addedDcrGSPList[index].giftType})',
+                      // //                                   style: const TextStyle(
+                      // //                                     color: Color.fromARGB(
+                      // //                                         255, 9, 38, 61),
+                      // //                                     fontSize: 16,
+                      // //                                   ),
+                      // //                                 ),
+                      // //                               ],
+                      // //                             ),
+                      // //                           ],
+                      // //                         ),
+                      // //                       ),
+                      // //                     ],
+                      // //                   ),
+                      // //                 ),
+                      // //               );
+                      // //             },
+                      // //           ),
+                      // //         ),
+                      // //       ),
+                      // //     ],
+                      // //   ),
+                      // //   ),
+                      // // ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: combinedList1.length,
+                          itemBuilder: (context, index) {
+                            print('merged item length: ${combinedList1.length}');
 
-              // ////////////////////////////////medicine List View////////////////
-              // finalMedicineList.isNotEmpty
-              //     ? Expanded(
-              //       child: SingleChildScrollView(
-              //         child: ListView.builder(
-              //           shrinkWrap: true,
-              //           itemCount: finalMedicineList.length,
-              //           physics: const BouncingScrollPhysics(),
-              //          // padding: const EdgeInsets.only(bottom: 200.0),
-              //           itemBuilder: (BuildContext itemBuilder, index) {
-              //             return Card(
-              //               elevation: 10,
-              //               color: const Color.fromARGB(255, 217, 248, 219),
-              //               shape: RoundedRectangleBorder(
-              //                 side: const BorderSide(color: Colors.white70, width: 1),
-              //                 borderRadius: BorderRadius.circular(10),
-              //               ),
-              //               child: Container(
-              //                 height: 70,
-              //                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
-              //                 ),
-              //                 child: Padding(
-              //                   padding: const EdgeInsets.all(8.0),
-              //                   child: Column(
-              //                     crossAxisAlignment:
-              //                     CrossAxisAlignment.start,
-              //                     children: [
-              //                       Row(
-              //                         children: [
-              //                           Expanded(
-              //                             flex: 2,
-              //                             child: Text(
-              //                               '${finalMedicineList[index].name} ''(${finalMedicineList[index].itemId})',
-              //                               style: const TextStyle(
-              //                                 color: Colors.black,
-              //                                 // fontWeight:
-              //                                 // FontWeight.bold,
-              //                                 fontSize: 14,
-              //                               ),
-              //                             ),
-              //                           ),
-              //                           // IconButton(
-              //                           //     onPressed: () {
-              //                           //       // var x =
-              //                           //       if (finalMedicineList[
-              //                           //       index]
-              //                           //           .quantity >
-              //                           //           1) {
-              //                           //         finalMedicineList[
-              //                           //         index]
-              //                           //             .quantity--;
-              //                           //       }
-              //                           //
-              //                           //       // calculateRxItemString(
-              //                           //       //     x.toString());
-              //                           //       setState(() {});
-              //                           //     },
-              //                           //     icon: const Icon(
-              //                           //         Icons.remove)),
-              //                           Container(
-              //                             width: 40,
-              //                             height: 30,
-              //                             decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-              //                             // color: !pressAttention
-              //                             //     ? Colors.white
-              //                             //     : Colors.blueAccent,
-              //                             child: Padding(
-              //                               padding: const EdgeInsets.all(6),
-              //                               child: Text(
-              //                                 textAlign: TextAlign.center,
-              //                                 finalMedicineList[index].quantity.toString(),
-              //                               ),
-              //                             ),
-              //                           ),
-              //                           // IconButton(
-              //                           //   onPressed: () {
-              //                           //     // var y =
-              //                           //     finalMedicineList[index]
-              //                           //         .quantity++;
-              //                           //     // calculateRxItemString(
-              //                           //     //     y.toString());
-              //                           //     setState(() {});
-              //                           //   },
-              //                           //   icon: const Icon(Icons.add),
-              //                           // ),
-              //                           IconButton(
-              //                             // color: Colors.red,
-              //                             onPressed: () {
-              //                               _showMyDialog(index);
-              //                             },
-              //                             icon: const Icon(Icons.clear, color: Colors.grey,
-              //                             ),
-              //                           ),
-              //                         ],
-              //                       ),
-              //                     ],
-              //                   ),
-              //                 ),
-              //               ),
-              //             );
-              //           },
-              //         ),
-              //       ),
-              //     )
-              //     :  Expanded(child: Container()),
-              //
-              //
-              // ////////////////Gift//Sample//PPM/////////
-              // Expanded(
-              //   child: SingleChildScrollView(
-              //     child: ListView.builder(
-              //       shrinkWrap: true,
-              //       itemCount: addedDcrGSPList.length,
-              //       physics: const BouncingScrollPhysics(),
-              //       itemBuilder: (BuildContext itemBuilder, index) {
-              //         print('promotional list: ${addedDcrGSPList.length}');
-              //         print('name: ${addedDcrGSPList[index].giftName}');
-              //         return Card(
-              //           color: Colors.white,
-              //           elevation: 15,
-              //           shape: RoundedRectangleBorder(
-              //             side: const BorderSide(color: Colors.white70, width: 1),
-              //             borderRadius: BorderRadius.circular(10),
-              //           ),
-              //           child: Container(
-              //             height: 90,
-              //             decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
-              //             ),
-              //             child: Padding(
-              //               padding: const EdgeInsets.all(8.0),
-              //               child: Column(
-              //                 mainAxisAlignment: MainAxisAlignment.start,
-              //                 children: [
-              //                   Expanded(
-              //                     flex: 3,
-              //                     child: Row(
-              //                       children: [
-              //                         Expanded(
-              //                           flex: 10,
-              //                           child: Row(
-              //                             mainAxisAlignment:
-              //                             MainAxisAlignment.spaceBetween,
-              //                             children: [
-              //                               Expanded(
-              //                                 child: Text(
-              //                                   addedDcrGSPList[index].giftName,
-              //                                   style: const TextStyle(
-              //                                       color: Color.fromARGB(255, 9, 38, 61),
-              //                                       fontWeight: FontWeight.w400,
-              //                                       fontSize: 16),
-              //                                 ),
-              //                               ),
-              //                               // Text(
-              //                               //   '(${addedDcrGSPList[index].giftType})',
-              //                               //   style: const TextStyle(
-              //                               //       fontSize: 16),
-              //                               // ),
-              //                             ],
-              //                           ),
-              //                         ),
-              //                         const SizedBox(
-              //                           width: 10,
-              //                         ),
-              //                         IconButton(
-              //                           onPressed: () {
-              //                             _showMyDialog(index);
-              //                           },
-              //                           icon: const Icon(Icons.clear, color: Colors.grey,
-              //                           ),
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //                   Expanded(
-              //                     child: Row(
-              //                       mainAxisAlignment:
-              //                       MainAxisAlignment.start,
-              //                       children: [
-              //                         addedDcrGSPList[index].giftType !=
-              //                             "Discussion"
-              //                             ? Row(
-              //                           children: [
-              //                             const Text(
-              //                               'Qt:  ',
-              //                               style: TextStyle(
-              //                                   fontSize: 16,
-              //                                   color: Color.fromARGB(
-              //                                       255, 9, 38, 61)),
-              //                             ),
-              //                             Text(
-              //                               addedDcrGSPList[index]
-              //                                   .quantity
-              //                                   .toString(),
-              //                               style: const TextStyle(
-              //                                   color: Color.fromARGB(
-              //                                       255, 9, 38, 61),
-              //                                   fontSize: 16,
-              //                                   fontWeight:
-              //                                   FontWeight.bold),
-              //                             ),
-              //                           ],
-              //                         )
-              //                             : const Text(""),
-              //                         const Spacer(),
-              //                         Row(
-              //                           children: [
-              //                             Text(
-              //                               '(${addedDcrGSPList[index].giftType})',
-              //                               style: const TextStyle(
-              //                                 color: Color.fromARGB(
-              //                                     255, 9, 38, 61),
-              //                                 fontSize: 16,
-              //                               ),
-              //                             ),
-              //                           ],
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //                 ],
-              //               ),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //     ),
-              //   ),
-              // ),
-              // // Expanded(
-              // //   child: Row(
-              // //     crossAxisAlignment: CrossAxisAlignment.start,
-              // //     children: [
-              // //       ////////////////////////////////medicine List View////////////////
-              // //       finalMedicineList.isNotEmpty
-              // //           ? Expanded(
-              // //         child: SingleChildScrollView(
-              // //           child: ListView.builder(
-              // //             shrinkWrap: true,
-              // //             itemCount: finalMedicineList.length,
-              // //             physics: const BouncingScrollPhysics(),
-              // //             // padding: const EdgeInsets.only(bottom: 200.0),
-              // //             itemBuilder: (BuildContext itemBuilder, index) {
-              // //               return Card(
-              // //                 elevation: 10,
-              // //                 color: const Color.fromARGB(255, 217, 248, 219),
-              // //                 shape: RoundedRectangleBorder(
-              // //                   side: const BorderSide(color: Colors.white70, width: 1),
-              // //                   borderRadius: BorderRadius.circular(10),
-              // //                 ),
-              // //                 child: Container(
-              // //                   height: 80,
-              // //                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
-              // //                   ),
-              // //                   child: Column(
-              // //                     crossAxisAlignment:
-              // //                     CrossAxisAlignment.start,
-              // //                     children: [
-              // //                       Row(
-              // //                         children: [
-              // //                           Expanded(
-              // //                             flex: 2,
-              // //                             child: Text(
-              // //                               '${finalMedicineList[index].name} ''(${finalMedicineList[index].itemId})',
-              // //                               style: const TextStyle(
-              // //                                 color: Colors.black,
-              // //                                 // fontWeight:
-              // //                                 // FontWeight.bold,
-              // //                                 fontSize: 14,
-              // //                               ),
-              // //                             ),
-              // //                           ),
-              // //                           // IconButton(
-              // //                           //     onPressed: () {
-              // //                           //       // var x =
-              // //                           //       if (finalMedicineList[
-              // //                           //       index]
-              // //                           //           .quantity >
-              // //                           //           1) {
-              // //                           //         finalMedicineList[
-              // //                           //         index]
-              // //                           //             .quantity--;
-              // //                           //       }
-              // //                           //
-              // //                           //       // calculateRxItemString(
-              // //                           //       //     x.toString());
-              // //                           //       setState(() {});
-              // //                           //     },
-              // //                           //     icon: const Icon(
-              // //                           //         Icons.remove)),
-              // //                           Container(
-              // //                             width: 40,
-              // //                             height: 30,
-              // //                             decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-              // //                             // color: !pressAttention
-              // //                             //     ? Colors.white
-              // //                             //     : Colors.blueAccent,
-              // //                             child: Padding(
-              // //                               padding: const EdgeInsets.all(6),
-              // //                               child: Text(
-              // //                                 textAlign: TextAlign.center,
-              // //                                 finalMedicineList[index].quantity.toString(),
-              // //                               ),
-              // //                             ),
-              // //                           ),
-              // //                           // IconButton(
-              // //                           //   onPressed: () {
-              // //                           //     // var y =
-              // //                           //     finalMedicineList[index]
-              // //                           //         .quantity++;
-              // //                           //     // calculateRxItemString(
-              // //                           //     //     y.toString());
-              // //                           //     setState(() {});
-              // //                           //   },
-              // //                           //   icon: const Icon(Icons.add),
-              // //                           // ),
-              // //                           IconButton(
-              // //                             // color: Colors.red,
-              // //                             onPressed: () {
-              // //                               _showMyDialog(index);
-              // //                             },
-              // //                             icon: const Icon(Icons.clear, color: Colors.grey,
-              // //                             ),
-              // //                           ),
-              // //                         ],
-              // //                       ),
-              // //                     ],
-              // //                   ),
-              // //                 ),
-              // //               );
-              // //             },
-              // //           ),
-              // //         ),
-              // //       )
-              // //           :  Expanded(child: Container()),
-              // //
-              // //       // ////////////////Gift//Sample//PPM/////////
-              // //       Expanded(
-              // //         child: SingleChildScrollView(
-              // //           child: ListView.builder(
-              // //             shrinkWrap: true,
-              // //             itemCount: addedDcrGSPList.length,
-              // //             physics: const BouncingScrollPhysics(),
-              // //             itemBuilder: (BuildContext itemBuilder, index) {
-              // //               return Card(
-              // //                 color: Colors.white,
-              // //                 elevation: 15,
-              // //                 shape: RoundedRectangleBorder(
-              // //                   side: const BorderSide(color: Colors.white70, width: 1),
-              // //                   borderRadius: BorderRadius.circular(10),
-              // //                 ),
-              // //                 child: Container(
-              // //                   padding: const EdgeInsets.all(6),
-              // //                   height: 80,
-              // //                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),
-              // //                   ),
-              // //                   child: Column(
-              // //                     mainAxisAlignment: MainAxisAlignment.start,
-              // //                     children: [
-              // //                       Expanded(
-              // //                         flex: 3,
-              // //                         child: Row(
-              // //                           children: [
-              // //                             Expanded(
-              // //                               flex: 10,
-              // //                               child: Row(
-              // //                                 mainAxisAlignment:
-              // //                                 MainAxisAlignment.spaceBetween,
-              // //                                 children: [
-              // //                                   Expanded(
-              // //                                     child: Text(
-              // //                                       addedDcrGSPList[index].giftName,
-              // //                                       style: const TextStyle(
-              // //                                           color: Color.fromARGB(255, 9, 38, 61),
-              // //                                           fontWeight: FontWeight.w400,
-              // //                                           fontSize: 16),
-              // //                                     ),
-              // //                                   ),
-              // //                                   // Text(
-              // //                                   //   '(${addedDcrGSPList[index].giftType})',
-              // //                                   //   style: const TextStyle(
-              // //                                   //       fontSize: 16),
-              // //                                   // ),
-              // //                                 ],
-              // //                               ),
-              // //                             ),
-              // //                             const SizedBox(
-              // //                               width: 10,
-              // //                             ),
-              // //                             IconButton(
-              // //                               onPressed: () {
-              // //                                 _showMyDialog(index);
-              // //                               },
-              // //                               icon: const Icon(Icons.clear, color: Colors.grey,
-              // //                               ),
-              // //                             ),
-              // //                           ],
-              // //                         ),
-              // //                       ),
-              // //                       Expanded(
-              // //                         child: Row(
-              // //                           mainAxisAlignment:
-              // //                           MainAxisAlignment.start,
-              // //                           children: [
-              // //                             addedDcrGSPList[index].giftType !=
-              // //                                 "Discussion"
-              // //                                 ? Row(
-              // //                               children: [
-              // //                                 const Text(
-              // //                                   'Qt:  ',
-              // //                                   style: TextStyle(
-              // //                                       fontSize: 16,
-              // //                                       color: Color.fromARGB(
-              // //                                           255, 9, 38, 61)),
-              // //                                 ),
-              // //                                 Text(
-              // //                                   addedDcrGSPList[index]
-              // //                                       .quantity
-              // //                                       .toString(),
-              // //                                   style: const TextStyle(
-              // //                                       color: Color.fromARGB(
-              // //                                           255, 9, 38, 61),
-              // //                                       fontSize: 16,
-              // //                                       fontWeight:
-              // //                                       FontWeight.bold),
-              // //                                 ),
-              // //                               ],
-              // //                             )
-              // //                                 : const Text(""),
-              // //                             const Spacer(),
-              // //                             Row(
-              // //                               children: [
-              // //                                 Text(
-              // //                                   '(${addedDcrGSPList[index].giftType})',
-              // //                                   style: const TextStyle(
-              // //                                     color: Color.fromARGB(
-              // //                                         255, 9, 38, 61),
-              // //                                     fontSize: 16,
-              // //                                   ),
-              // //                                 ),
-              // //                               ],
-              // //                             ),
-              // //                           ],
-              // //                         ),
-              // //                       ),
-              // //                     ],
-              // //                   ),
-              // //                 ),
-              // //               );
-              // //             },
-              // //           ),
-              // //         ),
-              // //       ),
-              // //     ],
-              // //   ),
-              // //   ),
-              // // ),
+                            final mergedItem = combinedList1[index];
 
+                            if (mergedItem.type == 'medicine') {
+                              final med = mergedItem.item;
 
-              Expanded(
-                child: ListView.builder(
-                  itemCount: combinedList1.length,
-                  itemBuilder: (context, index) {
-                    print('merged item length: ${combinedList1.length}');
-
-                    final mergedItem = combinedList1[index];
-
-                    if (mergedItem.type == 'medicine') {
-                      final med = mergedItem.item;
-
-                      return Card(
-                        elevation: 10,
-                        color: const Color.fromARGB(255, 217, 248, 219),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Container(
-                          height: 90,
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  '${med.name} (${med.itemId})',
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    if (finalMedicineList[index].quantity > 1) {
-                                      finalMedicineList[index].quantity--;
-                                    }
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.remove)),
-                              Container(
-                                width: 40,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.blueAccent),
-                                ),
-                                child: Center(
-                                    child: Text(med.quantity.toString())),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  finalMedicineList[index].quantity++;
-                                  setState(() {});
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                    Icons.clear, color: Colors.grey),
-                                onPressed: () => _showMyDialog(index),
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      final promo = mergedItem.item;
-                      return Card(
-                        color: Colors.white,
-                        elevation: 15,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Container(
-                          height: 90,
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      promo.giftName,
-                                      style: const TextStyle(
-                                        color: Color.fromARGB(255, 9, 38, 61),
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                        Icons.clear, color: Colors.grey),
-                                    onPressed: () => _showMyDialogforGiftSamplePpm(index),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  promo.giftType != "Discussion"
-                                      ? Row(
+                              return Card(
+                                elevation: 10,
+                                color: const Color.fromARGB(255, 217, 248, 219),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                child: Container(
+                                  height: 90,
+                                  padding: const EdgeInsets.all(8),
+                                  child: Row(
                                     children: [
-                                      const Text('Qt: ',
-                                          style: TextStyle(fontSize: 16)),
-                                      Text(
-                                        promo.quantity.toString(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Expanded(flex: 2, child: Text('${med.name} (${med.itemId})', style: const TextStyle(fontSize: 14))),
+                                      IconButton(
+                                        onPressed: () {
+                                          if (finalMedicineList[index].quantity > 1) {
+                                            finalMedicineList[index].quantity--;
+                                          }
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(Icons.remove),
+                                      ),
+                                      Container(width: 40, height: 30, decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)), child: Center(child: Text(med.quantity.toString()))),
+                                      IconButton(
+                                        onPressed: () {
+                                          finalMedicineList[index].quantity++;
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(Icons.add),
+                                      ),
+                                      IconButton(icon: const Icon(Icons.clear, color: Colors.grey), onPressed: () => _showMyDialog(index)),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              final promo = mergedItem.item;
+                              return Card(
+                                color: Colors.white,
+                                elevation: 15,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                child: Container(
+                                  height: 90,
+                                  padding: const EdgeInsets.all(8),
+                                  child: Column(
+                                    children: [
+                                      Row(children: [Expanded(child: Text(promo.giftName, style: const TextStyle(color: Color.fromARGB(255, 9, 38, 61), fontWeight: FontWeight.w400, fontSize: 16))), IconButton(icon: const Icon(Icons.clear, color: Colors.grey), onPressed: () => _showMyDialogforGiftSamplePpm(index))]),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          promo.giftType != "Discussion" ? Row(children: [const Text('Qt: ', style: TextStyle(fontSize: 16)), Text(promo.quantity.toString(), style: const TextStyle(fontWeight: FontWeight.bold))]) : const SizedBox.shrink(),
+                                          Text('(${promo.giftType})'),
+                                        ],
                                       ),
                                     ],
-                                  )
-                                      : const SizedBox.shrink(),
-                                  Text('(${promo.giftType})'),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
-                      );
-                    }
-                  },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-
-
-            ],
-          ),
-        ),
-        bottomNavigationBar: rx_gallery_allow == true
-            ? BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          onTap: _onItemTapped,
-          currentIndex: _currentSelected,
-          showUnselectedLabels: true,
-          unselectedItemColor: Colors.grey[800],
-          selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              label: 'Save Drafts',
-              icon: Icon(Icons.drafts),
-            ),
-            BottomNavigationBarItem(
-              label: 'Gallery',
-              icon: Icon(Icons.add_photo_alternate),
-            ),
-            BottomNavigationBarItem(
-              label: 'Submit',
-              icon: Icon(Icons.save),
-            ),
-            BottomNavigationBarItem(
-              label: 'Camera',
-              icon: Icon(Icons.camera_alt),
-            ),
-          ],
-        )
-            : BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          onTap: _onItemTapped2,
-          currentIndex: _currentSelected2,
-          showUnselectedLabels: true,
-          unselectedItemColor: Colors.grey[800],
-          selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              label: 'Save Drafts',
-              icon: Icon(Icons.drafts),
-            ),
-            BottomNavigationBarItem(
-              label: 'Submit',
-              icon: Icon(Icons.save),
-            ),
-            BottomNavigationBarItem(
-              label: 'Camera',
-              icon: Icon(Icons.camera_alt),
-            ),
-          ],
-        ),
-      )
-          : Container(
-        padding: const EdgeInsets.all(100),
-        color: Colors.white,
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+                bottomNavigationBar:
+                    rx_gallery_allow == true
+                        ? BottomNavigationBar(
+                          type: BottomNavigationBarType.fixed,
+                          onTap: _onItemTapped,
+                          currentIndex: _currentSelected,
+                          showUnselectedLabels: true,
+                          unselectedItemColor: Colors.grey[800],
+                          selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
+                          items: const <BottomNavigationBarItem>[BottomNavigationBarItem(label: 'Save Drafts', icon: Icon(Icons.drafts)), BottomNavigationBarItem(label: 'Gallery', icon: Icon(Icons.add_photo_alternate)), BottomNavigationBarItem(label: 'Submit', icon: Icon(Icons.save)), BottomNavigationBarItem(label: 'Camera', icon: Icon(Icons.camera_alt))],
+                        )
+                        : BottomNavigationBar(
+                          type: BottomNavigationBarType.fixed,
+                          onTap: _onItemTapped2,
+                          currentIndex: _currentSelected2,
+                          showUnselectedLabels: true,
+                          unselectedItemColor: Colors.grey[800],
+                          selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
+                          items: const <BottomNavigationBarItem>[BottomNavigationBarItem(label: 'Save Drafts', icon: Icon(Icons.drafts)), BottomNavigationBarItem(label: 'Submit', icon: Icon(Icons.save)), BottomNavigationBarItem(label: 'Camera', icon: Icon(Icons.camera_alt))],
+                        ),
+              )
+              : Container(padding: const EdgeInsets.all(100), color: Colors.white, child: const Center(child: CircularProgressIndicator())),
     );
   }
 
@@ -2323,8 +2020,7 @@ class _RxPageState extends State<RxPage> {
     try {
       geo.Position? position = await geo.Geolocator.getCurrentPosition();
       if (position != null) {
-        List<geocoding.Placemark> placemarks = await geocoding
-            .placemarkFromCoordinates(position.latitude, position.longitude);
+        List<geocoding.Placemark> placemarks = await geocoding.placemarkFromCoordinates(position.latitude, position.longitude);
         setState(() {
           lat = position.latitude;
           long = position.longitude;
@@ -2346,36 +2042,37 @@ class _RxPageState extends State<RxPage> {
     debugPrint(
       'prescription submit:: ${submit_url!}api_prescription_submit/submit_data'
       //'prescription submit:: http://192.168.100.219:8000/physician_api/api_prescription_submit/submit_data'
-          '?cid=$cid'
-          '&user_id=$userId'
-          '&user_pass=$userPassword'
-          '&device_id=$deviceId'
-          '&sales_type=$selectedSalesType'
-          '&patient_type=$selectedPatientType'
-          '&patient_name=${patientNameController.text}'
-          '&number=${phnNumberController.text}'
-          '&gender=$selectedGenderType'
-          '&dob=${dobController.text}'
-          '&strip_wastage=$selectedStripWastageType'
-          '&system_name=$selectedSystem'
-          '&disesses=$selectedDisease'
-          '&patient_temperament=$selectedPatientTemperament'
-          '&diabetes_before=${beforeDiabetesController.text}'
-          '&diabetes_after=${afterDiabetesController.text}'
-          '&pressure_systolic=${systolicController.text}'
-          '&pressure_diastolic=${diastolicController.text}'
-          '&oxygen_level=${oxygenLevelController.text}'
-          '&body_temp=${bodyTemperatureController.text}'
-          '&weight=${weightController.text}'
-          '&height_feet=${feetController.text}'
-          '&height_inch=${inchController.text}'
-          '&latitude=$lat'
-          '&longitude=$long'
-          '&image_name=$fileName'
-          '&cap_time=${"dt"}'
-          '&item_list=$itemString'
-          '&app_version=$appVersion'
-          '&item_list_gsp=$itemString1',
+      '?cid=$cid'
+      '&user_id=$userId'
+      '&user_pass=$userPassword'
+      '&device_id=$deviceId'
+      '&sales_type=$selectedSalesType'
+      '&patient_type=$selectedPatientType'
+      '&patient_name=${patientNameController.text}'
+      '&number=${phnNumberController.text}'
+      '&gender=$selectedGenderType'
+      '&dob=${dobController.text}'
+      '&strip_wastage=$selectedStripWastageType'
+      '&system_name=$selectedDiseasesText'
+      '&disesses=$selectedDiseasesText'
+      '&patient_temperament=$selectedPatientTemperamentsText'
+      '&diabetes_before=${beforeDiabetesController.text}'
+      '&diabetes_after=${afterDiabetesController.text}'
+      '&pressure_systolic=${systolicController.text}'
+      '&pressure_diastolic=${diastolicController.text}'
+      '&oxygen_level=${oxygenLevelController.text}'
+      '&body_temp=${bodyTemperatureController.text}'
+      '&weight=${weightController.text}'
+      '&height_feet=${feetController.text}'
+      '&height_inch=${inchController.text}'
+      '&latitude=$lat'
+      '&longitude=$long'
+      '&image_name=$fileName'
+      '&cap_time=${"dt"}'
+      '&item_list=$itemString'
+      '&app_version=$appVersion'
+      '&item_list_gsp=$itemString1'
+      '&branch_id=$branchId',
     );
     var dt = DateFormat('HH:mm:ss').format(DateTime.now());
 
@@ -2383,14 +2080,48 @@ class _RxPageState extends State<RxPage> {
     String a = '${user_id}_$time';
 
     try {
+      final Map<String, dynamic> body = {
+        'cid': cid,
+        'user_id': userId,
+        'user_pass': userPassword,
+        'device_id': deviceId,
+        'sales_type': selectedSalesType,
+        'patient_type': selectedPatientType,
+        'patient_name': patientNameController.text,
+        'number': phnNumberController.text,
+        'gender': selectedGenderType,
+        'dob': dobController.text,
+        'strip_wastage': selectedStripWastageType,
+        'system_name': selectedSystemsText,
+        'disesses': selectedDiseasesText,
+        'patient_temperament': selectedPatientTemperamentsText,
+        'diabetes_before': beforeDiabetesController.text,
+        'diabetes_after': afterDiabetesController.text,
+        'pressure_systolic': systolicController.text,
+        'pressure_diastolic': diastolicController.text,
+        'oxygen_level': oxygenLevelController.text,
+        'body_temp': bodyTemperatureController.text,
+        'weight': weightController.text,
+        'height_feet': feetController.text,
+        'height_inch': inchController.text,
+        "latitude": (minLatitude <= lat && lat <= maxLatitude) ? lat : '',
+        'longitude': (minLongitude <= long && long <= maxLongitude) ? long : '',
+        'image_name': fileName,
+        'cap_time': dt.toString(),
+        "item_list": itemString,
+        'app_version': appVersion,
+        'item_list_gsp': itemString1,
+        'branch_id': branchId,
+      };
+      final String url = '${submit_url!}api_prescription_submit/submit_data';
+      debugPrint("Submit Url : $url");
+
       final http.Response response = await http.post(
         Uri.parse(
-            '${submit_url!}api_prescription_submit/submit_data'
-            //'http://192.168.100.219:8000/physician_api/api_prescription_submit/submit_data'
+          '${submit_url!}api_prescription_submit/submit_data',
+          //'http://192.168.100.219:8000/physician_api/api_prescription_submit/submit_data'
         ),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
+        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
         // body: jsonEncode(
         //   <String, dynamic>{
         //     'cid': cid,
@@ -2408,45 +2139,47 @@ class _RxPageState extends State<RxPage> {
         //     'app_version' : appVersion,
         //   },
         // ),
-        body: jsonEncode(
-          <String, dynamic>{
-            'cid': cid,
-            'user_id': userId,
-            'user_pass': userPassword,
-            'device_id': deviceId,
-            'sales_type': selectedSalesType,
-            'patient_type': selectedPatientType,
-            'patient_name':patientNameController.text,
-            'number':phnNumberController.text,
-            'gender':selectedGenderType,
-            'dob':dobController.text,
-            'strip_wastage':selectedStripWastageType,
-            'system_name':selectedSystem,
-            'disesses':selectedDisease,
-            'patient_temperament':selectedPatientTemperament,
-            'diabetes_before':beforeDiabetesController.text,
-            'diabetes_after':afterDiabetesController.text,
-            'pressure_systolic':systolicController.text,
-            'pressure_diastolic':diastolicController.text,
-            'oxygen_level':oxygenLevelController.text,
-            'body_temp':bodyTemperatureController.text,
-            'weight':weightController.text,
-            'height_feet':feetController.text,
-            'height_inch':inchController.text,
-            "latitude": (minLatitude <= lat && lat <= maxLatitude) ? lat : '',
-            'longitude': (minLongitude <= long && long <= maxLongitude) ? long : '',
-            'image_name': fileName,
-            'cap_time': dt.toString(),
-            "item_list": itemString,
-            'app_version' : appVersion,
-            'item_list_gsp' : itemString1,
-          },
-        ),
+        // body: jsonEncode(<String, dynamic>{
+        //   'cid': cid,
+        //   'user_id': userId,
+        //   'user_pass': userPassword,
+        //   'device_id': deviceId,
+        //   'sales_type': selectedSalesType,
+        //   'patient_type': selectedPatientType,
+        //   'patient_name': patientNameController.text,
+        //   'number': phnNumberController.text,
+        //   'gender': selectedGenderType,
+        //   'dob': dobController.text,
+        //   'strip_wastage': selectedStripWastageType,
+        //   'system_name': selectedSystem,
+        //   'disesses': selectedDisease,
+        //   'patient_temperament': selectedPatientTemperament,
+        //   'diabetes_before': beforeDiabetesController.text,
+        //   'diabetes_after': afterDiabetesController.text,
+        //   'pressure_systolic': systolicController.text,
+        //   'pressure_diastolic': diastolicController.text,
+        //   'oxygen_level': oxygenLevelController.text,
+        //   'body_temp': bodyTemperatureController.text,
+        //   'weight': weightController.text,
+        //   'height_feet': feetController.text,
+        //   'height_inch': inchController.text,
+        //   "latitude": (minLatitude <= lat && lat <= maxLatitude) ? lat : '',
+        //   'longitude': (minLongitude <= long && long <= maxLongitude) ? long : '',
+        //   'image_name': fileName,
+        //   'cap_time': dt.toString(),
+        //   "item_list": itemString,
+        //   'app_version': appVersion,
+        //   'item_list_gsp': itemString1,
+        //   'branch_id': branchId,
+        // },
+        body: jsonEncode(body),
       );
 
+      debugPrint("Submit Data : $body");
       var orderInfo = json.decode(response.body);
       String status = orderInfo['status'];
       debugPrint('status::${orderInfo['status']}');
+
       var ret_str = orderInfo['ret_str'];
 
       if (status == "Success") {
@@ -2474,7 +2207,6 @@ class _RxPageState extends State<RxPage> {
           deleteRxDoctor(objectImageId);
         }
 
-
         print("===============================");
 
         setState(() {
@@ -2495,39 +2227,35 @@ class _RxPageState extends State<RxPage> {
           phnNumberController.clear();
           patientNameController.clear();
           dobController.clear();
-          selectedGenderType=null;
-          selectedStripWastageType=null;
-          selectedSalesType=null;
-          selectedPatientType=null;
-          selectedSystem=null;
-          selectedDisease=null;
-          selectedPatientTemperament=null;
-          itemString1='';
+          selectedGenderType = null;
+          selectedStripWastageType = null;
+          selectedSalesType = null;
+          selectedPatientType = null;
+          selectedSystem = null;
+          selectedDisease = null;
+          selectedPatientTemperament = null;
+          itemString1 = '';
           addedDcrGSPList.clear();
           bmi = null;
           bmiStatus = null;
           bmiDetailedMessage = null;
-
         });
         print('suceesssss');
 
         _submitToastforOrder(ret_str);
-      }
-      else if (orderInfo['ret_str'].toString().toLowerCase().contains('http') && status == 'Failed' )
-      {
+      } else if (orderInfo['ret_str'].toString().toLowerCase().contains('http') && status == 'Failed') {
         String update_app_url = '';
         String update_app_notification = '';
-        if(orderInfo['ret_str'].toString().contains('http')){
+        if (orderInfo['ret_str'].toString().contains('http')) {
           int index = orderInfo['ret_str'].toString().indexOf("http");
           //
           // String update_app_notification = orderInfo['ret_str'].toString().substring(0, index).trim();
           // debugPrint(update_app_notification);
 
           update_app_notification = orderInfo['ret_str'].toString().substring(0, index).trim() ?? '';
-          update_app_url =
-              orderInfo['ret_str'].toString().substring(index).trim() ?? '';
-          await databox.put('update_new_app',update_app_notification);
-          await databox.put('update_new_app_url',update_app_url);
+          update_app_url = orderInfo['ret_str'].toString().substring(index).trim() ?? '';
+          await databox.put('update_new_app', update_app_notification);
+          await databox.put('update_new_app_url', update_app_url);
         }
         // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         //     content: Text('${orderInfo['ret_str']}'),
@@ -2539,43 +2267,28 @@ class _RxPageState extends State<RxPage> {
         // debugPrint(update_app_url);
         // await databox.put('update_new_app',update_app_notification);
         // await databox.put('update_new_app_url',update_app_url);
-        if(update_app_url != null || update_app_url != '') {
+        if (update_app_url != null || update_app_url != '') {
           AllServices().showMap(update_app_url);
         }
-
-
-      }
-      else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('${orderInfo['ret_str']}'),
-              backgroundColor: Colors.red),
-        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${orderInfo['ret_str']}'), backgroundColor: Colors.red));
       }
     } on Exception catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Error on server'),
-            backgroundColor: Colors.red),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error on server'), backgroundColor: Colors.red));
       print('faileddd');
       throw Exception("Error on server");
-
-    }
-    finally{
+    } finally {
       setState(() {
         _isLoading = true;
       });
     }
-
   }
 
   // ------------------------ Rx Submit (Kamrul) --------------
   Future<dynamic> rxImageUpload() async {
-
-      setState(() {
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = false;
+    });
 
     // final compressfileForImage = await compressFile(imagePath!);
 
@@ -2588,8 +2301,7 @@ class _RxPageState extends State<RxPage> {
     var postUri = Uri.parse(photo_submit_url.toString()!);
     // var postUri = Uri.parse("http://52.230.87.124/image_up/api_image_upload/image_upload");
 
-    log(postUri.toString(),name: "photo url");
-
+    log(postUri.toString(), name: "photo url");
 
     http.MultipartRequest request = await http.MultipartRequest("POST", postUri);
     if (widget.image1 != '') {
@@ -2606,7 +2318,8 @@ class _RxPageState extends State<RxPage> {
       finalImage = removeSpace.replaceAll("'", '');
 
       http.MultipartFile multipartFile = await http.MultipartFile.fromPath(
-        'productImage', finalImage.toString(),
+        'productImage',
+        finalImage.toString(),
         // filename: a,
         // filename: finalImage.split("-").last
       );
@@ -2627,11 +2340,7 @@ class _RxPageState extends State<RxPage> {
         setState(() {
           _isLoading = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Rx Image submit Failed'),
-              backgroundColor: Colors.red),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Rx Image submit Failed'), backgroundColor: Colors.red));
       }
       // print(response.statusCode);
     } else {
@@ -2641,8 +2350,7 @@ class _RxPageState extends State<RxPage> {
 
       setState(() {
         rxImage = compressfileForImage.toString();
-        debugPrint(
-            "compressed image path   :::::::::::::::::::   ${compressfileForImage?.path.toString()}");
+        debugPrint("compressed image path   :::::::::::::::::::   ${compressfileForImage?.path.toString()}");
       });
 
       int space = rxImage.indexOf(" ");
@@ -2650,7 +2358,8 @@ class _RxPageState extends State<RxPage> {
       finalImage = removeSpace.replaceAll("'", '');
 
       http.MultipartFile multipartFile = await http.MultipartFile.fromPath(
-        'productImage', finalImage,
+        'productImage',
+        finalImage,
 
         // filename: a,  "-").last
       );
@@ -2675,11 +2384,7 @@ class _RxPageState extends State<RxPage> {
           _isLoading = true;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Rx Image submit Failed'),
-              backgroundColor: Colors.red),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Rx Image submit Failed'), backgroundColor: Colors.red));
       }
     }
   }
@@ -2878,13 +2583,7 @@ class _RxPageState extends State<RxPage> {
 
   // .......... Submit Toast messege..............
   void _submitToastforOrder(String ret_str) {
-    Fluttertoast.showToast(
-        msg: "Prescription Submitted\n$ret_str",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.green.shade900,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    Fluttertoast.showToast(msg: "Prescription Submitted\n$ret_str", toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.CENTER, backgroundColor: Colors.green.shade900, textColor: Colors.white, fontSize: 16.0);
   }
 
   deleteRxDoctor(int id) {
@@ -2898,7 +2597,7 @@ class _RxPageState extends State<RxPage> {
     box.delete(desiredKey);
   }
 
-// Save RX data to Hive......................................
+  // Save RX data to Hive......................................
 
   deleteMedicinItem(int id) {
     final box = Hive.box<MedicineListModel>("draftMdicinList");
@@ -2936,7 +2635,7 @@ class _RxPageState extends State<RxPage> {
           value.dob = dobController.text;
           value.stripWastage = selectedStripWastageType ?? '';
           value.systemName = selectedSystem ?? '';
-          value.disease = selectedDisease?? '';
+          value.disease = selectedDisease ?? '';
           value.patientTemperament = selectedPatientTemperament ?? '';
           value.diabetesBefore = beforeDiabetesController.text;
           value.diabetesAfter = afterDiabetesController.text;
@@ -2952,14 +2651,11 @@ class _RxPageState extends State<RxPage> {
         }
       });
 
-
       for (var d in finalMedicineList) {
         d.uiqueKey = widget.dcrKey;
         final box = Boxes.getMedicine();
         box.add(d);
       }
-
-
     } else {
       for (var dcr in finalDoctorList) {
         debugPrint('uiniquIdD:${dcr.uiqueKey}');
@@ -2976,15 +2672,14 @@ class _RxPageState extends State<RxPage> {
             value.address = dcr.address;
             value.dcrGrad = dropdownRxTypevalue.toString();
 
-
             value.phnNum = phnNumberController.text;
             value.patientName = patientNameController.text;
             value.gender = selectedGenderType ?? '';
             value.dob = dobController.text;
-            value.stripWastage = selectedStripWastageType?? '';
+            value.stripWastage = selectedStripWastageType ?? '';
             value.systemName = selectedSystem ?? '';
             value.disease = selectedDisease ?? '';
-            value.patientTemperament = selectedPatientTemperament ??'';
+            value.patientTemperament = selectedPatientTemperament ?? '';
             value.diabetesBefore = beforeDiabetesController.text;
             value.diabetesAfter = afterDiabetesController.text;
             value.bloodSystolic = systolicController.text;
@@ -2994,7 +2689,6 @@ class _RxPageState extends State<RxPage> {
             value.weight = weightController.text;
             value.heightFeet = feetController.text;
             value.heightInch = inchController.text;
-
 
             box.put(key, value);
             if (finalMedicineList.isNotEmpty) {
@@ -3006,7 +2700,6 @@ class _RxPageState extends State<RxPage> {
           }
         });
       }
-
     }
     // /// Pro Dx cus info add edit
     // ///
@@ -3059,18 +2752,17 @@ class _RxPageState extends State<RxPage> {
       finalMedicineList.clear();
       finalImage = '';
 
-
       phnNumberController.clear();
       patientNameController.clear();
       dobController.clear();
-      selectedGenderType=null;
-      selectedStripWastageType=null;
-      selectedSalesType=null;
-      selectedPatientType=null;
+      selectedGenderType = null;
+      selectedStripWastageType = null;
+      selectedSalesType = null;
+      selectedPatientType = null;
 
-      selectedSystem=null;
-      selectedDisease=null;
-      selectedPatientTemperament=null;
+      selectedSystem = null;
+      selectedDisease = null;
+      selectedPatientTemperament = null;
       beforeDiabetesController.clear();
       afterDiabetesController.clear();
       systolicController.clear();
@@ -3083,10 +2775,7 @@ class _RxPageState extends State<RxPage> {
       bmi = null;
       bmiStatus = null;
       bmiDetailedMessage = null;
-
     });
-
-
   }
 
   //! Future openBox() async {
@@ -3095,7 +2784,7 @@ class _RxPageState extends State<RxPage> {
   //!   box = await Hive.openBox('dcrListData');
   //! }
 
-////////////////////////////docotr//////////////////////////
+  ////////////////////////////docotr//////////////////////////
   getRxDoctorData() {
     //! await openBox();
     var box = Hive.box("dcrListData");
@@ -3107,65 +2796,67 @@ class _RxPageState extends State<RxPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => DoctorListFromHiveData(
-              counterCallback: (value) {
-                counterForDoctor = value;
+            builder:
+                (_) => DoctorListFromHiveData(
+                  counterCallback: (value) {
+                    counterForDoctor = value;
 
-                setState(() {});
-              },
-              a: a,
-              doctorData: doctorData,
-              tempList: finalDoctorList,
-              counterForDoctorList: widget.uniqueId > 0
-                  ? widget.uniqueId
-                  : _isCameraClick == true
-                  ? objectImageId
-                  : _counterforRx,
-              tempListFunc: (value) {
-                finalDoctorList = value;
-                for (var element in finalDoctorList) {
-                  docId = element.docId;
-                  //todo! for last Doctor
-                  tempdocName = element.docName;
-                  areaName = element.areaName;
-                  areaid = element.areaId;
-                  address = element.address;
-                }
+                    setState(() {});
+                  },
+                  a: a,
+                  doctorData: doctorData,
+                  tempList: finalDoctorList,
+                  counterForDoctorList:
+                      widget.uniqueId > 0
+                          ? widget.uniqueId
+                          : _isCameraClick == true
+                          ? objectImageId
+                          : _counterforRx,
+                  tempListFunc: (value) {
+                    finalDoctorList = value;
+                    for (var element in finalDoctorList) {
+                      docId = element.docId;
+                      //todo! for last Doctor
+                      tempdocName = element.docName;
+                      areaName = element.areaName;
+                      areaid = element.areaId;
+                      address = element.address;
+                    }
 
-                setState(() {});
-              },
-            ),
+                    setState(() {});
+                  },
+                ),
           ),
         );
       } else {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => DoctorListFromHiveData(
-              counterCallback: (value) {
-                counterForDoctor = value;
+            builder:
+                (_) => DoctorListFromHiveData(
+                  counterCallback: (value) {
+                    counterForDoctor = value;
 
-                // setState(() {});
-              },
-              a: a,
-              doctorData: doctorData,
-              tempList: finalDoctorList,
-              counterForDoctorList:
-              widget.uniqueId > 0 ? widget.uniqueId : counterForDoctor,
-              tempListFunc: (value) {
-                finalDoctorList = value;
-                for (var element in finalDoctorList) {
-                  docId = element.docId;
-                  //todo for set last Doctor
-                  tempdocName = element.docName;
-                  areaName = element.areaName;
-                  areaid = element.areaId;
-                  address = element.address;
-                }
+                    // setState(() {});
+                  },
+                  a: a,
+                  doctorData: doctorData,
+                  tempList: finalDoctorList,
+                  counterForDoctorList: widget.uniqueId > 0 ? widget.uniqueId : counterForDoctor,
+                  tempListFunc: (value) {
+                    finalDoctorList = value;
+                    for (var element in finalDoctorList) {
+                      docId = element.docId;
+                      //todo for set last Doctor
+                      tempdocName = element.docName;
+                      areaName = element.areaName;
+                      areaid = element.areaId;
+                      address = element.address;
+                    }
 
-                setState(() {});
-              },
-            ),
+                    setState(() {});
+                  },
+                ),
           ),
         );
       }
@@ -3174,7 +2865,7 @@ class _RxPageState extends State<RxPage> {
     }
   }
 
-///////////////////////////////medicine///////////////////////////////
+  ///////////////////////////////medicine///////////////////////////////
   //! Future openBox1() async {
   //!   var dir = await getApplicationDocumentsDirectory();
   //!   Hive.init(dir.path);
@@ -3191,24 +2882,25 @@ class _RxPageState extends State<RxPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => MedicinListScreen(
-            counter:
-            (finalDoctorList.isNotEmpty && finalDoctorList[0].docId != '')
-                ? counterForDoctor
-                : _isCameraClick == true
-                ? objectImageId
-                : widget.uniqueId > 0
-                ? widget.uniqueId
-                : _counterforRx,
-            medicineData: medicineData,
-            tempList: finalMedicineList,
-            tempListFunc: (value) {
-              finalMedicineList = value;
-              setState(() {});
-            },
-            img1: finalImage,
-            img: imagePath,
-          ),
+          builder:
+              (_) => MedicinListScreen(
+                counter:
+                    (finalDoctorList.isNotEmpty && finalDoctorList[0].docId != '')
+                        ? counterForDoctor
+                        : _isCameraClick == true
+                        ? objectImageId
+                        : widget.uniqueId > 0
+                        ? widget.uniqueId
+                        : _counterforRx,
+                medicineData: medicineData,
+                tempList: finalMedicineList,
+                tempListFunc: (value) {
+                  finalMedicineList = value;
+                  setState(() {});
+                },
+                img1: finalImage,
+                img: imagePath,
+              ),
         ),
       );
     } else {
@@ -3246,19 +2938,10 @@ class _RxPageState extends State<RxPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Please Confirm'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: const <Widget>[
-                Text('Do you want to delete this medicine?'),
-              ],
-            ),
-          ),
+          content: SingleChildScrollView(child: Column(children: const <Widget>[Text('Do you want to delete this medicine?')])),
           actions: <Widget>[
             TextButton(
-              child: const Text(
-                'Confirm',
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Confirm', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 if (widget.ck != '') {
                   final medicineUniqueKey = finalMedicineList[index].uiqueKey;
@@ -3274,10 +2957,7 @@ class _RxPageState extends State<RxPage> {
               },
             ),
             TextButton(
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.green),
-              ),
+              child: const Text('Cancel', style: TextStyle(color: Colors.green)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -3295,19 +2975,10 @@ class _RxPageState extends State<RxPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Please Confirm'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: const <Widget>[
-                Text('Are you sure to remove the Item?'),
-              ],
-            ),
-          ),
+          content: SingleChildScrollView(child: Column(children: const <Widget>[Text('Are you sure to remove the Item?')])),
           actions: <Widget>[
             TextButton(
-              child: const Text(
-                'Confirm',
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Confirm', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 if (widget.ck != '') {
                   final uniqueKey = widget.dcrKey;
@@ -3323,10 +2994,7 @@ class _RxPageState extends State<RxPage> {
               },
             ),
             TextButton(
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.green),
-              ),
+              child: const Text('Cancel', style: TextStyle(color: Colors.green)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -3353,8 +3021,7 @@ class _RxPageState extends State<RxPage> {
 
   int uniqueIdForImage() {
     int id = 0;
-    id = int.parse(
-        DateFormat('HH:mm:ssss').format(DateTime.now()).replaceAll(":", ''));
+    id = int.parse(DateFormat('HH:mm:ssss').format(DateTime.now()).replaceAll(":", ''));
     setState(() {
       objectImageId = id;
     });
@@ -3367,7 +3034,9 @@ class _RxPageState extends State<RxPage> {
       _isCameraClick = true;
       debugPrint('changeafter: $_isCameraClick');
     });
-    file = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 85
+    file = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 85,
       //preferredCameraDevice: CameraDevice.rear,
       // maxHeight: 800,
       // maxWidth: 700,
@@ -3394,10 +3063,8 @@ class _RxPageState extends State<RxPage> {
                 // areaName: 'areaName',
                 // address: 'address',
                 // presImage: imagePath.toString(),
-                uiqueKey:
-                widget.image1 != '' ? widget.uniqueId : uniqueIdForImage(),
-                docName:
-                tempdocName == "" ? objectImageId.toString() : tempdocName,
+                uiqueKey: widget.image1 != '' ? widget.uniqueId : uniqueIdForImage(),
+                docName: tempdocName == "" ? objectImageId.toString() : tempdocName,
                 docId: docId == '' ? "" : docId,
                 areaId: areaid == "" ? "" : areaid,
                 areaName: areaName == '' ? "areaName" : areaName,
@@ -3406,7 +3073,7 @@ class _RxPageState extends State<RxPage> {
                 dcrGrad: dropdownRxTypevalue.toString(),
                 phnNum: phnNumberController.text,
                 patientName: patientNameController.text,
-                gender:  selectedGenderType.toString(),
+                gender: selectedGenderType.toString(),
                 dob: dobController.text,
                 stripWastage: selectedStripWastageType.toString(),
                 systemName: selectedSystem.toString(),
@@ -3421,6 +3088,7 @@ class _RxPageState extends State<RxPage> {
                 weight: weightController.text,
                 heightFeet: feetController.text,
                 heightInch: inchController.text,
+                branchId: branchId,
               ),
             );
 
@@ -3446,10 +3114,8 @@ class _RxPageState extends State<RxPage> {
                 // areaName: 'areaName',
                 // address: 'address',
                 // presImage: imagePath.toString(),
-                uiqueKey:
-                widget.image1 != '' ? widget.uniqueId : uniqueIdForImage(),
-                docName:
-                tempdocName == "" ? objectImageId.toString() : tempdocName,
+                uiqueKey: widget.image1 != '' ? widget.uniqueId : uniqueIdForImage(),
+                docName: tempdocName == "" ? objectImageId.toString() : tempdocName,
                 docId: docId == "" ? '' : docId,
                 areaId: areaid == '' ? "" : areaid,
                 areaName: areaName == '' ? "areaName" : areaName,
@@ -3458,7 +3124,7 @@ class _RxPageState extends State<RxPage> {
                 dcrGrad: dropdownRxTypevalue.toString(),
                 phnNum: phnNumberController.text,
                 patientName: patientNameController.text,
-                gender:  selectedGenderType.toString(),
+                gender: selectedGenderType.toString(),
                 dob: dobController.text,
                 stripWastage: selectedStripWastageType.toString(),
                 systemName: selectedSystem.toString(),
@@ -3473,6 +3139,7 @@ class _RxPageState extends State<RxPage> {
                 weight: weightController.text,
                 heightFeet: feetController.text,
                 heightInch: inchController.text,
+                branchId: branchId,
               ),
             );
 
@@ -3496,8 +3163,7 @@ class _RxPageState extends State<RxPage> {
             }
           });
           // widget.image1 = imagePath.toString();
-          debugPrint(
-              "This Print is Total Darft data${Doctorbox.values.length}");
+          debugPrint("This Print is Total Darft data${Doctorbox.values.length}");
           // int langth=Doctorbox.values.toList().length.toInt();
           // widget.callback(langth);
         }
@@ -3523,23 +3189,18 @@ class _RxPageState extends State<RxPage> {
 
   void _submitToastforphoto() {
     Fluttertoast.showToast(
-        msg: 'Please Select Required Data',
-        // msg: 'Please Take Image and Select Medicine',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
+      msg: 'Please Select Required Data',
+      // msg: 'Please Take Image and Select Medicine',
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   void _submitToastforDoctor() {
-    Fluttertoast.showToast(
-        msg: 'Please Select Doctor.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    Fluttertoast.showToast(msg: 'Please Select Doctor.', toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
   }
 
   // Future<File> compressFile(File file) async {
@@ -3569,8 +3230,7 @@ class _RxPageState extends State<RxPage> {
       final imageBytes = await file.readAsBytes();
 
       // Decode the image
-      final originalImage =
-      await Isolate.run(() => img.decodeImage(imageBytes));
+      final originalImage = await Isolate.run(() => img.decodeImage(imageBytes));
       debugPrint(originalImage.runtimeType.toString());
       debugPrint("The image is decoded");
       if (originalImage == null) {
@@ -3579,18 +3239,13 @@ class _RxPageState extends State<RxPage> {
 
       // Resize the image to a smaller size (e.g., max width: 800px, height proportional)
       const maxWidth = 800;
-      final resizedImage = await img.copyResize(
-        originalImage,
-        width: originalImage.width > maxWidth ? maxWidth : originalImage.width,
-      );
+      final resizedImage = await img.copyResize(originalImage, width: originalImage.width > maxWidth ? maxWidth : originalImage.width);
 
       // Compress the image (JPEG with 75% quality)
-      final compressedImageBytes =
-      await img.encodeJpg(resizedImage, quality: 50);
+      final compressedImageBytes = await img.encodeJpg(resizedImage, quality: 50);
 
       // Create a new file to store the compressed image
-      final compressedFile =
-      File('${file.parent.path}/compressed_${file.uri.pathSegments.last}');
+      final compressedFile = File('${file.parent.path}/compressed_${file.uri.pathSegments.last}');
       await compressedFile.writeAsBytes(compressedImageBytes);
 
       return compressedFile;
@@ -3607,13 +3262,7 @@ class ZoomForRxImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        child: Center(
-          child: Hero(
-              tag: 'imageHero',
-              child: PhotoView(
-                imageProvider: FileImage(img!),
-              )),
-        ),
+        child: Center(child: Hero(tag: 'imageHero', child: PhotoView(imageProvider: FileImage(img!)))),
         onTap: () {
           Navigator.pop(context);
         },
@@ -3630,14 +3279,7 @@ class ZoomForRxDraftImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        child: Center(
-          child: Hero(
-            tag: 'imageForDraft',
-            child: PhotoView(
-              imageProvider: FileImage(File(draftFinalImage!)),
-            ),
-          ),
-        ),
+        child: Center(child: Hero(tag: 'imageForDraft', child: PhotoView(imageProvider: FileImage(File(draftFinalImage!))))),
         onTap: () {
           Navigator.of(context);
         },

@@ -299,9 +299,9 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Please Confirm'),
-          content: SingleChildScrollView(
+          content: const SingleChildScrollView(
             child: Column(
-              children: const <Widget>[
+              children: <Widget>[
                 Text('Are you sure to remove the Item?'),
               ],
             ),
@@ -2493,15 +2493,8 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
     );
 
     try {
-      final http.Response response = await http.post(
-        //Uri.parse('http://192.168.100.219:8000/physician_api/api_visit_submit/submit_data'),
-        Uri.parse('${submit_url}api_visit_submit/submit_data'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: jsonEncode(
-          <String, dynamic>{
-            'cid': cid,
+      final Map<String,dynamic> body = {
+        'cid': cid,
             'user_id': userId,
             'user_pass': userPassword,
             'device_id': deviceId,
@@ -2524,12 +2517,46 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
             "item_list_gsp": jobRoleCtrl.text.isEmpty ? itemString : '',
             //"causeExcucution": jobRoleCtrl.text,
             'app_version': appVersion,
-          },
-        ),
+      };
+      final http.Response response = await http.post(
+        //Uri.parse('http://192.168.100.219:8000/physician_api/api_visit_submit/submit_data'),
+        Uri.parse('${submit_url}api_visit_submit/submit_data'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(body)
+        // body: jsonEncode(
+        //   <String, dynamic>{
+        //     'cid': cid,
+        //     'user_id': userId,
+        //     'user_pass': userPassword,
+        //     'device_id': deviceId,
+        //     'office_id': widget.officeId,
+        //     'branch_id': widget.areaId,
+        //     'non_execution':causeData,
+        //     //'image_name':imageFileName,
+        //     'image_name':fileName,
+        //     'visit_with': dcrString,
+        //     "shift": selectedDeliveryTime,
+        //     "feedback": noteText,
+        //     'visited_person':visitedPersonController.text,
+        //     "latitude": (minLatitude <= lat && lat <= maxLatitude) ? lat : '',
+        //     'longitude':
+        //         (minLongitude <= long && long <= maxLongitude) ? long : '',
+        //     // 'location_detail': ((minLatitude <= lat && lat <= maxLatitude) &&
+        //     //         (minLongitude <= long && long <= maxLongitude))
+        //     //     ? address
+        //     //     : '',
+        //     "item_list_gsp": jobRoleCtrl.text.isEmpty ? itemString : '',
+        //     //"causeExcucution": jobRoleCtrl.text,
+        //     'app_version': appVersion,
+        //   },
+        // ),
       );
 
       var orderInfo = json.decode(response.body);
 
+print("Submit Body : $body");
       print("--------------------${orderInfo}");
       String status = orderInfo['status'];
       var ret_str = orderInfo['ret_str'];

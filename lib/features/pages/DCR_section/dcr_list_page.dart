@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:physician_latest/features/pages/DCR_section/visited_entity_add_page.dart';
 
-
 import '../../../data/datasources/local_storage/boxes.dart';
 import '../../Widgets/customerListWidget.dart';
 import 'dcr_gift_sample_PPM_page.dart';
@@ -19,13 +18,9 @@ class DcrListPage extends StatefulWidget {
   List visitOfficeDataList;
   String? branchId;
   String? branchName;
+  String? branchKey;
 
-  DcrListPage({
-    Key? key,
-    required this.visitOfficeDataList,
-    this.branchId,
-    this.branchName,
-  }) : super(key: key);
+  DcrListPage({Key? key, required this.visitOfficeDataList, this.branchId, this.branchName, this.branchKey}) : super(key: key);
 
   @override
   State<DcrListPage> createState() => _DcrListPageState();
@@ -56,6 +51,9 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     setState(() {
+      print("Branch Id  ${widget.branchId}");
+      print("Brainc Name ${widget.branchName}");
+      print('Branch Key ${widget.branchKey}');
       cid = mydata.get("CID")!;
       userId = mydata.get("USER_ID")!;
       userPassword = mydata.get("PASSWORD")!;
@@ -90,11 +88,9 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
   // A method to get the latest data from Hive
   void _refreshDataFromHive() {
     var doctorData = Hive.box('mpoForDoctor').values.toList();
-    final branchKey = '${widget.branchName}|${widget.branchId}';
-    var matched = doctorData.firstWhere(
-          (e) => e['branch'].toString() == branchKey,
-      orElse: () => {},
-    );
+    final branchKey = widget.branchKey;
+    // final branchKey = '${widget.branchName}|${widget.branchId}';
+    var matched = doctorData.firstWhere((e) => e['branch'].toString() == branchKey, orElse: () => {});
     List newOfficeList = matched['office_list'] ?? [];
 
     setState(() {
@@ -151,19 +147,19 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
     if (enteredKeyword.isEmpty) {
       results = widget.visitOfficeDataList;
     } else {
-      results = widget.visitOfficeDataList.where((s) {
-        final name = s['office_name']?.toLowerCase() ?? '';
-        final id = s['office_id']?.toString().toLowerCase() ?? '';
-        return name.contains(enteredKeyword.toLowerCase()) || id.startsWith(enteredKeyword.toLowerCase());
-      }).toList()
-        ..sort((a, b) => a['office_name'].toLowerCase().compareTo(b['office_name'].toLowerCase()));
+      results =
+          widget.visitOfficeDataList.where((s) {
+              final name = s['office_name']?.toLowerCase() ?? '';
+              final id = s['office_id']?.toString().toLowerCase() ?? '';
+              return name.contains(enteredKeyword.toLowerCase()) || id.startsWith(enteredKeyword.toLowerCase());
+            }).toList()
+            ..sort((a, b) => a['office_name'].toLowerCase().compareTo(b['office_name'].toLowerCase()));
     }
 
     setState(() {
       foundUsers = results;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -186,18 +182,13 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
         //   ),
         // ),
         leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            )),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+        ),
         title: const Text('Visited Entity list'),
-        titleTextStyle: const TextStyle(
-            color: Color.fromARGB(255, 27, 56, 34),
-            fontWeight: FontWeight.w500,
-            fontSize: 20),
+        titleTextStyle: const TextStyle(color: Color.fromARGB(255, 27, 56, 34), fontWeight: FontWeight.w500, fontSize: 20),
         centerTitle: true,
       ),
       endDrawer: Drawer(
@@ -205,8 +196,7 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 138, 201, 149)),
+              decoration: const BoxDecoration(color: Color.fromARGB(255, 138, 201, 149)),
               child: Column(
                 children: [
                   // logo_url_2 != null ?  CachedNetworkImage(
@@ -215,8 +205,8 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
                   //   errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
                   // )
                   //     : Image.asset("assets/images/mRep7_logo.png"),
-                  Image.asset('assets/images/c_logo_1.png',fit: BoxFit.contain,height: screenHeight*.075,),
-                  SizedBox(height: 8,),
+                  Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain, height: screenHeight * .075),
+                  SizedBox(height: 8),
                   // Image.asset('assets/images/mRep7_logo.png'),
                   // Expanded(
                   //   child: Text(
@@ -241,76 +231,61 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
             ),
             docFlag
                 ?
-            // ListTile(
-            //         onTap: () {
-            //           Navigator.pop(context);
-            //           Navigator.of(context).push(
-            //               MaterialPageRoute(
-            //             builder: (context) =>
-            //                 //DoctorAddPage(areaId: widget.branchId.toString()),
-            //             VisitedEntityAddScreen(
-            //               // officeId: "${foundUsers[index]['office_id'] ?? ''}",
-            //               // officeName: '${foundUsers[index]['office_name']}',
-            //               branchId: '${widget.branchId}',
-            //               branchName: '${widget.branchName}',
-            //             )
-            //           ));
-            //         },
-            //         leading:
-            //             const Icon(Icons.person_add, color: Colors.blueAccent),
-            //         title: const Text(
-            //           'Visited Entity Add',
-            //           style: TextStyle(
-            //               fontSize: 14,
-            //               fontWeight: FontWeight.w500,
-            //               color: Color.fromARGB(255, 15, 53, 85)),
-            //         ),
-            //       )
-            ListTile(
-              // onTap: () async {
-              //   Navigator.pop(context);
-              //   final updatedList = await Navigator.of(context).push(
-              //     MaterialPageRoute(
-              //       builder: (context) =>
-              //           VisitedEntityAddScreen(
-              //             branchId: '${widget.branchId}',
-              //             branchName: '${widget.branchName}',
-              //           ),
-              //     ),
-              //   );
-              //
-              //   // If result is returned (updated office list), refresh UI
-              //   if (updatedList != null && mounted) {
-              //     setState(() {
-              //       foundUsers = updatedList;
-              //       widget.visitOfficeDataList = updatedList;
-              //     });
-              //   }
-              // },
-              onTap: () async {
-                Navigator.pop(context);
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => VisitedEntityAddScreen(
-                      branchId: '${widget.branchId}',
-                      branchName: '${widget.branchName}',
-                    ),
-                  ),
-                );
-                _refreshDataFromHive();
-              },
-              leading: const Icon(Icons.person_add, color: Colors.blueAccent),
-              title: const Text(
-                'Visited Entity Add',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color.fromARGB(255, 15, 53, 85),
-                ),
-              ),
-            )
-
-        : Container(),
+                // ListTile(
+                //         onTap: () {
+                //           Navigator.pop(context);
+                //           Navigator.of(context).push(
+                //               MaterialPageRoute(
+                //             builder: (context) =>
+                //                 //DoctorAddPage(areaId: widget.branchId.toString()),
+                //             VisitedEntityAddScreen(
+                //               // officeId: "${foundUsers[index]['office_id'] ?? ''}",
+                //               // officeName: '${foundUsers[index]['office_name']}',
+                //               branchId: '${widget.branchId}',
+                //               branchName: '${widget.branchName}',
+                //             )
+                //           ));
+                //         },
+                //         leading:
+                //             const Icon(Icons.person_add, color: Colors.blueAccent),
+                //         title: const Text(
+                //           'Visited Entity Add',
+                //           style: TextStyle(
+                //               fontSize: 14,
+                //               fontWeight: FontWeight.w500,
+                //               color: Color.fromARGB(255, 15, 53, 85)),
+                //         ),
+                //       )
+                ListTile(
+                  // onTap: () async {
+                  //   Navigator.pop(context);
+                  //   final updatedList = await Navigator.of(context).push(
+                  //     MaterialPageRoute(
+                  //       builder: (context) =>
+                  //           VisitedEntityAddScreen(
+                  //             branchId: '${widget.branchId}',
+                  //             branchName: '${widget.branchName}',
+                  //           ),
+                  //     ),
+                  //   );
+                  //
+                  //   // If result is returned (updated office list), refresh UI
+                  //   if (updatedList != null && mounted) {
+                  //     setState(() {
+                  //       foundUsers = updatedList;
+                  //       widget.visitOfficeDataList = updatedList;
+                  //     });
+                  //   }
+                  // },
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => VisitedEntityAddScreen(branchId: '${widget.branchId}', branchName: '${widget.branchName}')));
+                    _refreshDataFromHive();
+                  },
+                  leading: const Icon(Icons.person_add, color: Colors.blueAccent),
+                  title: const Text('Visited Entity Add', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85))),
+                )
+                : Container(),
             // docFlag
             //     ?
             // ListTile(
@@ -346,24 +321,23 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
                 onChanged: (value) => runFilter(value),
                 controller: searchController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   labelText: ' Search',
-                  suffixIcon: searchController.text.isEmpty &&
-                          searchController.text == ''
-                      ? const Icon(Icons.search)
-                      : IconButton(
-                          onPressed: () {
-                            searchController.clear();
-                            runFilter('');
-                            setState(() {});
-                          },
-                          icon: const Icon(
-                            Icons.clear,
-                            color: Colors.black,
-                            // size: 28,
+                  suffixIcon:
+                      searchController.text.isEmpty && searchController.text == ''
+                          ? const Icon(Icons.search)
+                          : IconButton(
+                            onPressed: () {
+                              searchController.clear();
+                              runFilter('');
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.black,
+                              // size: 28,
+                            ),
                           ),
-                        ),
                 ),
               ),
             ),
@@ -373,59 +347,30 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                          widget.branchName.toString(),
-                          softWrap: false,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
-                        ),
-                    Text(
-                      "Total Count : ${foundUsers.length} ",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  thickness: 1.0,
-                ),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(widget.branchName.toString(), softWrap: false, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16, color: Colors.black)), Text("Total Count : ${foundUsers.length} ", style: const TextStyle(fontSize: 16, color: Colors.black))]),
+                const Divider(thickness: 1.0),
               ],
             ),
           ),
           Expanded(
             flex: 9,
-            child: foundUsers.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: searchController.text.isNotEmpty
-                        ? foundUsers.length
-                        : widget.visitOfficeDataList.length,
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (BuildContext itemBuilder, index) {
-                      return Card(
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                          side:
-                              const BorderSide(color: Colors.white70, width: 1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        margin: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 10.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                doctorEdit == true
-                                    ? InkWell(
+            child:
+                foundUsers.isNotEmpty
+                    ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: searchController.text.isNotEmpty ? foundUsers.length : widget.visitOfficeDataList.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (BuildContext itemBuilder, index) {
+                        return Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.white70, width: 1), borderRadius: BorderRadius.circular(10)),
+                          margin: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 10.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  doctorEdit == true
+                                      ? InkWell(
                                         // onTap: () async {
                                         //   final updatedList = await Navigator.of(context).push(
                                         //     MaterialPageRoute(
@@ -467,88 +412,79 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
                                         //   //   ),
                                         //   // );
                                         // },
-                                  onTap: () async {
-                                    await Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            VisitedEntityEditScreen(
-                                              officeId: "${foundUsers[index]['office_id'] ?? ''}",
-                                              officeName: '${foundUsers[index]['office_name']}',
-                                              branchId: '${widget.branchId}',
-                                              branchName: '${widget.branchName}',
-                                              district: "${foundUsers[index]['district'] ?? ''}",
-                                              thana: "${foundUsers[index]['thana'] ?? ''}",
-                                              phnNumber: foundUsers[index]['mobile_no'] ?? 0,
-                                              organization: "${foundUsers[index]['org_name'] ?? ''}",
-                                              designation: "${foundUsers[index]['designation'] ?? ''}",
-                                              address: "${foundUsers[index]['address'] ?? ''}",
+                                        onTap: () async {
+                                          await Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) => VisitedEntityEditScreen(
+                                                    officeId: "${foundUsers[index]['office_id'] ?? ''}",
+                                                    officeName: '${foundUsers[index]['office_name']}',
+                                                    branchId: '${widget.branchId}',
+                                                    branchName: '${widget.branchName}',
+                                                    district: "${foundUsers[index]['district'] ?? ''}",
+                                                    thana: "${foundUsers[index]['thana'] ?? ''}",
+                                                    phnNumber: foundUsers[index]['mobile_no'] ?? 0,
+                                                    organization: "${foundUsers[index]['org_name'] ?? ''}",
+                                                    designation: "${foundUsers[index]['designation'] ?? ''}",
+                                                    address: "${foundUsers[index]['address'] ?? ''}",
+                                                  ),
                                             ),
-                                      ),
-                                    );
-                                    _refreshDataFromHive();
-                                  },
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Icon(Icons.edit),
-                                  ),
-                                )
-                                    : const SizedBox(),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _incrementCounter();
+                                          );
+                                          _refreshDataFromHive();
+                                        },
+                                        child: const Padding(padding: EdgeInsets.only(left: 10), child: Icon(Icons.edit)),
+                                      )
+                                      : const SizedBox(),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        _incrementCounter();
 
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => DcrGiftSamplePpmPage(
-                                            ck: '',
-                                            dcrKey: 0,
-                                            uniqueId: _counter,
-                                            draftOrderItem: [],
-                                            officeName: foundUsers[index]['office_name']??'',
-                                            officeId: foundUsers[index]['office_id']??'',
-                                            areaName: widget.branchName??'',
-                                            // foundUsers[index]//todo Old
-                                            //     ['area_name'],
-                                            areaId: widget.branchId??'',
-                                            //  foundUsers[index]['area_id'],//todo old
-                                            address: "",
-                                            //  foundUsers[index]['address'],//todo old
-                                            note: '',
-                                            dVisitedWith: "",
-                                            nonExcution: "",
-                                            selectedDeliveryTime: "",
-                                            image1: '',
-                                            visitedPerson: '',
-                                            phnNum: foundUsers[index]['mobile_no']??'',
-                                            orgName: foundUsers[index]['org_name']??'',
-                                            brandId: foundUsers[index]['category']??'',
-                                            category: foundUsers[index]['brand_id']??'',
+                                        print("Selected Doctor : $foundUsers");
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => DcrGiftSamplePpmPage(
+                                                  ck: '',
+                                                  dcrKey: 0,
+                                                  uniqueId: _counter,
+                                                  draftOrderItem: [],
+                                                  officeName: foundUsers[index]['office_name'] ?? '',
+                                                  officeId: foundUsers[index]['office_id'] ?? '',
+                                                  areaName: widget.branchName ?? '',
+                                                  // foundUsers[index]//todo Old
+                                                  //     ['area_name'],
+                                                  areaId: widget.branchId ?? '',
+                                                  //  foundUsers[index]['area_id'],//todo old
+                                                  address: "",
+                                                  //  foundUsers[index]['address'],//todo old
+                                                  note: '',
+                                                  dVisitedWith: "",
+                                                  nonExcution: "",
+                                                  selectedDeliveryTime: "",
+                                                  image1: '',
+                                                  visitedPerson: '',
+                                                  phnNum: foundUsers[index]['mobile_no'] ?? '',
+                                                  orgName: foundUsers[index]['org_name'] ?? '',
+                                                  brandId: foundUsers[index]['category'] ?? '',
+                                                  category: foundUsers[index]['brand_id'] ?? '',
+                                                ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    child: CustomerListCardWidget(
-                                        clientName: foundUsers[index]['office_name']??'',
-                                        clientId:foundUsers[index]['office_id']??'',
-                                        docDegree:foundUsers[index]['category'].toString().isNotEmpty?'(${foundUsers[index]['category']??''})' : 'None',
-                                        address:foundUsers[index]['address'] ?? '',
+                                        );
+                                      },
+                                      child: CustomerListCardWidget(clientName: foundUsers[index]['office_name'] ?? '', clientId: foundUsers[index]['office_id'] ?? '', docDegree: foundUsers[index]['category'].toString().isNotEmpty ? '(${foundUsers[index]['category'] ?? ''})' : 'None', address: foundUsers[index]['address'] ?? ''),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    })
-                : const Center(
-                  child: Text(
-                      'No results found',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                    : const Center(child: Text('No results found', style: TextStyle(fontSize: 24))),
           ),
         ],
       ),

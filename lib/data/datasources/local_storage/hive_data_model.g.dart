@@ -255,13 +255,14 @@ class RxDcrDataModelAdapter extends TypeAdapter<RxDcrDataModel> {
       weight: fields[22] as String?,
       heightFeet: fields[23] as String?,
       heightInch: fields[24] as String?,
+      branchId: fields[25] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, RxDcrDataModel obj) {
     writer
-      ..writeByte(25)
+      ..writeByte(26)
       ..writeByte(0)
       ..write(obj.uiqueKey)
       ..writeByte(1)
@@ -311,7 +312,9 @@ class RxDcrDataModelAdapter extends TypeAdapter<RxDcrDataModel> {
       ..writeByte(23)
       ..write(obj.heightFeet)
       ..writeByte(24)
-      ..write(obj.heightInch);
+      ..write(obj.heightInch)
+      ..writeByte(25)
+      ..write(obj.branchId);
   }
 
   @override

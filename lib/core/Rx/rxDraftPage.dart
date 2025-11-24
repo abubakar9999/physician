@@ -111,6 +111,7 @@ class _RxDraftPageState extends State<RxDraftPage> {
       );
     }
     else {
+      
       return ListView.builder(
         itemCount: user.length,
         itemBuilder: (BuildContext context, int index) {
@@ -268,7 +269,9 @@ class _RxDraftPageState extends State<RxDraftPage> {
                                   bodyTemperature: user[index].bodyTemperature.toString(),
                                   weight: user[index].weight.toString(),
                                   heightFeet: user[index].heightFeet.toString(),
-                                  heightInch: user[index].heightInch.toString(),
+                                  heightInch: user[index].heightInch.toString(), 
+                                  branch_id: user[index].branchId.toString(),
+                                  
 
                                 ),
                               ),
@@ -309,7 +312,7 @@ class _RxDraftPageState extends State<RxDraftPage> {
                                   bodyTemperature: user[index].bodyTemperature.toString(),
                                   weight: user[index].weight.toString(),
                                   heightFeet: user[index].heightFeet.toString(),
-                                  heightInch: user[index].heightInch.toString(),
+                                  heightInch: user[index].heightInch.toString(), branch_id: user[index].branchId.toString(),
                                 ),
                               ),
                             );

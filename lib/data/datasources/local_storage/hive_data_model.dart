@@ -24,16 +24,7 @@ class AddItemModel extends HiveObject {
   @HiveField(7)
   String manufacturer;
   @HiveField(8)
-  AddItemModel({
-    this.uiqueKey1,
-    required this.quantity,
-    required this.item_name,
-    required this.tp,
-    required this.item_id,
-    required this.category_id,
-    required this.vat,
-    required this.manufacturer,
-  });
+  AddItemModel({this.uiqueKey1, required this.quantity, required this.item_name, required this.tp, required this.item_id, required this.category_id, required this.vat, required this.manufacturer});
 }
 
 @HiveType(typeId: 1)
@@ -71,24 +62,7 @@ class CustomerDataModel extends HiveObject {
   @HiveField(15)
   String collectionDate;
 
-  CustomerDataModel({
-    required this.uiqueKey,
-    required this.clientName,
-    required this.marketName,
-    required this.areaId,
-    required this.clientId,
-    required this.outstanding,
-    required this.thana,
-    required this.address,
-    required this.deliveryDate,
-    required this.collectionDate,
-    required this.deliveryTime,
-    required this.paymentMethod,
-    this.offer,
-    this.note,
-    this.shift,
-    required this.areaName,
-  });
+  CustomerDataModel({required this.uiqueKey, required this.clientName, required this.marketName, required this.areaId, required this.clientId, required this.outstanding, required this.thana, required this.address, required this.deliveryDate, required this.collectionDate, required this.deliveryTime, required this.paymentMethod, this.offer, this.note, this.shift, required this.areaName});
 }
 
 @HiveType(typeId: 2)
@@ -126,24 +100,7 @@ class DcrDataModel extends HiveObject {
   @HiveField(15)
   String? brandId;
 
-  DcrDataModel(
-      {required this.uiqueKey,
-      required this.docName,
-      required this.docId,
-      required this.areaId,
-      required this.areaName,
-      required this.address,
-      this.visitedWith,
-      this.note,
-      this.non_Excution,
-      this.shift,
-      required this.image,
-      required this.visitedPerson,
-      required this.organizationName,
-      required this.phoneNum,
-      required this.category,
-        required this.brandId
-      });
+  DcrDataModel({required this.uiqueKey, required this.docName, required this.docId, required this.areaId, required this.areaName, required this.address, this.visitedWith, this.note, this.non_Excution, this.shift, required this.image, required this.visitedPerson, required this.organizationName, required this.phoneNum, required this.category, required this.brandId});
 }
 
 @HiveType(typeId: 3)
@@ -198,7 +155,8 @@ class RxDcrDataModel extends HiveObject {
   String? heightFeet;
   @HiveField(24)
   String? heightInch;
-
+  @HiveField(25)
+  String? branchId;
 
   RxDcrDataModel({
     required this.uiqueKey,
@@ -227,6 +185,7 @@ class RxDcrDataModel extends HiveObject {
     required this.weight,
     required this.heightFeet,
     required this.heightInch,
+    required this.branchId,
   });
 }
 
@@ -243,13 +202,7 @@ class DcrGSPDataModel extends HiveObject {
   @HiveField(4)
   String giftType;
 
-  DcrGSPDataModel({
-    required this.uiqueKey,
-    required this.quantity,
-    required this.giftName,
-    required this.giftId,
-    required this.giftType,
-  });
+  DcrGSPDataModel({required this.uiqueKey, required this.quantity, required this.giftName, required this.giftId, required this.giftType});
 }
 
 @HiveType(typeId: 5)
@@ -273,17 +226,7 @@ class MedicineListModel extends HiveObject {
   @HiveField(8)
   int quantity;
 
-  MedicineListModel({
-    required this.uiqueKey,
-    required this.strength,
-    required this.brand,
-    required this.company,
-    required this.formation,
-    required this.name,
-    required this.generic,
-    required this.itemId,
-    required this.quantity,
-  });
+  MedicineListModel({required this.uiqueKey, required this.strength, required this.brand, required this.company, required this.formation, required this.name, required this.generic, required this.itemId, required this.quantity});
 }
 
 @HiveType(typeId: 6)
@@ -301,15 +244,7 @@ class NoticeListModel extends HiveObject {
   @HiveField(5)
   String? status;
 
-
-  NoticeListModel({
-    required this.uiqueKey,
-    required this.notice_date,
-    required this.notice_title,
-    required this.notice_details,
-    required this.notice_id,
-    this.status
-  });
+  NoticeListModel({required this.uiqueKey, required this.notice_date, required this.notice_title, required this.notice_details, required this.notice_id, this.status});
   // From JSON
   factory NoticeListModel.fromJson(Map<String, dynamic> json) {
     return NoticeListModel(
@@ -324,15 +259,8 @@ class NoticeListModel extends HiveObject {
 
   // To JSON
   Map<String, dynamic> toJson() {
-    return {
-      'notice_id': notice_id,
-      'notice_date': notice_date,
-      'notice_title': notice_title,
-      'notice_details': notice_details,
-      'status': status
-    };
+    return {'notice_id': notice_id, 'notice_date': notice_date, 'notice_title': notice_title, 'notice_details': notice_details, 'status': status};
   }
-
 }
 
 // @HiveType(typeId: 7)

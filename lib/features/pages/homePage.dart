@@ -15,6 +15,7 @@ import 'package:hive/hive.dart';
 import 'package:marquee/marquee.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart' as geo;
+import 'package:physician_latest/features/pages/branch_selectiion_screen.dart';
 import 'package:physician_latest/features/pages/patient_call_&_board_meeting.dart';
 import 'package:physician_latest/features/pages/plugin_reports_page.dart';
 import 'package:physician_latest/features/pages/reset_password.dart';
@@ -53,7 +54,6 @@ import 'order_sections/for_mpo_route_claient.dart';
 import 'order_sections/order_approval_area_page.dart';
 import 'order_sections/order_report_page.dart';
 
-
 var tempdocName = "";
 String areaName = "";
 String areaid = "";
@@ -77,13 +77,7 @@ class MyHomePage extends StatefulWidget {
   // bool rx_gallery_allow;
   // String endTime;
 
-  MyHomePage({
-    Key? key,
-    required this.userName,
-    required this.user_id,
-    this.userPassword,
-    this.data,
-  }) : super(key: key);
+  MyHomePage({Key? key, required this.userName, required this.user_id, this.userPassword, this.data}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -145,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   String order_approval_url = "";
   String order_list = "";
   bool order_approval_flag = false;
-  String? lat ;
+  String? lat;
   String? long;
   String? address;
   bool loading = false;
@@ -153,11 +147,11 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   String marketList = "";
   String areaName = "";
   String noticeCount = '0';
-  String examCount='0';
+  String examCount = '0';
 
   String user_level = "";
-  List<dynamic> branchList=[];
-  String branchText='';
+  List<dynamic> branchList = [];
+  String branchText = '';
 
   bool first_notice_api_hit = false;
   bool expense_flag = false;
@@ -176,13 +170,11 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   final noticeBox = Hive.box<NoticeListModel>('noticeList');
   Timer? _timer;
 
-
-
   Future<void> checkInOut_submit(BuildContext context, String submitType) async {
     try {
       await NetworkConnecticity.checkConnectivity().then((internet) async {
         if (internet == true) {
-          if (lat == null || long == null || address == null ) {
+          if (lat == null || long == null || address == null) {
             await getLatLong();
           }
           if (lat != null && long != null && address != null) {
@@ -190,34 +182,23 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             var url = "$check_in_url?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&latitude=${lat.toString()}&longitude=${long.toString()}&address=${address.toString()}&submit_type=$submitType";
             // var url = "${sync_url}api_attendance_submit/submit_data?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&latitude=${lat.toString()}&longitude=${long.toString()}&address=${address.toString()}&submit_type=$submitType";
             print("check in url:$url");
-            final response = await http.get(
-              Uri.parse(url),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-            );
+            final response = await http.get(Uri.parse(url), headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'});
             Map<String, dynamic> data = json.decode(response.body);
             final status = data['status'] ?? '';
             var message = data['ret_str'] ?? '';
             // var startTimeStr = data['start_time'] ?? '';
             // var endTimeStr = data['end_time'] ?? '';
             // var prefs = await SharedPreferences.getInstance();
-            print (message);
+            print(message);
 
             if (status.toString().toLowerCase() == "success") {
               lat = null;
               long = null;
               address = '';
-              Fluttertoast.showToast(
-                msg: "Check In Successful",
-              );
+              Fluttertoast.showToast(msg: "Check In Successful");
               setState(() {});
-            }
-            else if(status == 'Failed')
-            {
-              Fluttertoast.showToast(
-                msg: message,
-              );
+            } else if (status == 'Failed') {
+              Fluttertoast.showToast(msg: message);
             }
           } else {
             print("Latitude and longitude are null.");
@@ -227,9 +208,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please turn on internet connection")));
         }
       });
-    } catch(e){
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong!"),backgroundColor: Colors.red,));
-    }finally {
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong!"), backgroundColor: Colors.red));
+    } finally {
       setState(() {
         loading = false;
       });
@@ -292,9 +273,6 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     for (int i = 0; i < placemarks.length; i++) {}
   }
 
-
-
-
   @override
   void initState() {
     super.initState();
@@ -302,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     getLatLong();
     print('getlatlon:$getLatLong()');
     AllServices().getPermission();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mydatabox.get('auto_day_end') == true && mydatabox.get('attendance').toString() != AllServices().getTodayDate()) {
         log('auto day end new date');
         mydatabox.put('attendance', '');
@@ -319,12 +297,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
         if (mydatabox.get('attendanceUserId') != mydatabox.get("USER_ID")) {
           mydatabox.put('attendance', '');
         }
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AttendanceScreen(),
-          ),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AttendanceScreen()));
       }
 
       userPassword = mydatabox.get("PASSWORD") ?? widget.userPassword;
@@ -372,26 +345,23 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       order_approval_flag = mydatabox.get('order_approval_flag') ?? false;
       check_in_flag = mydatabox.get("check_in_flag") ?? false;
       // check_in_flag = true;
-      check_in_url = mydatabox.get('check_in_url') ??  "sample_base_url";
+      check_in_url = mydatabox.get('check_in_url') ?? "sample_base_url";
       marketList = mydatabox.get('marketList') ?? "";
       areaName = mydatabox.get('areaName') ?? "";
       user_level = mydatabox.get('userLevel') ?? "";
       print('user_level: $user_level');
 
-
-      branchList=mydatabox.get('branch_list', defaultValue: []);
+      branchList = mydatabox.get('branch_list', defaultValue: []);
       print('branch list: $branchList');
       branchText = branchList
           .map((b) => b.values.first) // get branch name like "Sitakunda Branch"
           .join(', ');
       print('branch list text: $branchText');
 
-      
       expense_flag = mydatabox.get('expense_flag') ?? false;
       debugPrint(marketList.toString());
       update_app_notification = mydatabox.get('update_new_app') ?? '';
       update_app_url = mydatabox.get('update_new_app_url') ?? '';
-
 
       ///change to false///
       print("......................................");
@@ -413,25 +383,20 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       first_notice_api_hit = mydatabox.get('first_notice_api_hit');
       debugPrint("first_notice_api_hit-------------------------------------------------------------------$first_notice_api_hit");
 
-      if(first_notice_api_hit == false){
+      if (first_notice_api_hit == false) {
         getNotice();
       }
       await fetchNoticeList();
-      if(mounted){
-        setState(()  {
-
-        });
+      if (mounted) {
+        setState(() {});
       }
 
-
       // await getNoticeApi();
-
 
       debugPrint("notice_auto_scroll_flag::::::::::::::::::::::::::::::::::::::$notice_auto_scroll_flag");
       debugPrint("notice_auto_scroll_flag::::::::::::::::::::::::::::::::::::::$notice");
       debugPrint("target_sales_achievement_flag::::::::::::::::::::::::::::::::::::::::$target_sales_achievement_flag");
     });
-
 
     // if (background_service == true) {
     //   if (mydatabox.get('timer_flag') == true) {
@@ -456,9 +421,6 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     debugPrint(report_rx_url);
   }
 
-
-
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -471,24 +433,21 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   }
 
   @override
-  void didPopNext() async{
-
+  void didPopNext() async {
     debugPrint("The didpopnext fucntion is calling--------------------------------------------");
     await fetchNoticeList();
     update_app_notification = mydatabox.get('update_new_app') ?? '';
-    update_app_url = mydatabox.get('update_new_app_url') ?? '' ;
+    update_app_url = mydatabox.get('update_new_app_url') ?? '';
     setState(() {});
     debugPrint("notice count in homescreen ::::::::::::::::::::::::::::::: $noticeCount");
     debugPrint("The didpopnext fucntion is callied//////////////////////////////////////////");
-
   }
-
 
   Future<void> fetchNoticeList() async {
     print('entered to fetch');
     print('noticebox called');
 
-    if(mounted){
+    if (mounted) {
       setState(() {
         targetAmount = mydatabox.get('target_amount') ?? "0";
         print('targetAmount $targetAmount');
@@ -498,10 +457,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
         noticeList = noticeBox.values.toList();
         debugPrint("noticeList length :::::: ${noticeList.length}");
         if (noticeList.isNotEmpty) {
-          List<String> notices = noticeList
-              .where((element) => element.status == 'ACTIVE')
-              .map((item) => "${item.notice_title}  ◉  ${item.notice_details}")
-              .toList();
+          List<String> notices = noticeList.where((element) => element.status == 'ACTIVE').map((item) => "${item.notice_title}  ◉  ${item.notice_details}").toList();
           print(notices);
           notice = notices.join("      ■ ■ ■      ");
         } else {
@@ -511,10 +467,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     }
 
     print("notice ----------------  $notice");
-
   }
-
-
 
   Future<void> getButtonNames() async {
     try {
@@ -531,26 +484,16 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
     debugPrint("api hitted");
 
-
     List noticeSeenCount = seenNoticeCount.get('notice_Id', defaultValue: []);
     List<String> currentNoticeIds = apiNoticeList.map((notice) => notice.notice_id ?? '').toList();
     noticeSeenCount = noticeSeenCount.where((id) => currentNoticeIds.contains(id)).toList();
     seenNoticeCount.put('notice_Id', noticeSeenCount);
     await noticeBox.clear();
     for (var noticeMap in apiNoticeList) {
-      NoticeListModel noticeModel = NoticeListModel(
-          uiqueKey: noticeMap.uiqueKey ?? 0,
-          notice_date: noticeMap.notice_date ?? '',
-          notice_title: noticeMap.notice_title ?? '',
-          notice_details: noticeMap.notice_details ?? '',
-          notice_id: noticeMap.notice_id ?? '',
-          status: noticeMap.status ?? ''
-      );
-
+      NoticeListModel noticeModel = NoticeListModel(uiqueKey: noticeMap.uiqueKey ?? 0, notice_date: noticeMap.notice_date ?? '', notice_title: noticeMap.notice_title ?? '', notice_details: noticeMap.notice_details ?? '', notice_id: noticeMap.notice_id ?? '', status: noticeMap.status ?? '');
 
       await noticeBox.add(noticeModel);
     }
-
 
     String noticeCount = (apiNoticeList.length - noticeSeenCount.length).toString();
     seenNoticeCount.put('noticeCount', noticeCount);
@@ -563,10 +506,10 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   }
 
   ///...............................Apex Pharma..................................///
-//   restartBackgroundService()async{
-//  await getPermission();
+  //   restartBackgroundService()async{
+  //  await getPermission();
 
-//   }
+  //   }
 
   // getPermission() async {
   //   bool _serviceEnabled;
@@ -665,42 +608,47 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
   int _currentSelected = 0;
   _onItemTapped(int index) async {
-
     if (index == 1) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => RxPage(
-                address: '',
-                areaId: '',
-                areaName: '',
-                ck: '',
-                dcrKey: 0,
-                docId: '',
-                docName: '',
-                uniqueId: 0,
-                draftRxMedicinItem: [],
-                image1: '',
-                dcrGrad: '',
+      Navigator.push(context, MaterialPageRoute(builder: (context) => BranchSelectiionScreen()));
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder:
+      //         (_) => RxPage(
+      //           address: '',
+      //           areaId: '',
+      //           areaName: '',
+      //           ck: '',
+      //           dcrKey: 0,
+      //           docId: '',
+      //           docName: '',
+      //           uniqueId: 0,
+      //           draftRxMedicinItem: [],
+      //           image1: '',
+      //           dcrGrad: '',
 
-                phnNum: '',
-                patientName: '',
-                gender: '',
-                dob: '',
-                stripWastage: '',
-                systemName: '',
-                disease: '',
-                patientTemperament: '',
-                beforeDiabetes: '',
-                afterDiabetes: '',
-                bloodSystolic: '',
-                bloodDiastolic: '',
-                oxygenLevel: '',
-                bodyTemperature: '',
-                weight: '',
-                heightFeet: '',
-                heightInch: '',
-              )));
+      //           phnNum: '',
+      //           patientName: '',
+      //           gender: '',
+      //           dob: '',
+      //           stripWastage: '',
+      //           systemName: '',
+      //           disease: '',
+      //           patientTemperament: '',
+      //           beforeDiabetes: '',
+      //           afterDiabetes: '',
+      //           bloodSystolic: '',
+      //           bloodDiastolic: '',
+      //           oxygenLevel: '',
+      //           bodyTemperature: '',
+      //           weight: '',
+      //           heightFeet: '',
+      //           heightInch: '',
+      //           branch_id: 'Test',
+      //         ),
+      //   ),
+      // );
+
       setState(() {
         _currentSelected = index;
       });
@@ -712,34 +660,32 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     log('leave:$leave_flag');
-    debugPrint('draft visit count: ${ Boxes.dcrUsers().length}');
+    debugPrint('draft visit count: ${Boxes.dcrUsers().length}');
     debugPrint('draft prescription count: ${Boxes.rxdDoctor().length}');
 
     return WillPopScope(
       onWillPop: () async {
         return (await showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Confirm"),
-            content: const Text("Do you exit app?"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: Text("NO"),
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Confirm"),
+                content: const Text("Do you exit app?"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text("NO"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: const Text("YES", style: TextStyle(color: Colors.red)),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text(
-                  "YES",
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ],
-          ),
         ));
       },
       child: Scaffold(
@@ -754,52 +700,36 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                   child: SizedBox(
                     height: 20,
                     child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child:
-                        // logo_url_2 != null
-                        // ? CachedNetworkImage(
-                        //     imageUrl: logo_url_2!,
-                        //     errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
-                        //   )
-                        // : Image.asset("assets/images/mRep7_logo.png"),
-                        Image.asset('assets/images/c_logo_1.png',fit: BoxFit.contain,)
+                      padding: const EdgeInsets.all(16.0),
+                      child:
+                      // logo_url_2 != null
+                      // ? CachedNetworkImage(
+                      //     imageUrl: logo_url_2!,
+                      //     errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
+                      //   )
+                      // : Image.asset("assets/images/mRep7_logo.png"),
+                      Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain),
                     ),
                   ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.sync_outlined, color: Colors.blueAccent),
-                  title: const Text(
-                    'Sync Data',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85)),
-                  ),
+                  title: const Text('Sync Data', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85))),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => SyncDataTabScreen(
-                              cid: cid,
-                              userId: userId,
-                              userPassword: userPassword,
-                            )));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => SyncDataTabScreen(cid: cid, userId: userId, userPassword: userPassword)));
                   },
                 ),
                 const SizedBox(height: 10),
                 ListTile(
                   leading: const Icon(Icons.vpn_key, color: Colors.blueAccent),
-                  title: const Text(
-                    'Change password',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85)),
-                  ),
+                  title: const Text('Change password', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85))),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const ResetPasswordScreen()));
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.logout, color: Colors.blueAccent),
-                  title: const Text(
-                    'Logout',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85)),
-                  ),
+                  title: const Text('Logout', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 15, 53, 85))),
                   onTap: () async {
                     await AuthServices.logOut(context);
                     // final prefs = await SharedPreferences.getInstance();
@@ -833,120 +763,93 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
         appBar: AppBar(
           leadingWidth: 60,
           leading: Padding(
-              padding: const EdgeInsets.only(left: 8.0, top: 6, bottom: 6), // Adjust padding as needed
-              child:
-              // logo_url_1 != null
-              //     ? CachedNetworkImage(
-              //         imageUrl: logo_url_1!,
-              //         errorWidget: (context, url, error) => SizedBox.shrink(),
-              //       )
-              //     : SizedBox.shrink(),
-              Image.asset('assets/images/c_logo_1.png')
+            padding: const EdgeInsets.only(left: 8.0, top: 6, bottom: 6), // Adjust padding as needed
+            child:
+            // logo_url_1 != null
+            //     ? CachedNetworkImage(
+            //         imageUrl: logo_url_1!,
+            //         errorWidget: (context, url, error) => SizedBox.shrink(),
+            //       )
+            //     : SizedBox.shrink(),
+            Image.asset('assets/images/c_logo_1.png'),
           ),
-          backgroundColor: const Color.fromARGB(255, 138, 201, 149),
+          backgroundColor: Colors.blue,
           title:
-          // notice = "" ? Container(
-          //   margin: EdgeInsets.only(left: 0.0), // Adjust margin to control the gap
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     borderRadius: BorderRadius.circular(5),
-          //     border: Border.all(color: Colors.black, width: 1.0),
-          //   ),
-          //   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          //   child: FittedBox(
-          //     child: Text(
-          //       'MREPORTING $appVersion',
-          //     ),
-          //   ),
-          // ),
-          notice == "" || notice_auto_scroll_flag == false
-              ? Container(
-            margin: EdgeInsets.only(left: 0.0), // Adjust margin to control the gap
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.black, width: 1.0),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            child: FittedBox(
-              child: Text(
-                'MREPORTING $appVersion',
-              ),
-            ),
-          )
-              : GestureDetector(
-            onTap: () async{
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const NoticeScreen()));
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              height: 40,
-              width: double.infinity,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.black, width: 1.0), color: Colors.white),
-              child: Center(
-                child: Marquee(
-                  text: notice,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  scrollAxis: Axis.horizontal,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  blankSpace: 300,
-                  velocity: 50.0,
-                  startPadding: 10.0,
-                  accelerationDuration: const Duration(seconds: 0),
-                  accelerationCurve: Curves.bounceIn,
-                  decelerationDuration: const Duration(milliseconds: 0),
-                  decelerationCurve: Curves.easeOut,
-                ),
-              ),
-            ),
-          ),
-          titleTextStyle: const TextStyle(
-            color: Color.fromARGB(255, 27, 56, 34),
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-          ),
+              // notice = "" ? Container(
+              //   margin: EdgeInsets.only(left: 0.0), // Adjust margin to control the gap
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(5),
+              //     border: Border.all(color: Colors.black, width: 1.0),
+              //   ),
+              //   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              //   child: FittedBox(
+              //     child: Text(
+              //       'MREPORTING $appVersion',
+              //     ),
+              //   ),
+              // ),
+              notice == "" || notice_auto_scroll_flag == false
+                  ? Container(
+                    margin: EdgeInsets.only(left: 0.0), // Adjust margin to control the gap
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.black, width: 1.0)),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    child: FittedBox(child: Text('MREPORTING $appVersion')),
+                  )
+                  : GestureDetector(
+                    onTap: () async {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const NoticeScreen()));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      height: 40,
+                      width: double.infinity,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.black, width: 1.0), color: Colors.white),
+                      child: Center(
+                        child: Marquee(
+                          text: notice,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 300,
+                          velocity: 50.0,
+                          startPadding: 10.0,
+                          accelerationDuration: const Duration(seconds: 0),
+                          accelerationCurve: Curves.bounceIn,
+                          decelerationDuration: const Duration(milliseconds: 0),
+                          decelerationCurve: Curves.easeOut,
+                        ),
+                      ),
+                    ),
+                  ),
+          titleTextStyle: const TextStyle(color: Color.fromARGB(255, 27, 56, 34), fontWeight: FontWeight.w500, fontSize: 20),
           centerTitle: true,
           elevation: 0,
           automaticallyImplyLeading: false,
         ),
-        bottomNavigationBar: rxFlag == true
-            ? BottomNavigationBar(
-          onTap: _onItemTapped,
-          currentIndex: _currentSelected,
-          unselectedItemColor: Colors.grey[800],
-          selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              label: 'Home',
-              icon: Icon(Icons.home),
-            ),
-            BottomNavigationBarItem(
-              label: 'Camera',
-              icon: Icon(
-                Icons.photo_camera_outlined,
-                color: Colors.black87,
-              ),
-            )
-          ],
-        )
-            : const Text(""),
+        bottomNavigationBar:
+            rxFlag == true
+                ? BottomNavigationBar(onTap: _onItemTapped, currentIndex: _currentSelected, unselectedItemColor: Colors.grey[800], selectedItemColor: const Color.fromRGBO(10, 135, 255, 1), items: const <BottomNavigationBarItem>[BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)), BottomNavigationBarItem(label: 'Camera', icon: Icon(Icons.photo_camera_outlined, color: Colors.black87))])
+                : const Text(""),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-
                 children: [
-
-                  update_app_notification == '' ? const SizedBox.shrink() : Center(child: GestureDetector(onTap : (){
-                    AllServices().showMap(update_app_url);
-                  }, child: Container(color: Colors.red, height: 20, width: double.infinity, child: Text(textAlign: TextAlign.center,"Please click here to download new version", style: TextStyle(color: Colors.white),)))),
-                  update_app_notification == '' ? const SizedBox.shrink() : const SizedBox(
-                    height: 8,
-                  ),
+                  update_app_notification == ''
+                      ? const SizedBox.shrink()
+                      : Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            AllServices().showMap(update_app_url);
+                          },
+                          child: Container(color: Colors.red, height: 20, width: double.infinity, child: Text(textAlign: TextAlign.center, "Please click here to download new version", style: TextStyle(color: Colors.white))),
+                        ),
+                      ),
+                  update_app_notification == '' ? const SizedBox.shrink() : const SizedBox(height: 8),
 
                   ///*****************************************************  User information Section  ***********************************************///
-
                   Container(
                     //height: screenHeight / 9.3,
                     width: MediaQuery.of(context).size.width,
@@ -957,25 +860,25 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         Expanded(
                           flex: 5,
                           child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: Text(
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      "User: $user_id | $userName",
-                                      // ' $userName',
-                                      style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: Text(
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    "User: $user_id | $userName",
+                                    // ' $userName',
+                                    style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
-                                  const SizedBox(height: 8),
-                                  FittedBox(child: Text("Branch: $branchText", style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 14, fontWeight: FontWeight.bold,),maxLines: 4, overflow: TextOverflow.ellipsis,))
-
-                                ],
-                              )),
+                                ),
+                                const SizedBox(height: 8),
+                                FittedBox(child: Text("Branch: $branchText", style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 14, fontWeight: FontWeight.bold), maxLines: 4, overflow: TextOverflow.ellipsis)),
+                              ],
+                            ),
+                          ),
                         ),
                         Expanded(
                           flex: 3,
@@ -991,178 +894,72 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                                   }),
                                   child: FittedBox(
                                     fit: BoxFit.contain,
-                                    child: prefix != prefix2
-                                        ? const Text(
-                                      '[Attendance]'
-                                          '\n'
-                                          'Start: '
-                                          " "
-                                          '\n'
-                                          "End: "
-                                          " ",
-                                      style: TextStyle(
-                                        color: Color.fromARGB(255, 15, 53, 85),
-                                        fontSize: 18,
-                                      ),
-                                    )
-                                        : Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Attendance',
-                                          style: TextStyle(
-                                              color: Color.fromARGB(255, 15, 53, 85),
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600
-                                          ),
-                                        ),
-                                        Text(
-                                          'Start: ' + startTime.toString(),
-                                          style: const TextStyle(
-                                            color: Color.fromARGB(255, 15, 53, 85),
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        Text(
-                                          "End: " + endTime.toString(),
-                                          style: const TextStyle(
-                                            color: Color.fromARGB(255, 15, 53, 85),
-                                            fontSize: 18,
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                    child:
+                                        prefix != prefix2
+                                            ? const Text(
+                                              '[Attendance]'
+                                              '\n'
+                                              'Start: '
+                                              " "
+                                              '\n'
+                                              "End: "
+                                              " ",
+                                              style: TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 18),
+                                            )
+                                            : Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text('Attendance', style: TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 18, fontWeight: FontWeight.w600)),
+                                                Text('Start: ' + startTime.toString(), style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 18)),
+                                                Text("End: " + endTime.toString(), style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 18)),
+                                              ],
+                                            ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  const SizedBox(height: 5),
 
                   ///************************************************ Target Sales Achievement *********************************************///
-
                   target_sales_achievement_flag == true
                       ? Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(6),
-                              topRight: Radius.circular(6),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 30,
+                              decoration: BoxDecoration(borderRadius: const BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)), color: const Color(0xff70BA85).withOpacity(0.3)),
+                              child: const Row(
+                                children: [
+                                  Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("Target", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, height: 1.5))]))),
+                                  Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("Sales", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, height: 1.5))]))),
+                                  Expanded(child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text("Achievement", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, height: 1.5))]))),
+                                ],
+                              ),
                             ),
-                            color: const Color(0xff70BA85).withOpacity(0.3),
-                          ),
-                          child: const Row(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Target",
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, height: 1.5),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                            const Divider(height: 2, color: Colors.white),
+                            Container(
+                              height: 50,
+                              color: const Color.fromARGB(255, 222, 237, 250),
+                              child: Row(
+                                children: [
+                                  Expanded(child: Center(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0), child: Text(targetAmount, style: const TextStyle(height: 1.5))))),
+                                  Expanded(child: Container(color: const Color(0xff70BA85).withOpacity(0.3), child: Center(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0), child: Text(salesAmount, style: TextStyle(height: 1.5)))))),
+                                  Expanded(child: Center(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0), child: Text(achievementAmount, style: TextStyle(height: 1.5))))),
+                                ],
                               ),
-                              Expanded(
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Sales",
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, height: 1.5),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Achievement",
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, height: 1.5),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        const Divider(
-                          height: 2,
-                          color: Colors.white,
-                        ),
-                        Container(
-                          height: 50,
-                          color: const Color.fromARGB(255, 222, 237, 250),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: Text(
-                                      targetAmount,
-                                      style: const TextStyle(height: 1.5),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  color: const Color(0xff70BA85).withOpacity(0.3),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                      child: Text(
-                                        salesAmount,
-                                        style: TextStyle(height: 1.5),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: Text(
-                                      achievementAmount,
-                                      style: TextStyle(height: 1.5),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                      )
                       : const SizedBox(),
-                  SizedBox(
-                    height: target_sales_achievement_flag ? 5 : 0,
-                  ),
+                  SizedBox(height: target_sales_achievement_flag ? 5 : 0),
 
                   ///************************************************ Order area Field *********************************************///
 
@@ -1326,494 +1123,393 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                   // )
                   //     : const SizedBox.shrink(),
 
-
                   ///********************************************* New Rx section **************************************///
-
                   rxFlag
                       ? Container(
-                    height: screenHeight / 3.5,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFE2EFDA),
-                        borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(
+                        height: screenHeight / 3.5,
+                        decoration: BoxDecoration(color: const Color(0xFFE2EFDA), borderRadius: BorderRadius.circular(12)),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
+                            Column(
                               children: [
-                                Expanded(
-                                  child: customBuildIconButton(
-                                    height: 42,
-                                    width: 42,
-                                    icon: "assets/icons/prescriptionRx.png",
-                                    onClick: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => RxPage(
-                                            address: '',
-                                            areaId: '',
-                                            areaName: '',
-                                            ck: '',
-                                            dcrKey: 0,
-                                            docId: '',
-                                            docName: '',
-                                            uniqueId: 0,
-                                            draftRxMedicinItem: [],
-                                            image1: '',
-                                            dcrGrad: '',
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: customBuildIconButton(
+                                        height: 42,
+                                        width: 42,
+                                        icon: "assets/icons/prescriptionRx.png",
+                                        onClick: () async {
+                                          await Navigator.push(context, MaterialPageRoute(builder: (context) => BranchSelectiionScreen()));
+                                          // await Navigator.push(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //     builder: (context) => RxPage(
+                                          //       address: '',
+                                          //       areaId: '',
+                                          //       areaName: '',
+                                          //       ck: '',
+                                          //       dcrKey: 0,
+                                          //       docId: '',
+                                          //       docName: '',
+                                          //       uniqueId: 0,
+                                          //       draftRxMedicinItem: [],
+                                          //       image1: '',
+                                          //       dcrGrad: '',
 
-                                            phnNum: '',
-                                            patientName: '',
-                                            gender: '',
-                                            dob: '',
-                                            stripWastage: '',
-                                            systemName: '',
-                                            disease: '',
-                                            patientTemperament: '',
-                                            beforeDiabetes: '',
-                                            afterDiabetes: '',
-                                            bloodSystolic: '',
-                                            bloodDiastolic: '',
-                                            oxygenLevel: '',
-                                            bodyTemperature: '',
-                                            weight: '',
-                                            heightFeet: '',
-                                            heightInch: '',
+                                          //       phnNum: '',
+                                          //       patientName: '',
+                                          //       gender: '',
+                                          //       dob: '',
+                                          //       stripWastage: '',
+                                          //       systemName: '',
+                                          //       disease: '',
+                                          //       patientTemperament: '',
+                                          //       beforeDiabetes: '',
+                                          //       afterDiabetes: '',
+                                          //       bloodSystolic: '',
+                                          //       bloodDiastolic: '',
+                                          //       oxygenLevel: '',
+                                          //       bodyTemperature: '',
+                                          //       weight: '',
+                                          //       heightFeet: '',
+                                          //       heightInch: '',
+                                          //     ),
+                                          //   ),
+                                          // );
+                                          await getNotice();
+                                          //Fluttertoast.showToast(msg: notice);
+                                          setState(() {});
+                                        },
+                                        title: buttonNames?.get('seen_rx_capture') == "" ? 'Prescription Capture' : buttonNames?.get('seen_rx_capture') ?? 'Prescription Capture',
+                                        sizeWidth: screenWidth,
+                                        inputColor: const Color(0xff70BA85).withOpacity(.3),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Stack(
+                                        children: [
+                                          customBuildIconButton(
+                                            height: 39,
+                                            width: 39,
+                                            icon: "assets/icons/folderRx.png",
+                                            onClick: () async {
+                                              await Navigator.push(context, MaterialPageRoute(builder: (_) => const RxDraftPage()));
+                                              await getNotice();
+                                              //Fluttertoast.showToast(msg: notice);
+
+                                              setState(() {});
+                                            },
+                                            title: buttonNames?.get('draft_seen_rx') == "" ? 'Draft Prescription' : buttonNames?.get('draft_seen_rx') ?? 'Draft Prescription',
+                                            sizeWidth: screenWidth,
+                                            //inputColor: Colors.white,
+                                            inputColor: const Color(0xff70BA85).withOpacity(.3),
                                           ),
-                                        ),
-                                      );
-                                      await  getNotice();
-                                      //Fluttertoast.showToast(msg: notice);
-                                      setState(() {});
-                                    },
-                                    title: buttonNames?.get('seen_rx_capture') == "" ? 'Prescription Capture' : buttonNames?.get('seen_rx_capture') ?? 'Prescription Capture',
-                                    sizeWidth: screenWidth,
-                                    inputColor: const Color(0xff70BA85).withOpacity(.3),
-                                  ),
+                                          Boxes.rxdDoctor().length == 0
+                                              ? const SizedBox.shrink()
+                                              : Positioned(right: 0, child: Container(height: 35, width: 35, decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)), child: Center(child: Text(Boxes.rxdDoctor().length.toString(), style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))))),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: customBuildIconButton(
+                                        height: 42,
+                                        width: 42,
+                                        icon: "assets/icons/rxreport.png",
+                                        onClick: () async {
+                                          await Navigator.push(context, MaterialPageRoute(builder: (_) => PrescriptionReportPage()));
+                                          await getNotice();
+                                        },
+                                        title: buttonNames?.get('seen_rx_report') == "" ? 'Prescription Report' : buttonNames?.get('seen_rx_report') ?? 'Prescription Report',
+                                        sizeWidth: screenWidth,
+                                        //inputColor: Colors.white,
+                                        inputColor: const Color(0xff70BA85).withOpacity(.3),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 5,
+                          ],
+                        ),
+                      )
+                      : Container(),
+                  rxFlag ? const SizedBox(height: 10) : const SizedBox.shrink(),
+
+                  ///******************************************** Visit Section ********************************************///
+                  dcrFlag
+                      ? Container(
+                        height: screenHeight / 3.5,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(color: const Color(0xFFDDEBF7), borderRadius: BorderRadius.circular(12)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: customBuildIconButton(
+                                icon: "assets/icons/newdcr2.png",
+                                onClick: () async {
+                                  if (areaPage == false) {
+                                    print('xxx');
+                                    await Navigator.push(context, MaterialPageRoute(builder: (context) => const DoctorTerritoryPage()));
+                                    await getNotice();
+                                    setState(() {});
+                                  } else {
+                                    print('yyy');
+                                    await Navigator.push(context, MaterialPageRoute(builder: (_) => AreaPage(isdcr: "dcr")));
+                                    await getNotice();
+                                    setState(() {});
+                                  }
+                                },
+                                title: buttonNames?.get('new_dcr') == "" ? 'New Visit' : buttonNames?.get('new_dcr') ?? 'New Visit',
+                                sizeWidth: screenWidth,
+                                inputColor: const Color(0xff56CCF2).withOpacity(.3),
+                                height: 50,
+                                width: 50,
+                              ),
                             ),
+                            const SizedBox(height: 5),
                             Row(
                               children: [
                                 Expanded(
                                   child: Stack(
                                     children: [
                                       customBuildIconButton(
-                                        height: 39,
-                                        width: 39,
-                                        icon: "assets/icons/folderRx.png",
+                                        height: 40,
+                                        width: 40,
+                                        icon: "assets/icons/first-aid-kit.png",
                                         onClick: () async {
-                                          await Navigator.push(context,
-                                              MaterialPageRoute(builder: (_) => const RxDraftPage()));
-                                          await  getNotice();
+                                          await Navigator.push(context, MaterialPageRoute(builder: (context) => const DraftDCRScreen()));
+                                          await getNotice();
                                           //Fluttertoast.showToast(msg: notice);
-
                                           setState(() {});
                                         },
-                                        title: buttonNames?.get('draft_seen_rx') == "" ? 'Draft Prescription' : buttonNames?.get('draft_seen_rx') ?? 'Draft Prescription',
+                                        title: buttonNames?.get('draft_dcr') == "" ? 'Draft Visit' : buttonNames?.get('draft_dcr') ?? 'Draft Visit',
                                         sizeWidth: screenWidth,
                                         //inputColor: Colors.white,
-                                        inputColor: const Color(0xff70BA85).withOpacity(.3),
+                                        inputColor: const Color(0xff56CCF2).withOpacity(.3),
                                       ),
-                                      Boxes.rxdDoctor().length==0? const SizedBox.shrink() : Positioned(
-                                          right: 0,
-                                          child: Container(
-                                            height: 35,
-                                            width: 35,
-                                            decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)),
-                                            child: Center(
-                                                child: Text(
-                                                  Boxes.rxdDoctor().length.toString(),
-                                                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                                )),
-                                          ))
+                                      Boxes.dcrUsers().length == 0
+                                          ? const SizedBox.shrink()
+                                          : Positioned(right: 0, child: Container(height: 35, width: 35, decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)), child: Center(child: Text(Boxes.dcrUsers().length.toString(), style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))))),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
+                                const SizedBox(width: 5),
                                 Expanded(
                                   child: customBuildIconButton(
-                                    height: 42,
-                                    width: 42,
-                                    icon: "assets/icons/rxreport.png",
+                                    height: 50,
+                                    width: 50,
+                                    icon: "assets/icons/dcrReport.png",
                                     onClick: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>  PrescriptionReportPage(
-                                          ),
-                                        ),
-                                      );
-                                      await  getNotice();
-                                    },
-                                    title: buttonNames?.get('seen_rx_report') == "" ? 'Prescription Report' : buttonNames?.get('seen_rx_report') ?? 'Prescription Report',
-                                    sizeWidth: screenWidth,
-                                    //inputColor: Colors.white,
-                                    inputColor: const Color(0xff70BA85).withOpacity(.3),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                      : Container(),
-                  rxFlag
-                      ? const SizedBox(height: 10,)
-                      : const SizedBox.shrink(),
-
-                  ///******************************************** Visit Section ********************************************///
-
-                  dcrFlag
-                      ?
-                  Container(
-                    height: screenHeight / 3.5,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFDDEBF7),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: customBuildIconButton(
-                            icon: "assets/icons/newdcr2.png",
-                            onClick: () async {
-                              if (areaPage == false) {
-                                print('xxx');
-                                await Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) =>
-                                        const DoctorTerritoryPage()));
-                                await getNotice();
-                                setState(() {});
-
-                              } else {
-                                print('yyy');
-                                await Navigator.push(
-                                  context, MaterialPageRoute(builder: (_) => AreaPage(isdcr: "dcr")),
-                                );
-                                await getNotice();
-                                setState(() {});
-                              }
-                            },
-                            title: buttonNames?.get('new_dcr') == ""
-                                ? 'New Visit'
-                                : buttonNames?.get('new_dcr') ?? 'New Visit',
-                            sizeWidth: screenWidth,
-                            inputColor: const Color(0xff56CCF2).withOpacity(.3),
-                            height: 50,
-                            width: 50,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Stack(
-                                children: [
-                                  customBuildIconButton(
-                                    height: 40,
-                                    width: 40,
-                                    icon: "assets/icons/first-aid-kit.png",
-                                    onClick: () async {
-                                      await Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const DraftDCRScreen()));
-                                      await  getNotice();
+                                      await Navigator.push(context, MaterialPageRoute(builder: (context) => VisitReportPage()));
+                                      await getNotice();
                                       //Fluttertoast.showToast(msg: notice);
-                                      setState(() {});
                                     },
-                                    title: buttonNames?.get('draft_dcr') == "" ? 'Draft Visit' : buttonNames?.get('draft_dcr') ?? 'Draft Visit',
+                                    title: buttonNames?.get('dcr_report') == "" ? "Visit Report" : buttonNames?.get('dcr_report') ?? 'Visit Report',
                                     sizeWidth: screenWidth,
                                     //inputColor: Colors.white,
                                     inputColor: const Color(0xff56CCF2).withOpacity(.3),
                                   ),
-                                  Boxes.dcrUsers().length==0? const SizedBox.shrink() : Positioned(
-                                      right: 0,
-                                      child: Container(
-                                        height: 35,
-                                        width: 35,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(135, 2, 160, 68),
-                                          borderRadius: BorderRadius.circular(15),
-                                        ),
-                                        child: Center(
-                                          child: Text(Boxes.dcrUsers().length.toString(), style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                                        ),
-                                      ))
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Expanded(
-                              child: customBuildIconButton(
-                                height: 50,
-                                width: 50,
-                                icon: "assets/icons/dcrReport.png",
-                                onClick: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>  VisitReportPage(),
-                                    ),
-                                  );
-                                  await  getNotice();
-                                  //Fluttertoast.showToast(msg: notice);
-                                },
-                                title: buttonNames?.get('dcr_report') == "" ? "Visit Report" : buttonNames?.get('dcr_report') ?? 'Visit Report',
-                                sizeWidth: screenWidth,
-                                //inputColor: Colors.white,
-                                inputColor: const Color(0xff56CCF2).withOpacity(.3),
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  )
+                      )
                       : Container(),
-                  dcrFlag
-                      ? const SizedBox(height: 10,)
-                      : const SizedBox.shrink(),
-
-
-
+                  dcrFlag ? const SizedBox(height: 10) : const SizedBox.shrink(),
 
                   ///*********************************** Patient Call & Board Meeting, Reports *************************************************///
                   patientCallBoardMeeting
-                      ?
-                  Container(
-                    height: screenHeight / 7,
-                    decoration: BoxDecoration(
-                        //color: const Color(0xFFDDE0F7),
-                        color: const Color(0xFFDDE0F7),
-                        borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
+                      ? Container(
+                        height: screenHeight / 7,
+                        decoration: BoxDecoration(
+                          //color: const Color(0xFFDDE0F7),
+                          color: const Color(0xFFDDE0F7),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Row(
+                            Column(
                               children: [
-                                Expanded(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                      width: screenWidth,
-                                      height: MediaQuery.of(context).size.height / 8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6),
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            await Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) => PatientCallBoardMeeting(),
-                                            ));
-                                            await  getNotice();
-                                          },
-                                          label: const Text(
-                                            //buttonNames?.get('plug_in_reports') == " " ? 'Patient Call & Board Meeting' : buttonNames?.get('plug_in_reports') ?? 'Patient Call & Board Meeting',
-                                            'Patient Call & Board Meeting',
-                                            style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.phone_android_sharp,
-                                            color: Color.fromARGB(255, 27, 56, 34),
-                                            size: 28,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        elevation: 5,
+                                        child: Container(
+                                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                          width: screenWidth,
+                                          height: MediaQuery.of(context).size.height / 8,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(6),
+                                            child: TextButton.icon(
+                                              onPressed: () async {
+                                                await Navigator.of(context).push(MaterialPageRoute(builder: (context) => PatientCallBoardMeeting()));
+                                                await getNotice();
+                                              },
+                                              label: const Text(
+                                                //buttonNames?.get('plug_in_reports') == " " ? 'Patient Call & Board Meeting' : buttonNames?.get('plug_in_reports') ?? 'Patient Call & Board Meeting',
+                                                'Patient Call & Board Meeting',
+                                                style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
+                                              ),
+                                              icon: const Icon(Icons.phone_android_sharp, color: Color.fromARGB(255, 27, 56, 34), size: 28),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                      width: screenWidth,
-                                      height: MediaQuery.of(context).size.height / 8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            await Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) =>  BoardMeetingReport(),
-                                            ));
-                                             await  getNotice();
-                                          },
-                                          label: const Text(
-                                            //buttonNames?.get('activity_log') == "" ? 'Report' : buttonNames?.get('activity_log') ?? 'Report',
-                                            'Report',
-                                            style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
-                                          ),
-                                          icon: const Icon(
-                                           //Icons.fact_check_outlined,
-                                            //Icons.note_alt_outlined,
-                                            //Icons.event_note_outlined,
-                                            Icons.note_alt,
-                                            color: Color.fromARGB(255, 27, 56, 34),
-                                            size: 28,
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        elevation: 5,
+                                        child: Container(
+                                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                          width: screenWidth,
+                                          height: MediaQuery.of(context).size.height / 8,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: TextButton.icon(
+                                              onPressed: () async {
+                                                await Navigator.of(context).push(MaterialPageRoute(builder: (context) => BoardMeetingReport()));
+                                                await getNotice();
+                                              },
+                                              label: const Text(
+                                                //buttonNames?.get('activity_log') == "" ? 'Report' : buttonNames?.get('activity_log') ?? 'Report',
+                                                'Report',
+                                                style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
+                                              ),
+                                              icon: const Icon(
+                                                //Icons.fact_check_outlined,
+                                                //Icons.note_alt_outlined,
+                                                //Icons.event_note_outlined,
+                                                Icons.note_alt,
+                                                color: Color.fromARGB(255, 27, 56, 34),
+                                                size: 28,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  )
+                      )
                       : Container(),
-                  patientCallBoardMeeting == true
-                      ? const SizedBox(height: 10,)
-                      : const SizedBox.shrink(),
-
-
+                  patientCallBoardMeeting == true ? const SizedBox(height: 10) : const SizedBox.shrink(),
 
                   ///*********************************** Exam & Result *************************************************///
                   examFlag
-                      ?
-                  Container(
-                    height: screenHeight / 7,
-                    decoration: BoxDecoration(
-                        //color: const Color(0xFFDDEBF7),
-                        color: const Color(0xFFE2EFDA),
-                        borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
+                      ? Container(
+                        height: screenHeight / 7,
+                        decoration: BoxDecoration(
+                          //color: const Color(0xFFDDEBF7),
+                          color: const Color(0xFFE2EFDA),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Row(
+                            Column(
                               children: [
-                                Expanded(
-                                  child: Stack(
-                                    children: [
-                                      Card(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                      elevation: 5,
-                                      child: Container(
-                                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                        width: screenWidth,
-                                        height: MediaQuery.of(context).size.height / 8,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6),
-                                          child: TextButton.icon(
-                                            onPressed: () async {
-                                              await Navigator.of(context).push(MaterialPageRoute(
-                                                builder: (context) =>  const ExamPage(),
-                                              ));
-                                              await  getNotice();
-                                            },
-                                            label: const Text(
-                                              //buttonNames?.get('plug_in_reports') == " " ? 'Exam' : buttonNames?.get('plug_in_reports') ?? 'Exam',
-                                              'Exam',
-                                              style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Stack(
+                                        children: [
+                                          Card(
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                            elevation: 5,
+                                            child: Container(
+                                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                              width: screenWidth,
+                                              height: MediaQuery.of(context).size.height / 8,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(6),
+                                                child: TextButton.icon(
+                                                  onPressed: () async {
+                                                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ExamPage()));
+                                                    await getNotice();
+                                                  },
+                                                  label: const Text(
+                                                    //buttonNames?.get('plug_in_reports') == " " ? 'Exam' : buttonNames?.get('plug_in_reports') ?? 'Exam',
+                                                    'Exam',
+                                                    style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
+                                                  ),
+                                                  icon: const Icon(Icons.note_alt_outlined, color: Color.fromARGB(255, 27, 56, 34), size: 28),
+                                                ),
+                                              ),
                                             ),
-                                            icon: const Icon(
-                                              Icons.note_alt_outlined,
-                                              color: Color.fromARGB(255, 27, 56, 34),
-                                              size: 28,
+                                          ),
+                                          examCount == 0 ? Positioned(right: 0, child: Container(height: 35, width: 35, decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)), child: Center(child: Text(examCount, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))))) : const SizedBox.shrink(),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        elevation: 5,
+                                        child: Container(
+                                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                          width: screenWidth,
+                                          height: MediaQuery.of(context).size.height / 8,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: TextButton.icon(
+                                              onPressed: () async {
+                                                await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ExamResultPage()));
+                                                await getNotice();
+                                              },
+                                              label: const Text(
+                                                //buttonNames?.get('activity_log') == "" ? 'Result' : buttonNames?.get('activity_log') ?? 'Result',
+                                                'Result',
+                                                style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
+                                              ),
+                                              icon: const Icon(
+                                                Icons.fact_check_outlined,
+                                                //Icons.note_alt_outlined,
+                                                //Icons.event_note_outlined,
+                                                //Icons.note_alt,
+                                                color: Color.fromARGB(255, 27, 56, 34),
+                                                size: 28,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                      examCount==0 ? Positioned(
-                                          right: 0,
-                                          child: Container(
-                                            height: 35,
-                                            width: 35,
-                                            decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)),
-                                            child: Center(
-                                                child: Text(
-                                                  examCount,
-                                                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                                )),
-                                          )) : const SizedBox.shrink()
-                                    ]
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                      width: screenWidth,
-                                      height: MediaQuery.of(context).size.height / 8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            await Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) => const ExamResultPage(),
-                                            ));
-                                            await  getNotice();
-                                          },
-                                          label: const Text(
-                                            //buttonNames?.get('activity_log') == "" ? 'Result' : buttonNames?.get('activity_log') ?? 'Result',
-                                            'Result',
-                                            style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.fact_check_outlined,
-                                            //Icons.note_alt_outlined,
-                                            //Icons.event_note_outlined,
-                                            //Icons.note_alt,
-                                            color: Color.fromARGB(255, 27, 56, 34),
-                                            size: 28,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  )
+                      )
                       : Container(),
-                  examFlag == true
-                      ? const SizedBox(height: 10,)
-                      : const SizedBox.shrink(),
-
-
-
+                  examFlag == true ? const SizedBox(height: 10) : const SizedBox.shrink(),
 
                   ///*******************************************Expense and Attendance  section ***********************************///
                   // othersFlag
@@ -2068,97 +1764,74 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
                   ///***********************************  Plugg-in & Reports *************************************************///
                   pluginFlag
-                      ?
-                  Container(
-                    height: screenHeight / 7,
-                    decoration: BoxDecoration(color: const Color(0xFFDDEBF7), borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
+                      ? Container(
+                        height: screenHeight / 7,
+                        decoration: BoxDecoration(color: const Color(0xFFDDEBF7), borderRadius: BorderRadius.circular(12)),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Row(
+                            Column(
                               children: [
-                                Expanded(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                      width: screenWidth,
-                                      height: MediaQuery.of(context).size.height / 8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            await Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) => const PlugInReportsPage(),
-                                            ));
-                                            await  getNotice();
-                                            //Fluttertoast.showToast(msg: notice);
-                                          },
-                                          label: Text(
-                                            buttonNames?.get('plug_in_reports') == " " ? 'Plug-in &  Reports' : buttonNames?.get('plug_in_reports') ?? 'Plug-in &  Reports',
-                                            style: const TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.insert_drive_file,
-                                            color: Color.fromARGB(255, 27, 56, 34),
-                                            size: 28,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        elevation: 5,
+                                        child: Container(
+                                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                          width: screenWidth,
+                                          height: MediaQuery.of(context).size.height / 8,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: TextButton.icon(
+                                              onPressed: () async {
+                                                await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlugInReportsPage()));
+                                                await getNotice();
+                                                //Fluttertoast.showToast(msg: notice);
+                                              },
+                                              label: Text(buttonNames?.get('plug_in_reports') == " " ? 'Plug-in &  Reports' : buttonNames?.get('plug_in_reports') ?? 'Plug-in &  Reports', style: const TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500)),
+                                              icon: const Icon(Icons.insert_drive_file, color: Color.fromARGB(255, 27, 56, 34), size: 28),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                      width: screenWidth,
-                                      height: MediaQuery.of(context).size.height / 8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: TextButton.icon(
-                                          onPressed: () async {
-                                            await Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) => ActivityLog(),
-                                            ));
-                                            await  getNotice();
-                                            //Fluttertoast.showToast(msg: notice);
-                                          },
-                                          label: Text(
-                                            buttonNames?.get('activity_log') == "" ? 'Activity Log' : buttonNames?.get('activity_log') ?? 'Activity Log',
-                                            style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.local_activity_rounded,
-                                            color: Color.fromARGB(255, 27, 56, 34),
-                                            size: 28,
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        elevation: 5,
+                                        child: Container(
+                                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                          width: screenWidth,
+                                          height: MediaQuery.of(context).size.height / 8,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: TextButton.icon(
+                                              onPressed: () async {
+                                                await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ActivityLog()));
+                                                await getNotice();
+                                                //Fluttertoast.showToast(msg: notice);
+                                              },
+                                              label: Text(buttonNames?.get('activity_log') == "" ? 'Activity Log' : buttonNames?.get('activity_log') ?? 'Activity Log', style: TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500)),
+                                              icon: const Icon(Icons.local_activity_rounded, color: Color.fromARGB(255, 27, 56, 34), size: 28),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  )
+                      )
                       : Container(),
-                  pluginFlag == true
-                      ? const SizedBox(height: 10,)
-                      : const SizedBox.shrink(),
+                  pluginFlag == true ? const SizedBox(height: 10) : const SizedBox.shrink(),
 
                   ///****************************************** Sync Data************************************************///
                   Container(
@@ -2172,54 +1845,32 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                           children: [
                             //==========================================================Notice flag +Notice url will be here====================================
                             notice_flag
-                                ?
-                            Expanded(
-                              child: Stack(
-                                children: [
-                                  customBuildButton(
-                                    icon: Icons.note_alt,
-                                    onClick: () async {
-                                      await Navigator.push(context, MaterialPageRoute(builder: (_) => const NoticeScreen()));
-                                      await  getNotice();
-                                      //Fluttertoast.showToast(msg: notice);
-
-                                    },
-                                    title: buttonNames?.get('notice') == "" ? 'Notice' : buttonNames?.get('notice') ?? 'Notice',
-                                    sizeWidth: screenWidth,
-                                    inputColor: Colors.white,
+                                ? Expanded(
+                                  child: Stack(
+                                    children: [
+                                      customBuildButton(
+                                        icon: Icons.note_alt,
+                                        onClick: () async {
+                                          await Navigator.push(context, MaterialPageRoute(builder: (_) => const NoticeScreen()));
+                                          await getNotice();
+                                          //Fluttertoast.showToast(msg: notice);
+                                        },
+                                        title: buttonNames?.get('notice') == "" ? 'Notice' : buttonNames?.get('notice') ?? 'Notice',
+                                        sizeWidth: screenWidth,
+                                        inputColor: Colors.white,
+                                      ),
+                                      noticeCount.isNotEmpty ? const SizedBox.shrink() : Positioned(right: 0, child: Container(height: 35, width: 35, decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)), child: Center(child: Text(noticeCount, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))))),
+                                    ],
                                   ),
-                                  noticeCount.isNotEmpty? const SizedBox.shrink() : Positioned(
-                                      right: 0,
-                                      child: Container(
-                                        height: 35,
-                                        width: 35,
-                                        decoration: BoxDecoration(color: const Color.fromARGB(135, 2, 160, 68), borderRadius: BorderRadius.circular(15)),
-                                        child: Center(
-                                            child: Text(
-                                              noticeCount,
-                                              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                            )),
-                                      ))
-                                ],
-                              ),
-                            )
+                                )
                                 : const SizedBox.shrink(),
-                            const SizedBox(
-                              width: 5,
-                            ),
+                            const SizedBox(width: 5),
                             Expanded(
                               child: customBuildButton(
                                 icon: Icons.sync,
                                 onClick: () async {
-                                  await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => SyncDataTabScreen(
-                                            cid: cid,
-                                            userId: userId,
-                                            userPassword: userPassword,
-                                          )));
-                                  await  getNotice();
+                                  await Navigator.push(context, MaterialPageRoute(builder: (_) => SyncDataTabScreen(cid: cid, userId: userId, userPassword: userPassword)));
+                                  await getNotice();
                                   //Fluttertoast.showToast(msg: notice);
                                 },
                                 title: buttonNames?.get('sync_data') == "" ? 'Sync Data' : buttonNames?.get('sync_data') ?? 'Sync Data',
@@ -2234,63 +1885,56 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                   ),
 
                   ///*****************************************Check in button****************************************************///
-
-                  check_in_flag == true
-                      ? const SizedBox(height: 10,)
-                      : const SizedBox.shrink(),
+                  check_in_flag == true ? const SizedBox(height: 10) : const SizedBox.shrink(),
                   check_in_flag
                       ? Container(
-                    height: screenHeight / 7,
-                    decoration: BoxDecoration(color: const Color(0xFFDDEBF7), borderRadius: BorderRadius.circular(12)),
-                    width: MediaQuery.of(context).size.width,
-                    child: loading ? const Center(child: CircularProgressIndicator(),) : Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                                      width: screenWidth,
-                                      height: MediaQuery.of(context).size.height / 8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: TextButton.icon(
-                                          onPressed: () async{
-                                            loading = true;
-                                            setState(() {});
-                                            getLatLong();
-                                            await checkInOut_submit(context, 'CHECKIN');
-                                            loading = false;
-                                            setState(() {});
-                                          },
-                                          label: Text(
-                                            buttonNames?.get('check_in') == " " ? 'Check In' : buttonNames?.get('check_in') ?? 'Check In',
-                                            style: const TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500),
-                                          ),
-                                          icon: const Icon(
-                                            Icons.my_location,
-                                            color: Color.fromARGB(255, 27, 56, 34),
-                                            size: 28,
-                                          ),
+                        height: screenHeight / 7,
+                        decoration: BoxDecoration(color: const Color(0xFFDDEBF7), borderRadius: BorderRadius.circular(12)),
+                        width: MediaQuery.of(context).size.width,
+                        child:
+                            loading
+                                ? const Center(child: CircularProgressIndicator())
+                                : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Card(
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                elevation: 5,
+                                                child: Container(
+                                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                                                  width: screenWidth,
+                                                  height: MediaQuery.of(context).size.height / 8,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(10.0),
+                                                    child: TextButton.icon(
+                                                      onPressed: () async {
+                                                        loading = true;
+                                                        setState(() {});
+                                                        getLatLong();
+                                                        await checkInOut_submit(context, 'CHECKIN');
+                                                        loading = false;
+                                                        setState(() {});
+                                                      },
+                                                      label: Text(buttonNames?.get('check_in') == " " ? 'Check In' : buttonNames?.get('check_in') ?? 'Check In', style: const TextStyle(color: Color.fromARGB(255, 29, 67, 78), fontSize: 16, fontWeight: FontWeight.w500)),
+                                                      icon: const Icon(Icons.my_location, color: Color.fromARGB(255, 27, 56, 34), size: 28),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
+                      )
                       : Container(),
                 ],
               ),
@@ -2300,8 +1944,6 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       ),
     );
   }
-
-
 
   getAllCustomarData() async {
     // await openBox();
@@ -2313,17 +1955,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     } else {
       data = mymap;
 
-      await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => CustomerListScreen(
-                terrorId: "",
-                terrorName: '',
-                data: data,
-              )));
+      await Navigator.push(context, MaterialPageRoute(builder: (_) => CustomerListScreen(terrorId: "", terrorName: '', data: data)));
     }
   }
-
 }
-
-

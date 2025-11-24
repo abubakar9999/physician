@@ -13,7 +13,6 @@ import 'core/themes.dart';
 import 'data/datasources/local_storage/hive_data_model.dart';
 import 'data/service/hive_adapter.dart';
 
-
 // String address = "";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -31,8 +30,8 @@ var SameDeviceId;
 //var appVersion = "v-20250728";
 //var appVersion = "v-20250729";
 // var appVersion = "v-20250730";
-var appVersion = "v-20250901";
-
+// var appVersion = "v-20250901";
+var appVersion = "v-20251123";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,7 +50,6 @@ void main() async {
   Hive.registerAdapter(DcrDataModelAdapter());
   Hive.registerAdapter(NoticeListModelAdapter());
 
-
   await Hive.openBox('checkData');
   await Hive.openBox('proDxCusBox');
   await HiveAdapter().HiveAdapterbox();
@@ -64,19 +62,12 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(systemNavigationBarColor: Colors.black));
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(systemNavigationBarColor: Colors.black));
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: GetMaterialApp(
-        navigatorObservers: [routeObserver],
-        debugShowCheckedModeBanner: false,
-        title: 'mRep_v03',
-        theme: defaultTheme,
-        home: SplashScreen(),
-      ),
+      child: GetMaterialApp(navigatorObservers: [routeObserver], debugShowCheckedModeBanner: false, title: 'mRep_v03', theme: defaultTheme, home: SplashScreen()),
     );
   }
 }

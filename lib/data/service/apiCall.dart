@@ -417,6 +417,10 @@ Future attendanceAPI(BuildContext context, String submitType, reportAttendance,
             value: "${background_service.toString()}");
         await _secureStorage.write(key: 'notice_api_hit' , value: 'true');
         //await restartBackgroundService();
+
+
+
+
       } else if (submitType.toString() == 'Approval') {
         databox.put('need_approval', false);
       } else {
