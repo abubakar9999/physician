@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import '../../data/datasources/local_storage/boxes.dart';
@@ -204,10 +206,13 @@ class _DxdrawerState extends State<Dxdrawer> {
                                   isMulti: true,
                                   multiValues: selectedSystems,
                                   onChanged: (joined) {
+                                    log(joined.toString(), name: "abu joined print on change");
                                     setState(() {
                                       final j = (joined as String?) ?? '';
-                                      selectedSystemsText = j;
+                                      // selectedSystemsText = j;
                                       selectedSystems = j.isEmpty ? [] : j.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+                                      selectedSystemsText = selectedSystems.map((e) => e.trim()).where((e) => e.isNotEmpty).join("||");
+                                      log(selectedSystemsText, name: "abu totol final strint");
 
                                       dxDataMap['system_name'] = selectedSystemsText;
                                       dxDataMap['system_name_list'] = selectedSystems;
@@ -234,7 +239,10 @@ class _DxdrawerState extends State<Dxdrawer> {
                                 onChanged: (joinedString) {
                                   setState(() {
                                     selectedDiseasesText = joinedString ?? '';
+
                                     selectedDiseases = selectedDiseasesText.isEmpty ? [] : selectedDiseasesText.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+                                    selectedDiseasesText = selectedDiseases.map((e) => e.trim()).where((e) => e.isNotEmpty).join("||");
+                                    log(selectedDiseasesText, name: 'roman:');
 
                                     dxDataMap['diseases'] = selectedDiseasesText;
                                     dxDataMap['diseases_list'] = selectedDiseases;
@@ -257,6 +265,9 @@ class _DxdrawerState extends State<Dxdrawer> {
                                     selectedPatientTemperamentsText = j;
                                     selectedPatientTemperaments = j.isEmpty ? [] : j.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
 
+                                    selectedPatientTemperamentsText = selectedPatientTemperaments.map((e) => e.trim()).where((e) => e.isNotEmpty).join("||");
+                                    log(selectedPatientTemperamentsText, name: "roman:");
+
                                     // save to dxDataMap as text and as list
                                     dxDataMap['temperament'] = selectedPatientTemperamentsText;
                                     dxDataMap['temperament_list'] = selectedPatientTemperaments;
@@ -274,6 +285,7 @@ class _DxdrawerState extends State<Dxdrawer> {
                                   Expanded(
                                     child: DiagnosisInputField(
                                       controller: beforeDiabetesController,
+                                      keyboardType: TextInputType.number,
                                       hint: 'Before',
                                       onchange: (v) {
                                         dxDataMap["beforeDiabetes"] = v;
@@ -284,6 +296,7 @@ class _DxdrawerState extends State<Dxdrawer> {
                                   Expanded(
                                     child: DiagnosisInputField(
                                       controller: afterDiabetesController,
+                                      keyboardType: TextInputType.number,
                                       hint: 'After',
                                       onchange: (v) {
                                         dxDataMap["afterDiabetes"] = v;
@@ -628,7 +641,9 @@ class DiagnosisDropdown extends StatelessWidget {
     );
 
     if (result != null) {
+      log(result.toString(), name: "Abu  result print");
       final joined = result.map((e) => e.trim()).where((e) => e.isNotEmpty).join(', ');
+      log(joined.toString(), name: "abu joined print");
       onChanged(joined); // send joined string
     }
   }

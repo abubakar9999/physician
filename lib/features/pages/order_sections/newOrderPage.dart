@@ -44,24 +44,7 @@ class NewOrderPage extends StatefulWidget {
   String areaName;
 
   List<AddItemModel> draftOrderItem;
-  NewOrderPage({
-    Key? key,
-    required this.ckey,
-    required this.uniqueId,
-    required this.draftOrderItem,
-    required this.clientName,
-    required this.clientId,
-    this.outStanding,
-    required this.deliveryDate,
-    required this.collectionDate,
-    required this.deliveryTime,
-    required this.paymentMethod,
-    this.offer,
-    this.note,
-    required this.marketName,
-    required this.areaId,
-    required this.areaName,
-  }) : super(key: key);
+  NewOrderPage({Key? key, required this.ckey, required this.uniqueId, required this.draftOrderItem, required this.clientName, required this.clientId, this.outStanding, required this.deliveryDate, required this.collectionDate, required this.deliveryTime, required this.paymentMethod, this.offer, this.note, required this.marketName, required this.areaId, required this.areaName}) : super(key: key);
 
   @override
   State<NewOrderPage> createState() => _NewOrderPageState();
@@ -77,8 +60,7 @@ class _NewOrderPageState extends State<NewOrderPage> {
   final _quantityController = TextEditingController();
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   String selectedDeliveryDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String selectedCollectionDate =
-  DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String selectedCollectionDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   String userName = '';
   String user_id = '';
@@ -145,13 +127,14 @@ class _NewOrderPageState extends State<NewOrderPage> {
   bool _isLoading = true;
   var formatter = NumberFormat.currency(
     // locale: "",
-      decimalDigits: 2,
-      symbol: "");
+    decimalDigits: 2,
+    symbol: "",
+  );
   final databox = Boxes.allData();
 
   @override
   void initState() {
-    super.initState();   // WidgetsBinding.instance.addPostFrameCallback((_) {
+    super.initState(); // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   debugPrint("Rebuilding...3");
     //
     //   final RenderBox renderBox =
@@ -239,18 +222,20 @@ class _NewOrderPageState extends State<NewOrderPage> {
 
   getLatLong() {
     Future<Position> data = AllServices().determinePosition();
-    data.then((value) {
-      // debugPrint("value $value");
-      setState(() {
-        latitude = value.latitude;
-        longitude = value.longitude;
+    data
+        .then((value) {
+          // debugPrint("value $value");
+          setState(() {
+            latitude = value.latitude;
+            longitude = value.longitude;
 
-        databox.put("latitude", latitude);
-        databox.put("longitude", longitude);
-      });
-    }).catchError((error) {
-      // debugPrint("Error $error");
-    });
+            databox.put("latitude", latitude);
+            databox.put("longitude", longitude);
+          });
+        })
+        .catchError((error) {
+          // debugPrint("Error $error");
+        });
   }
 
   initialValue(String val) {
@@ -269,19 +254,10 @@ class _NewOrderPageState extends State<NewOrderPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Please Confirm'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: const <Widget>[
-                Text('Are you sure to remove the Item?'),
-              ],
-            ),
-          ),
+          content: SingleChildScrollView(child: Column(children: const <Widget>[Text('Are you sure to remove the Item?')])),
           actions: <Widget>[
             TextButton(
-              child: const Text(
-                'Confirm',
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Confirm', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 if (widget.deliveryDate != '') {
                   final uniqueKey = widget.ckey;
@@ -299,10 +275,7 @@ class _NewOrderPageState extends State<NewOrderPage> {
               },
             ),
             TextButton(
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.green),
-              ),
+              child: const Text('Cancel', style: TextStyle(color: Colors.green)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -347,951 +320,574 @@ class _NewOrderPageState extends State<NewOrderPage> {
     //   });
     // });
     // debugPrint("Rebuilding...4");
-print('is loading:$_isLoading');
+    print('is loading:$_isLoading');
 
     return _isLoading
         ? Scaffold(
-      key: _drawerKey,
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 138, 201, 149),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            )),
-        title: Text(
-          'Order Cart',
-        ),
-        titleTextStyle: const TextStyle(
-            color: Color.fromARGB(255, 27, 56, 34),
-            fontWeight: FontWeight.w500,
-            fontSize: 20),
-        centerTitle: true,
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              padding: const EdgeInsets.fromLTRB(16, 15, 16, 15),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 138, 201, 149),
-              ),
-              child: Column(
-                children: [
-
-                  // logo_url_2 != null ?  CachedNetworkImage(
-                  //   height: screenHeight*.11,
-                  //   imageUrl: logo_url_2!,
-                  //   errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
-                  // )
-                  //     : Image.asset("assets/images/mRep7_logo.png"),
-                  // Image.asset('assets/images/mRep7_logo.png'),
-                  Image.asset('assets/images/c_logo_1.png',fit: BoxFit.contain,height: screenHeight*.075,),
-                  SizedBox(height: 8,),
-                  Expanded(
-                    child: FittedBox(
-                      child: Text(
-                        widget.clientName,
-                        // 'Chemist: ADEE MEDICINE CORNER(6777724244)',
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 11, 22, 13),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(widget.clientId,
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 11, 22, 13),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15)),
-                  )
-                ],
-              ),
+          key: _drawerKey,
+          appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 138, 201, 149),
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
-            // ListTile(
-            //   leading:
-            //       const Icon(Icons.sync_outlined, color: Colors.black),
-            //   title: const Text('Outstanding'),
-            //   onTap: () {},
-            // ),
-            // ListTile(
-            //   leading: const Icon(Icons.document_scanner_outlined,
-            //       color: Colors.black),
-            //   title: const Text('Report'),
-            //   onTap: () {
-            //     // Update the state of the app.
-            //   },
-            // ),
-            // const Center(child: Text("SHOW OUTSTANDING")),
-            // const SizedBox(
-            //   height: 200,
-            // ),
-
-            SizedBox(
-              height: 80,
-              child: Center(
-                child: Text(
-                  resultofOuts,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ),
-            ),
-            os_show_flag == true
-                ? Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  var body = await outstanding(widget.clientId);
-                  if (body["outstanding"] == "") {
-                    resultofOuts = "No Outstanding";
-                  } else {
-                    if (body["outstanding"] != 0) {
-                      resultofOuts = body["outstanding"]
-                          .replaceAll(", ", "\n")
-                          .toString();
-                    } else {
-                      resultofOuts = body["outstanding"].toString();
-                    }
-                  }
-
-                  setState(() {});
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  "Show Outstanding",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            )
-                : Container(),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  //  var url ='https://ww11.yeapps.com/ipi_report/api_client_outstanding_report/client_outstanding_report?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
-                  // var url =
-                  //     '$repOutsUrl?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
-
-                  // if (await canLaunch(url)) {
-                  //   await launch(url);
-                  // } else {
-                  //   throw 'Could not launch $url';
-                  // }
-                  // setState(() {});
-
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => OutstandingPage(
-                      clientId: widget.clientId,
-                    ),
-                  ));
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  "Outstanding",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // var url =
-                  //     '$repLastInvUrl?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
-                  // //  var url= 'http://w05.yeapps.com/ipi_report/api_client_invoice_report/client_invoice_report?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
-                  // if (await canLaunch(url)) {
-                  //   await launch(url);
-                  // } else {
-                  //   throw 'Could not launch $url';
-                  // }
-                  // setState(() {});
-
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => LastInvoicePage(
-                      clientId: widget.clientId,
-                    ),
-                  ));
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  "Last Invoice",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                  //  var url ='http://w05.yeapps.com/ipi_report/api_client_order_report/client_order_report?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
-
-                  // var url =
-                  //     '$repLastOrdUrl?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
-                  // if (await canLaunch(url)) {
-                  //   await launch(url);
-                  // } else {
-                  //   throw 'Could not launch $url';
-                  // }
-                  // setState(() {});
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => LastOrderPage(
-                      clientId: widget.clientId,
-                    ),
-                  ));
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  "Last Order",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-
-            // widget.os_details_flag == true
-            //     ? Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: ElevatedButton(
-            //           onPressed: () {
-            //             setState(() {
-            //               Navigator.push(
-            //                   context,
-            //                   MaterialPageRoute(
-            //                       builder: (context) =>
-            //                           const OutStandingHistory()));
-            //             });
-            //           },
-            //           child: const Text("Show Outstanding Details"),
-            //           style: ElevatedButton.styleFrom(
-            //             fixedSize: const Size(20, 50),
-            //             primary: Color.fromARGB(255, 55, 129, 167),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(15),
-            //             ),
-            //           ),
-            //         ),
-            //       )
-            //     : Container(),
-
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Row(children: [
-            //     widget.ord_history_flag == true
-            //         ? Expanded(
-            //             child: ElevatedButton(
-            //               onPressed: () {
-            //                 setState(() {
-            //                   Navigator.push(
-            //                       context,
-            //                       MaterialPageRoute(
-            //                           builder: (context) =>
-            //                               const OrderHistory()));
-            //                 });
-            //               },
-            //               child: const Text("Order History"),
-            //               style: ElevatedButton.styleFrom(
-            //                 fixedSize: const Size(20, 50),
-            //                 primary: Color.fromARGB(255, 55, 129, 167),
-            //                 shape: RoundedRectangleBorder(
-            //                   borderRadius: BorderRadius.circular(15),
-            //                 ),
-            //               ),
-            //             ),
-            //           )
-            //         : Container(),
-            //     const SizedBox(
-            //       width: 10,
-            //     ),
-            //     widget.inv_histroy_flag == true
-            //         ? Expanded(
-            //             child: ElevatedButton(
-            //               onPressed: () {
-            //                 setState(() {
-            //                   Navigator.push(
-            //                       context,
-            //                       MaterialPageRoute(
-            //                           builder: (context) =>
-            //                               const InvoiceHistory()));
-            //                 });
-            //               },
-            //               child: const Text("Invoice History"),
-            //               style: ElevatedButton.styleFrom(
-            //                 fixedSize: const Size(20, 50),
-            //                 primary: Color.fromARGB(255, 55, 129, 167),
-            //                 shape: RoundedRectangleBorder(
-            //                   borderRadius: BorderRadius.circular(15),
-            //                 ),
-            //               ),
-            //             ),
-            //           )
-            //         : Container(),
-            //   ]),
-            // )
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              width: screenWidth,
-              height: screenHeight / 10,
-              color: const Color.fromARGB(223, 171, 241, 153),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: FittedBox(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${widget.clientName}(${widget.clientId})',
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 23, 41, 23),
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.marketName,
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 26, 66, 28),
-                            fontSize: 16),
-                      ),
-                    ),
-                    FittedBox(
-                      child: Text(
-                        '${widget.areaName} | ${widget.areaId}',
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 23, 41, 23),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              color: const Color(0xFFDDEBF7),
-              elevation: 5,
-              child: SizedBox(
-                // height: screenHeight / 9,
-                height: 100,
-
-                width: screenWidth,
-
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
+            title: Text('Order Cart'),
+            titleTextStyle: const TextStyle(color: Color.fromARGB(255, 27, 56, 34), fontWeight: FontWeight.w500, fontSize: 20),
+            centerTitle: true,
+          ),
+          endDrawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                DrawerHeader(
+                  padding: const EdgeInsets.fromLTRB(16, 15, 16, 15),
+                  decoration: const BoxDecoration(color: Color.fromARGB(255, 138, 201, 149)),
                   child: Column(
                     children: [
+                      // logo_url_2 != null ?  CachedNetworkImage(
+                      //   height: screenHeight*.11,
+                      //   imageUrl: logo_url_2!,
+                      //   errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
+                      // )
+                      //     : Image.asset("assets/images/mRep7_logo.png"),
+                      // Image.asset('assets/images/mRep7_logo.png'),
+                      Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain, height: screenHeight * .075),
+                      SizedBox(height: 8),
                       Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Count:  ${finalItemDataList.length} ',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Order value: ${formatter.format(totalAmount)}',
-                                style: const TextStyle(fontSize: 17),
-                              ),
-                            ),
-                            offer_flag == true
-                                ? Expanded(
-                              flex: 2,
-                              child: SizedBox(
-                                // width: 220,
-                                child: Center(
-                                  child: DropdownButton<String>(
-                                    value: initialOffer,
-                                    items: offer
-                                        .map(
-                                          (String item) =>
-                                          DropdownMenuItem<
-                                              String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style:
-                                              const TextStyle(
-                                                  fontSize:
-                                                  15),
-                                            ),
-                                          ),
-                                    )
-                                        .toList(),
-                                    onChanged: (item) => setState(
-                                          () {
-                                        initialOffer =
-                                            item.toString();
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 06.0),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: SizedBox(
-                                child: TextField(
-                                  autofocus: false,
-                                  controller: initialValue(
-                                      selectedDeliveryDate),
-                                  focusNode: AlwaysDisabledFocusNode(),
-                                  style: const TextStyle(
-                                      color: Colors.black),
-                                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    hintText: 'Start Date',
-                                    contentPadding:
-                                    const EdgeInsets.all(2.0),
-                                    labelText: "Delivery",
-                                    labelStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0,
-                                        color: Colors.black,
-                                        overflow:
-                                        TextOverflow.ellipsis),
-                                    border: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(5.0),
-                                    ),
-                                  ),
-                                  onChanged: (String value) {
-                                    setState(() {});
-                                    selectedDeliveryDate = value;
-                                    //dateSelected;
-                                  },
-                                  onTap: () async {
-                                    DateTime? pickedDate =
-                                    await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.parse(
-                                          DateFormat('yyyy-MM-dd')
-                                              .parse(
-                                              selectedDeliveryDate)
-                                              .toString()),
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime(
-                                          DateTime.now().year + 1),
-                                    );
-
-                                    if (pickedDate != null) {
-                                      setState(() {
-                                        selectedDeliveryDate =
-                                            DateFormat('yyyy-MM-dd')
-                                                .format(pickedDate);
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: SizedBox(
-                                // width: 220,
-                                child: Center(
-                                  child: DropdownButton<String>(
-                                    value: selectedDeliveryTime,
-                                    items: deliveryTime
-                                        .map(
-                                          (String item) =>
-                                          DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                  fontSize: 15),
-                                            ),
-                                          ),
-                                    )
-                                        .toList(),
-                                    onChanged: (item) => setState(
-                                          () {
-                                        selectedDeliveryTime =
-                                            item.toString();
-
-                                        print(
-                                            "-----------------$selectedDeliveryTime");
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: SizedBox(
-                                // width: 220,
-                                child: Center(
-                                  child: DropdownButton<String>(
-                                    value: slectedPayMethod,
-                                    items: payMethod
-                                        .map(
-                                          (String item) =>
-                                          DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                    )
-                                        .toList(),
-                                    onChanged: (item) => setState(
-                                          () {
-                                        slectedPayMethod =
-                                            item.toString();
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            if (cid.toString().toUpperCase() ==
-                                'BIOPHARMA')
-                              Expanded(
-                                flex: 3,
-                                child: SizedBox(
-                                  child: TextField(
-                                    autofocus: false,
-                                    controller: initialValue(
-                                        selectedCollectionDate),
-                                    focusNode:
-                                    AlwaysDisabledFocusNode(),
-                                    style: const TextStyle(
-                                        color: Colors.black),
-                                    textAlign: TextAlign.center,
-                                    decoration: InputDecoration(
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      hintText: 'Start Date',
-                                      contentPadding:
-                                      const EdgeInsets.all(2.0),
-                                      labelText: "Collection",
-                                      labelStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18.0,
-                                          color: Colors.black,
-                                          overflow:
-                                          TextOverflow.ellipsis),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(5.0),
-                                      ),
-                                    ),
-                                    onChanged: (String value) {
-                                      setState(() {});
-                                      selectedCollectionDate = value;
-                                      //dateSelected;
-                                    },
-                                    onTap: () async {
-                                      DateTime? pickedDate =
-                                      await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.parse(
-                                            DateFormat('yyyy-MM-dd')
-                                                .parse(
-                                                selectedCollectionDate)
-                                                .toString()),
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(
-                                            DateTime.now().year + 1),
-                                      );
-
-                                      if (pickedDate != null) {
-                                        setState(() {
-                                          selectedCollectionDate =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(pickedDate);
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 06.0),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            ///*************************************** Note ***********************************************/
-            note_flag == true
-                ? Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: SizedBox(
-                // height: 55,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color:
-                    const Color.fromARGB(255, 138, 201, 149)
-                        .withOpacity(.5),
-                  ),
-                  // elevation: 6,
-
-                  child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.done,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'[a-zA-Z0-9 ]')),
-                    ],
-                    style: const TextStyle(
-                        fontSize: 18, color: Colors.black),
-                    controller: noteController
-                      ..addListener(() {
-                        setState(() {
-                          noteText = noteController.text;
-                        });
-                      }),
-                    minLines: 1,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none),
-                        labelText: '  Notes...',
-                        labelStyle:
-                        TextStyle(color: Colors.blueGrey)),
-                    onChanged: (value) {
-                      // noteText = (noteController.text).replaceAll(
-                      //     RegExp('[^A-Za-z0-9]'), " ");
-                      noteText = value.toString();
-                    },
-                  ),
-                ),
-              ),
-            )
-                : Container(),
-            Expanded(
-              child: SizedBox(
-                // height: screenHeight / 1.7,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: finalItemDataList.length,
-                  physics: const BouncingScrollPhysics(),
-                  // padding:
-                  // EdgeInsets.only(bottom: 1 + 20),
-                  itemBuilder: (BuildContext itemBuilder, index) {
-                    // _itemController.add(TextEditingController());
-
-                    // _itemController[index].text =
-                    //     finalItemDataList[index].quantity.toString();
-                    return Card(
-                      elevation: 15,
-                      color: const Color.fromARGB(255, 222, 233, 243),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                            color: Colors.white70, width: 1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        height: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 10,
-                                    child: Text(
-                                      finalItemDataList[index].item_name,
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      _showMyDialog(index);
-                                    },
-                                    icon: const Icon(
-                                      Icons.clear,
-                                      size: 20,
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(15.0),
-                                  ),
-                                  color: const Color.fromARGB(
-                                      255, 200, 250, 207),
-                                  elevation: 2,
-                                  child: Row(
-                                    children: const [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            'QTY',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            'TP',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            'Vat',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            'Total',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      // flex: 2,
-                                      child: Padding(
-                                        padding:
-                                        const EdgeInsets.fromLTRB(
-                                            8, 0, 8, 0),
-                                        child: Container(
-                                          color: const Color.fromARGB(
-                                              255, 138, 201, 149)
-                                              .withOpacity(.3),
-                                          child: TextFormField(
-                                            textAlign: TextAlign.center,
-                                            controller: controllers[
-                                            finalItemDataList[index]
-                                                .item_id],
-
-                                            keyboardType:
-                                            TextInputType.number,
-                                            // focusNode: FocusNode(),
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15,
-                                            ),
-                                            decoration:
-                                            const InputDecoration(
-                                              border:
-                                              OutlineInputBorder(),
-                                            ),
-
-                                            inputFormatters: [
-                                              LengthLimitingTextInputFormatter(7),
-                                            ],
-
-
-                                            onChanged: (value) {
-                                              // _itemController[index].clear();
-                                              finalItemDataList[index]
-                                                  .quantity = controllers[
-                                              finalItemDataList[
-                                              index]
-                                                  .item_id]
-                                                  ?.text !=
-                                                  ''
-                                                  ? int.parse(controllers[
-                                              finalItemDataList[
-                                              index]
-                                                  .item_id]!
-                                                  .text)
-                                                  : 0;
-
-                                              ordertotalAmount();
-                                              // setState(() {});
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Center(
-                                        child: Text(
-                                          '${finalItemDataList[index].tp}',
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Center(
-                                        child: Text(
-                                          '${finalItemDataList[index].vat}',
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Center(
-                                        child: Text(
-                                          formatter.format(totalCount(
-                                              finalItemDataList[index])),
-                                          // totalCount(finalItemDataList[
-                                          //         index])
-                                          //     .toStringAsFixed(2),
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
+                        child: FittedBox(
+                          child: Text(
+                            widget.clientName,
+                            // 'Chemist: ADEE MEDICINE CORNER(6777724244)',
+                            style: const TextStyle(color: Color.fromARGB(255, 11, 22, 13), fontWeight: FontWeight.w500, fontSize: 20),
                           ),
                         ),
                       ),
-                    );
-                  },
+                      Expanded(child: Text(widget.clientId, style: const TextStyle(color: Color.fromARGB(255, 11, 22, 13), fontWeight: FontWeight.w500, fontSize: 15))),
+                    ],
+                  ),
                 ),
-              ),
+
+                // ListTile(
+                //   leading:
+                //       const Icon(Icons.sync_outlined, color: Colors.black),
+                //   title: const Text('Outstanding'),
+                //   onTap: () {},
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.document_scanner_outlined,
+                //       color: Colors.black),
+                //   title: const Text('Report'),
+                //   onTap: () {
+                //     // Update the state of the app.
+                //   },
+                // ),
+                // const Center(child: Text("SHOW OUTSTANDING")),
+                // const SizedBox(
+                //   height: 200,
+                // ),
+                SizedBox(height: 80, child: Center(child: Text(resultofOuts, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)))),
+                os_show_flag == true
+                    ? Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          var body = await outstanding(widget.clientId);
+                          if (body["outstanding"] == "") {
+                            resultofOuts = "No Outstanding";
+                          } else {
+                            if (body["outstanding"] != 0) {
+                              resultofOuts = body["outstanding"].replaceAll(", ", "\n").toString();
+                            } else {
+                              resultofOuts = body["outstanding"].toString();
+                            }
+                          }
+
+                          setState(() {});
+                        },
+                        style: ElevatedButton.styleFrom(foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                        child: const Text("Show Outstanding", style: TextStyle(fontSize: 16)),
+                      ),
+                    )
+                    : Container(),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      //  var url ='https://ww11.yeapps.com/ipi_report/api_client_outstanding_report/client_outstanding_report?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
+                      // var url =
+                      //     '$repOutsUrl?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
+
+                      // if (await canLaunch(url)) {
+                      //   await launch(url);
+                      // } else {
+                      //   throw 'Could not launch $url';
+                      // }
+                      // setState(() {});
+
+                      Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => OutstandingPage(clientId: widget.clientId)));
+                    },
+                    style: ElevatedButton.styleFrom(foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                    child: const Text("Outstanding", style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // var url =
+                      //     '$repLastInvUrl?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
+                      // //  var url= 'http://w05.yeapps.com/ipi_report/api_client_invoice_report/client_invoice_report?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
+                      // if (await canLaunch(url)) {
+                      //   await launch(url);
+                      // } else {
+                      //   throw 'Could not launch $url';
+                      // }
+                      // setState(() {});
+
+                      Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LastInvoicePage(clientId: widget.clientId)));
+                    },
+                    style: ElevatedButton.styleFrom(foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                    child: const Text("Last Invoice", style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      //  var url ='http://w05.yeapps.com/ipi_report/api_client_order_report/client_order_report?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
+
+                      // var url =
+                      //     '$repLastOrdUrl?cid=$cid&rep_id=$userId&rep_pass=$userPassword&client_id=${widget.clientId}';
+                      // if (await canLaunch(url)) {
+                      //   await launch(url);
+                      // } else {
+                      //   throw 'Could not launch $url';
+                      // }
+                      // setState(() {});
+                      Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => LastOrderPage(clientId: widget.clientId)));
+                    },
+                    style: ElevatedButton.styleFrom(foregroundColor: const Color.fromARGB(255, 27, 43, 23), backgroundColor: const Color.fromARGB(223, 146, 212, 157), fixedSize: const Size(20, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                    child: const Text("Last Order", style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+
+                // widget.os_details_flag == true
+                //     ? Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: ElevatedButton(
+                //           onPressed: () {
+                //             setState(() {
+                //               Navigator.push(
+                //                   context,
+                //                   MaterialPageRoute(
+                //                       builder: (context) =>
+                //                           const OutStandingHistory()));
+                //             });
+                //           },
+                //           child: const Text("Show Outstanding Details"),
+                //           style: ElevatedButton.styleFrom(
+                //             fixedSize: const Size(20, 50),
+                //             primary: Color.fromARGB(255, 55, 129, 167),
+                //             shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(15),
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     : Container(),
+
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Row(children: [
+                //     widget.ord_history_flag == true
+                //         ? Expanded(
+                //             child: ElevatedButton(
+                //               onPressed: () {
+                //                 setState(() {
+                //                   Navigator.push(
+                //                       context,
+                //                       MaterialPageRoute(
+                //                           builder: (context) =>
+                //                               const OrderHistory()));
+                //                 });
+                //               },
+                //               child: const Text("Order History"),
+                //               style: ElevatedButton.styleFrom(
+                //                 fixedSize: const Size(20, 50),
+                //                 primary: Color.fromARGB(255, 55, 129, 167),
+                //                 shape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(15),
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+                //         : Container(),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                //     widget.inv_histroy_flag == true
+                //         ? Expanded(
+                //             child: ElevatedButton(
+                //               onPressed: () {
+                //                 setState(() {
+                //                   Navigator.push(
+                //                       context,
+                //                       MaterialPageRoute(
+                //                           builder: (context) =>
+                //                               const InvoiceHistory()));
+                //                 });
+                //               },
+                //               child: const Text("Invoice History"),
+                //               style: ElevatedButton.styleFrom(
+                //                 fixedSize: const Size(20, 50),
+                //                 primary: Color.fromARGB(255, 55, 129, 167),
+                //                 shape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(15),
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+                //         : Container(),
+                //   ]),
+                // )
+              ],
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        key: _bottomNavBarKey,
-        type: BottomNavigationBarType.fixed,
-        onTap: _onItemTapped,
-        currentIndex: _currentSelected,
-        showUnselectedLabels: true,
-        unselectedItemColor: Colors.grey[800],
-        selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            label: 'Save Drafts',
-            icon: Icon(Icons.drafts),
           ),
-          BottomNavigationBarItem(
-            label: 'Submit',
-            icon: Icon(Icons.save),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Container(
+                  width: screenWidth,
+                  height: screenHeight / 10,
+                  color: const Color.fromARGB(223, 171, 241, 153),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: FittedBox(alignment: Alignment.centerLeft, child: Text('${widget.clientName}(${widget.clientId})', style: const TextStyle(color: Color.fromARGB(255, 23, 41, 23), fontSize: 17, fontWeight: FontWeight.bold)))),
+                        Expanded(child: Text(widget.marketName, style: const TextStyle(color: Color.fromARGB(255, 26, 66, 28), fontSize: 16))),
+                        FittedBox(child: Text('${widget.areaName} | ${widget.areaId}', style: const TextStyle(color: Color.fromARGB(255, 23, 41, 23), fontSize: 14.0, fontWeight: FontWeight.w500))),
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  color: const Color(0xFFDDEBF7),
+                  elevation: 5,
+                  child: SizedBox(
+                    // height: screenHeight / 9,
+                    height: 100,
+
+                    width: screenWidth,
+
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(flex: 3, child: Text('Count:  ${finalItemDataList.length} ', style: const TextStyle(fontSize: 16))),
+                                Expanded(flex: 4, child: Text('Order value: ${formatter.format(totalAmount)}', style: const TextStyle(fontSize: 17))),
+                                offer_flag == true
+                                    ? Expanded(
+                                      flex: 2,
+                                      child: SizedBox(
+                                        // width: 220,
+                                        child: Center(
+                                          child: DropdownButton<String>(
+                                            value: initialOffer,
+                                            items: offer.map((String item) => DropdownMenuItem<String>(value: item, child: Text(item, style: const TextStyle(fontSize: 15)))).toList(),
+                                            onChanged:
+                                                (item) => setState(() {
+                                                  initialOffer = item.toString();
+                                                }),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 06.0),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: SizedBox(
+                                    child: TextField(
+                                      autofocus: false,
+                                      controller: initialValue(selectedDeliveryDate),
+                                      focusNode: AlwaysDisabledFocusNode(),
+                                      style: const TextStyle(color: Colors.black),
+                                      textAlign: TextAlign.center,
+                                      decoration: InputDecoration(fillColor: Colors.white, filled: true, hintText: 'Start Date', contentPadding: const EdgeInsets.all(2.0), labelText: "Delivery", labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.black, overflow: TextOverflow.ellipsis), border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
+                                      onChanged: (String value) {
+                                        setState(() {});
+                                        selectedDeliveryDate = value;
+                                        //dateSelected;
+                                      },
+                                      onTap: () async {
+                                        DateTime? pickedDate = await showDatePicker(context: context, initialDate: DateTime.parse(DateFormat('yyyy-MM-dd').parse(selectedDeliveryDate).toString()), firstDate: DateTime.now(), lastDate: DateTime(DateTime.now().year + 1));
+
+                                        if (pickedDate != null) {
+                                          setState(() {
+                                            selectedDeliveryDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: SizedBox(
+                                    // width: 220,
+                                    child: Center(
+                                      child: DropdownButton<String>(
+                                        value: selectedDeliveryTime,
+                                        items: deliveryTime.map((String item) => DropdownMenuItem<String>(value: item, child: Text(item, style: const TextStyle(fontSize: 15)))).toList(),
+                                        onChanged:
+                                            (item) => setState(() {
+                                              selectedDeliveryTime = item.toString();
+
+                                              print("-----------------$selectedDeliveryTime");
+                                            }),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: SizedBox(
+                                    // width: 220,
+                                    child: Center(
+                                      child: DropdownButton<String>(
+                                        value: slectedPayMethod,
+                                        items: payMethod.map((String item) => DropdownMenuItem<String>(value: item, child: Text(item, style: const TextStyle(fontSize: 14)))).toList(),
+                                        onChanged:
+                                            (item) => setState(() {
+                                              slectedPayMethod = item.toString();
+                                            }),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (cid.toString().toUpperCase() == 'BIOPHARMA')
+                                  Expanded(
+                                    flex: 3,
+                                    child: SizedBox(
+                                      child: TextField(
+                                        autofocus: false,
+                                        controller: initialValue(selectedCollectionDate),
+                                        focusNode: AlwaysDisabledFocusNode(),
+                                        style: const TextStyle(color: Colors.black),
+                                        textAlign: TextAlign.center,
+                                        decoration: InputDecoration(fillColor: Colors.white, filled: true, hintText: 'Start Date', contentPadding: const EdgeInsets.all(2.0), labelText: "Collection", labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.black, overflow: TextOverflow.ellipsis), border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
+                                        onChanged: (String value) {
+                                          setState(() {});
+                                          selectedCollectionDate = value;
+                                          //dateSelected;
+                                        },
+                                        onTap: () async {
+                                          DateTime? pickedDate = await showDatePicker(context: context, initialDate: DateTime.parse(DateFormat('yyyy-MM-dd').parse(selectedCollectionDate).toString()), firstDate: DateTime.now(), lastDate: DateTime(DateTime.now().year + 1));
+
+                                          if (pickedDate != null) {
+                                            setState(() {
+                                              selectedCollectionDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 06.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                ///*************************************** Note ***********************************************/
+                note_flag == true
+                    ? Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: SizedBox(
+                        // height: 55,
+                        child: Container(
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: const Color.fromARGB(255, 138, 201, 149).withOpacity(.5)),
+
+                          // elevation: 6,
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.done,
+                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ]'))],
+                            style: const TextStyle(fontSize: 18, color: Colors.black),
+                            controller:
+                                noteController..addListener(() {
+                                  setState(() {
+                                    noteText = noteController.text;
+                                  });
+                                }),
+                            minLines: 1,
+                            maxLines: 3,
+                            decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide.none), labelText: '  Notes...', labelStyle: TextStyle(color: Colors.blueGrey)),
+                            onChanged: (value) {
+                              // noteText = (noteController.text).replaceAll(
+                              //     RegExp('[^A-Za-z0-9]'), " ");
+                              noteText = value.toString();
+                            },
+                          ),
+                        ),
+                      ),
+                    )
+                    : Container(),
+                Expanded(
+                  child: SizedBox(
+                    // height: screenHeight / 1.7,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: finalItemDataList.length,
+                      physics: const BouncingScrollPhysics(),
+                      // padding:
+                      // EdgeInsets.only(bottom: 1 + 20),
+                      itemBuilder: (BuildContext itemBuilder, index) {
+                        // _itemController.add(TextEditingController());
+
+                        // _itemController[index].text =
+                        //     finalItemDataList[index].quantity.toString();
+                        return Card(
+                          elevation: 15,
+                          color: const Color.fromARGB(255, 222, 233, 243),
+                          shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.white70, width: 1), borderRadius: BorderRadius.circular(10)),
+                          child: Container(
+                            height: 120,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(flex: 10, child: Text(finalItemDataList[index].item_name, style: const TextStyle(color: Colors.black, fontSize: 16))),
+                                      IconButton(
+                                        onPressed: () {
+                                          _showMyDialog(index);
+                                        },
+                                        icon: const Icon(Icons.clear, size: 20, color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                                      color: const Color.fromARGB(255, 200, 250, 207),
+                                      elevation: 2,
+                                      child: Row(
+                                        children: const [
+                                          Expanded(flex: 1, child: Center(child: Text('QTY', style: TextStyle(color: Colors.black, fontSize: 14)))),
+                                          Expanded(flex: 1, child: Center(child: Text('TP', style: TextStyle(color: Colors.black, fontSize: 14)))),
+                                          Expanded(flex: 1, child: Center(child: Text('Vat', style: TextStyle(color: Colors.black, fontSize: 14)))),
+                                          Expanded(flex: 1, child: Center(child: Text('Total', style: TextStyle(color: Colors.black, fontSize: 14)))),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          // flex: 2,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                            child: Container(
+                                              color: const Color.fromARGB(255, 138, 201, 149).withOpacity(.3),
+                                              child: TextFormField(
+                                                textAlign: TextAlign.center,
+                                                controller: controllers[finalItemDataList[index].item_id],
+
+                                                keyboardType: TextInputType.number,
+                                                // focusNode: FocusNode(),
+                                                style: const TextStyle(color: Colors.black, fontSize: 15),
+                                                decoration: const InputDecoration(border: OutlineInputBorder()),
+
+                                                inputFormatters: [LengthLimitingTextInputFormatter(7)],
+
+                                                onChanged: (value) {
+                                                  // _itemController[index].clear();
+                                                  finalItemDataList[index].quantity = controllers[finalItemDataList[index].item_id]?.text != '' ? int.parse(controllers[finalItemDataList[index].item_id]!.text) : 0;
+
+                                                  ordertotalAmount();
+                                                  // setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(flex: 1, child: Center(child: Text('${finalItemDataList[index].tp}', style: const TextStyle(color: Colors.black, fontSize: 15)))),
+                                        Expanded(flex: 1, child: Center(child: Text('${finalItemDataList[index].vat}', style: const TextStyle(color: Colors.black, fontSize: 15)))),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Center(
+                                            child: Text(
+                                              formatter.format(totalCount(finalItemDataList[index])),
+                                              // totalCount(finalItemDataList[
+                                              //         index])
+                                              //     .toStringAsFixed(2),
+                                              style: const TextStyle(color: Colors.black, fontSize: 15),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            label: 'Add Item',
-            icon: Icon(Icons.add),
+          bottomNavigationBar: BottomNavigationBar(
+            key: _bottomNavBarKey,
+            type: BottomNavigationBarType.fixed,
+            onTap: _onItemTapped,
+            currentIndex: _currentSelected,
+            showUnselectedLabels: true,
+            unselectedItemColor: Colors.grey[800],
+            selectedItemColor: const Color.fromRGBO(10, 135, 255, 1),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(label: 'Save Drafts', icon: Icon(Icons.drafts)),
+              BottomNavigationBarItem(label: 'Submit', icon: Icon(Icons.save)),
+              BottomNavigationBarItem(label: 'Add Item', icon: Icon(Icons.add)),
+              // BottomNavigationBarItem(
+              //   label: 'Drawer',
+              //   icon: Icon(Icons.menu),
+              // )
+            ],
           ),
-          // BottomNavigationBarItem(
-          //   label: 'Drawer',
-          //   icon: Icon(Icons.menu),
-          // )
-        ],
-      ),
-    )
-        : Container(
-      padding: const EdgeInsets.all(50),
-      color: Colors.white,
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+        )
+        : Container(padding: const EdgeInsets.all(50), color: Colors.white, child: const Center(child: CircularProgressIndicator()));
   }
 
   _onItemTapped(int index) async {
@@ -1320,30 +916,30 @@ print('is loading:$_isLoading');
         if (result == true) {
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-              title: const Text("Confirm"),
-              content: Text(
-                  "Are you sure want to submit ${finalItemDataList.isEmpty ? 'Visit' : 'Order'}?"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // User clicked No, so close the dialog
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text("No"),
+            builder:
+                (context) => AlertDialog(
+                  title: const Text("Confirm"),
+                  content: Text("Are you sure want to submit ${finalItemDataList.isEmpty ? 'Visit' : 'Order'}?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        // User clicked No, so close the dialog
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text("No"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        orderSubmit();
+                        Navigator.of(context).pop(true);
+                      },
+                      child: const Text("Yes"),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                    orderSubmit();
-                    Navigator.of(context).pop(true);
-                  },
-                  child: const Text("Yes"),
-                ),
-              ],
-            ),
           );
         } else {
           _submitToastforOrder3();
@@ -1365,27 +961,17 @@ print('is loading:$_isLoading');
             _currentSelected = index;
           });
         } else {
-          Fluttertoast.showToast(
-              msg: 'Please sync item',
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
+          Fluttertoast.showToast(msg: 'Please sync item', backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
         }
       }
     }
   }
 
   void _submitToastforOrder3() {
-    Fluttertoast.showToast(
-        msg: 'No Internet Connection\nPlease check your internet connection.',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    Fluttertoast.showToast(msg: 'No Internet Connection\nPlease check your internet connection.', toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.SNACKBAR, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
   }
 
-// Delete data from Hive by id...................................
+  // Delete data from Hive by id...................................
   deleteOrderItem(int id) {
     final box = Hive.box<AddItemModel>("orderedItem");
 
@@ -1408,16 +994,10 @@ print('is loading:$_isLoading');
     box.delete(desiredKey);
   }
 
-//outstanding Api///////////////////////////////////////////////////////////////////////
+  //outstanding Api///////////////////////////////////////////////////////////////////////
   Future outstanding(String id) async {
     try {
-      final http.Response response = await http.get(
-        Uri.parse(
-            '$client_outst_url?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&client_id=$id'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-      );
+      final http.Response response = await http.get(Uri.parse('$client_outst_url?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&client_id=$id'), headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'});
 
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
@@ -1425,13 +1005,10 @@ print('is loading:$_isLoading');
 
         return data;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Order Failed'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Order Failed'), backgroundColor: Colors.red));
       }
     } on Exception catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Please check connection or data!'),
-          backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please check connection or data!'), backgroundColor: Colors.red));
       setState(() {
         _isLoading = true;
       });
@@ -1450,8 +1027,7 @@ print('is loading:$_isLoading');
     try {
       geo.Position? position = await geo.Geolocator.getCurrentPosition();
       if (position != null) {
-        List<geocoding.Placemark> placemarks = await geocoding
-            .placemarkFromCoordinates(position.latitude, position.longitude);
+        List<geocoding.Placemark> placemarks = await geocoding.placemarkFromCoordinates(position.latitude, position.longitude);
         setState(() {
           lat = position.latitude;
           long = position.longitude;
@@ -1467,7 +1043,9 @@ print('is loading:$_isLoading');
       String status;
       try {
         String url =
-            "${submit_url}api_order_submit/submit_data?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&client_id=${widget.clientId}&delivery_date=$selectedDeliveryDate&collection_date=$selectedCollectionDate&delivery_time=$selectedDeliveryTime&payment_mode=$slectedPayMethod&offer=$initialOffer&note=$noteText&item_list=$itemString&app_version=v-$appVersion&latitude=${(minLatitude <= lat && lat <= maxLatitude) ? lat : ''}&longitude=${(minLongitude <= long && long <= maxLongitude) ? long : ''}&location_detail=${((minLatitude <= lat && lat <= maxLatitude) && (minLongitude <= long && long <= maxLongitude)) ? address : ''}"; /// main url
+            "${submit_url}api_order_submit/submit_data?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&client_id=${widget.clientId}&delivery_date=$selectedDeliveryDate&collection_date=$selectedCollectionDate&delivery_time=$selectedDeliveryTime&payment_mode=$slectedPayMethod&offer=$initialOffer&note=$noteText&item_list=$itemString&app_version=v-$appVersion&latitude=${(minLatitude <= lat && lat <= maxLatitude) ? lat : ''}&longitude=${(minLongitude <= long && long <= maxLongitude) ? long : ''}&location_detail=${((minLatitude <= lat && lat <= maxLatitude) && (minLongitude <= long && long <= maxLongitude)) ? address : ''}";
+
+        /// main url
         // "https://ww11.yeapps.com/hamdard_api/api_order_submit_test/submit_data?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&client_id=${widget.clientId}&delivery_date=$selectedDeliveryDate&collection_date=$selectedCollectionDate&delivery_time=$selectedDeliveryTime&payment_mode=$slectedPayMethod&offer=$initialOffer&note=$noteText&item_list=$itemString&app_version=$appVersion&latitude=${(minLatitude <= lat && lat <= maxLatitude) ? lat : ''}&longitude=${(minLongitude <= long && long <= maxLongitude) ? long : ''}&location_detail=${((minLatitude <= lat && lat <= maxLatitude) && (minLongitude <= long && long <= maxLongitude)) ? address : ''}"; /// test url
         // "http://192.168.100.235:8000/apex_pharma_api/api_order_submit/submit_data?cid=$cid&user_id=$userId&user_pass=$userPassword&device_id=$deviceId&client_id=${widget.clientId}&delivery_date=$selectedDeliveryDate&collection_date=$selectedCollectionDate&delivery_time=$selectedDeliveryTime&payment_mode=$slectedPayMethod&offer=$initialOffer&note=$noteText&item_list=$itemString&latitude=${(minLatitude <= lat && lat <= maxLatitude) ? lat : ''}&longitude=${(minLongitude <= long && long <= maxLongitude) ? long : ''}&location_detail=${((minLatitude <= lat && lat <= maxLatitude) && (minLongitude <= long && long <= maxLongitude)) ? address : ''}&app_version=$appVersion";
         // "http://192.168.100.241:8000/hamdard_api/api_order_submit/submit_data?cid=HAMDARD&user_id=9010&user_pass=1234&device_id=dc4b24f052443aaa&client_id=10001918&delivery_date=2024-01-15&collection_date=2024-01-15&delivery_time=Morning&payment_mode=CASH&offer=_&note=&item_list=P723|10||U008|5||P216|8||U124|12||U031|1&latitude=23.7613035&longitude=90.3717694&location_detail=1%20Asad%20Ave%20Bangladesh&app_version=v-20250200";
@@ -1508,22 +1086,19 @@ print('is loading:$_isLoading');
 
           _submitToastforOrder(ret_str);
           Navigator.of(context).pop();
-        }
-        else if (orderInfo['ret_str'].toString().toLowerCase().contains('http') && status == 'Failed' )
-        {
+        } else if (orderInfo['ret_str'].toString().toLowerCase().contains('http') && status == 'Failed') {
           String update_app_url = '';
           String update_app_notification = '';
-          if(orderInfo['ret_str'].toString().contains('http')){
+          if (orderInfo['ret_str'].toString().contains('http')) {
             int index = orderInfo['ret_str'].toString().indexOf("http");
             //
             // String update_app_notification = orderInfo['ret_str'].toString().substring(0, index).trim();
             // debugPrint(update_app_notification);
             update_app_notification = orderInfo['ret_str'].toString().substring(0, index).trim() ?? '';
 
-            update_app_url =
-                orderInfo['ret_str'].toString().substring(index).trim() ?? '';
-            await databox.put('update_new_app',update_app_notification);
-            await databox.put('update_new_app_url',update_app_url);
+            update_app_url = orderInfo['ret_str'].toString().substring(index).trim() ?? '';
+            await databox.put('update_new_app', update_app_notification);
+            await databox.put('update_new_app_url', update_app_url);
           }
           // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           //     content: Text('${orderInfo['ret_str']}'),
@@ -1535,24 +1110,17 @@ print('is loading:$_isLoading');
           // debugPrint(update_app_url);
           // await databox.put('update_new_app',update_app_notification);
           // await databox.put('update_new_app_url',update_app_url);
-          if(update_app_url != null || update_app_url != '') {
+          if (update_app_url != null || update_app_url != '') {
             AllServices().showMap(update_app_url);
           }
-
-
-        }
-        else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('${orderInfo['ret_str']}'),
-              backgroundColor: Colors.red));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${orderInfo['ret_str']}'), backgroundColor: Colors.red));
           setState(() {
             _isLoading = true;
           });
         }
       } on Exception catch (_) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Please check connection or data!'),
-            backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please check connection or data!'), backgroundColor: Colors.red));
         setState(() {
           _isLoading = true;
         });
@@ -1562,11 +1130,7 @@ print('is loading:$_isLoading');
       setState(() {
         _isLoading = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-            'Please Order something',
-          ),
-          backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please Order something'), backgroundColor: Colors.red));
     }
     // return status;
   }
@@ -1582,26 +1146,26 @@ print('is loading:$_isLoading');
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => ShowSyncItemData(
-            uniqueId: widget.uniqueId,
-            syncItemList: syncItemList,
-            tempList: finalItemDataList,
-            tempListFunc: (value) {
-              finalItemDataList = value;
+          builder:
+              (_) => ShowSyncItemData(
+                uniqueId: widget.uniqueId,
+                syncItemList: syncItemList,
+                tempList: finalItemDataList,
+                tempListFunc: (value) {
+                  finalItemDataList = value;
 
-              for (var element in finalItemDataList) {
-                controllers[element.item_id] = TextEditingController();
-                controllers[element.item_id]?.text =
-                    element.quantity.toString();
-              }
-              // finalItemDataList.forEach((element) {
+                  for (var element in finalItemDataList) {
+                    controllers[element.item_id] = TextEditingController();
+                    controllers[element.item_id]?.text = element.quantity.toString();
+                  }
+                  // finalItemDataList.forEach((element) {
 
-              // });
+                  // });
 
-              ordertotalAmount();
-              setState(() {});
-            },
-          ),
+                  ordertotalAmount();
+                  setState(() {});
+                },
+              ),
         ),
       );
     }
@@ -1646,7 +1210,7 @@ print('is loading:$_isLoading');
   //    return formatter.format(double.parse(data));
   // }
 
-// Save OrderCustomer and ordered item to Hive..................................
+  // Save OrderCustomer and ordered item to Hive..................................
   Future<dynamic> orderPutData() async {
     if (widget.deliveryDate != '' && finalItemDataList.isNotEmpty) {
       for (int i = 0; i <= finalItemDataList.length; i++) {
@@ -1690,17 +1254,7 @@ print('is loading:$_isLoading');
         box.add(c);
       }
 
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(
-              userName: userName,
-              user_id: user_id,
-              userPassword: userPassword ?? '',
-              data: finalItemDataList.length,
-            ),
-          ),
-              (route) => false);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyHomePage(userName: userName, user_id: user_id, userPassword: userPassword ?? '', data: finalItemDataList.length)), (route) => false);
     } else if (widget.deliveryDate != '' && finalItemDataList.isEmpty) {
       deleteOrderItem(widget.ckey);
       deleteOrderCustomer(widget.uniqueId);
@@ -1731,29 +1285,15 @@ print('is loading:$_isLoading');
         box.add(c);
       }
 
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(
-              userName: userName,
-              user_id: user_id,
-              userPassword: userPassword ?? '',
-              data: finalItemDataList.length,
-            ),
-          ),
-              (route) => false);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyHomePage(userName: userName, user_id: user_id, userPassword: userPassword ?? '', data: finalItemDataList.length)), (route) => false);
     }
-
     /// this code hide to save customer when order item is empty
     // else if (finalItemDataList.isEmpty) {
     //   for (int i = 0; i <= tempCount; i++) {
     //     deleteOrderItem(widget.ckey);
-
     //     setState(() {});
     //   }
-
     //   setState(() {});
-
     //   Navigator.pushAndRemoveUntil(
     //       context,
     //       MaterialPageRoute(
@@ -1765,7 +1305,6 @@ print('is loading:$_isLoading');
     //       ),
     //       (route) => false);
     // }
-
     else {
       var customer = CustomerDataModel(
         uiqueKey: widget.uniqueId,
@@ -1803,27 +1342,16 @@ print('is loading:$_isLoading');
     }
   }
 
-// Date pick function.................................................................
+  // Date pick function.................................................................
   pickDate(String initialDate) async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 10),
-    );
+    final pickedDate = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime(DateTime.now().year + 10));
     print("*********************************** ${pickedDate}");
     return pickedDate;
   }
 
   // Status Message...................................................................
   void _submitToastforOrder(String ret_str) {
-    Fluttertoast.showToast(
-        msg: "Order Submitted\n$ret_str",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.green.shade900,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    Fluttertoast.showToast(msg: "Order Submitted\n$ret_str", toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.CENTER, backgroundColor: Colors.green.shade900, textColor: Colors.white, fontSize: 16.0);
   }
 }
 

@@ -696,7 +696,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
               padding: EdgeInsets.zero,
               children: [
                 DrawerHeader(
-                  decoration: const BoxDecoration(color: Color.fromARGB(255, 138, 201, 149)),
+                  decoration: const BoxDecoration(color: Colors.blue),
                   child: SizedBox(
                     height: 20,
                     child: Padding(
@@ -875,7 +875,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                FittedBox(child: Text("Branch: $branchText", style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 14, fontWeight: FontWeight.bold), maxLines: 4, overflow: TextOverflow.ellipsis)),
+                                FittedBox(child: Text("$user_level", style: const TextStyle(color: Color.fromARGB(255, 15, 53, 85), fontSize: 14, fontWeight: FontWeight.bold), maxLines: 4, overflow: TextOverflow.ellipsis)),
                               ],
                             ),
                           ),

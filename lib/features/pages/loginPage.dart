@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-
 import 'dart:ui';
 import 'package:android_id/android_id.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
@@ -37,10 +36,10 @@ import 'homePage.dart';
 
 List<String> dcr_visitedWithList = [];
 List<String> rxTypeList = [];
-List<String> salesTypeList=[];
-List<String> patientTypeList=[];
-List<String> systemNameList=[];
-List<String> patientTemperamentList=[];
+List<String> salesTypeList = [];
+List<String> patientTypeList = [];
+List<String> systemNameList = [];
+List<String> patientTemperamentList = [];
 
 List<String> exp_reject_reasonList = [];
 List<String> user_basis_level_list = [];
@@ -99,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String address = "";
 
   String version = "test";
-  String DeviceId='';
+  String DeviceId = '';
 
   bool? serviceEnabled;
   // PermissionStatus? permissionGranted;
@@ -126,7 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
       update_app_notification = box.get('update_new_app') ?? '';
       update_app_url = box.get('update_new_app_url') ?? '';
 
-
       debugPrint("offer flag result $offer_flag");
     }
   }
@@ -134,7 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future _getDeviceInfo() async {
     var deviceInfo = DeviceInfoPlugin();
     DeviceId = await getDeviceAndroidInfo();
-
 
     var androidDeviceInfo = await deviceInfo.androidInfo;
     deviceId = DeviceId;
@@ -166,13 +163,11 @@ class _LoginScreenState extends State<LoginScreen> {
     print("Model: $deviceModel");
   }
 
-
   Future<String> getDeviceAndroidInfo() async {
     const androidIdPlugin = AndroidId();
     String androidId;
     try {
       androidId = await androidIdPlugin.getId() ?? 'Unknown ID';
-
     } on PlatformException {
       androidId = 'Failed to get Android ID';
     }
@@ -180,25 +175,24 @@ class _LoginScreenState extends State<LoginScreen> {
     return androidId.toString();
   }
 
-
-
-
   getLatLong() {
     Future<Position> data = AllServices().determinePosition();
-    data.then((value) {
-      debugPrint("value $value");
-      setState(() {
-        double latitude = value.latitude;
-        double longitude = value.longitude;
+    data
+        .then((value) {
+          debugPrint("value $value");
+          setState(() {
+            double latitude = value.latitude;
+            double longitude = value.longitude;
 
-        debugPrint("Splass Screen Lat Long :::::::::::::  $latitude : $longitude");
+            debugPrint("Splass Screen Lat Long :::::::::::::  $latitude : $longitude");
 
-        box.put("latitude", latitude);
-        box.put("longitude", longitude);
-      });
-    }).catchError((error) {
-      // debugPrint("Error $error");
-    });
+            box.put("latitude", latitude);
+            box.put("longitude", longitude);
+          });
+        })
+        .catchError((error) {
+          // debugPrint("Error $error");
+        });
   }
 
   ///******************************************************Function to Store button Names**********************************************************///
@@ -237,229 +231,168 @@ class _LoginScreenState extends State<LoginScreen> {
     final double safeAreaBotttom = MediaQuery.of(context).padding.bottom;
 
     return isLoading
-        ? Container(
-            padding: const EdgeInsets.all(50),
-            color: Colors.white,
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          )
+        ? Container(padding: const EdgeInsets.all(50), color: Colors.white, child: const Center(child: CircularProgressIndicator()))
         : Scaffold(
-            backgroundColor: const Color(0xFFE2EFDA),
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    height: screenHeight - 30,
-                    width: screenWidth,
-                    child: Form(
-                      key: _formKey,
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(12.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: 240,
-                                height: 120,
-                                child: Image.asset(
-                                  'assets/images/mRep7_wLogo.png',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30.0,
-                              ),
-                              Container(
-                                child: Column(
-                                  children: [
-                                    // Company ID Field
-                                    TextFormField(
-                                      autofocus: false,
-                                      controller: _companyIdController,
-                                      keyboardType: TextInputType.text,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Company Id',
-                                        labelStyle: TextStyle(
-                                          color: Color.fromARGB(255, 98, 126, 112),
-                                        ),
-                                        prefixIcon: Icon(
-                                          Icons.domain_outlined,
-                                          color: Color.fromARGB(255, 98, 126, 112),
-                                        ),
-                                      ),
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please Provide Your valid CompanyId';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                    ),
+          backgroundColor: const Color(0xFFE2EFDA),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  height: screenHeight - 30,
+                  width: screenWidth,
+                  child: Form(
+                    key: _formKey,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(12.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(width: 240, height: 120, child: Image.asset('assets/images/mRep7_wLogo.png', fit: BoxFit.cover)),
+                            SizedBox(height: 30.0),
+                            Container(
+                              child: Column(
+                                children: [
+                                  // Company ID Field
+                                  TextFormField(
+                                    autofocus: false,
+                                    controller: _companyIdController,
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: const InputDecoration(labelText: 'Company Id', labelStyle: TextStyle(color: Color.fromARGB(255, 98, 126, 112)), prefixIcon: Icon(Icons.domain_outlined, color: Color.fromARGB(255, 98, 126, 112))),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please Provide Your valid CompanyId';
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
 
-                                    SizedBox(
-                                      height: 20.0,
-                                    ),
+                                  SizedBox(height: 20.0),
 
-                                    // User Id field
-                                    TextFormField(
-                                      autofocus: false,
-                                      controller: _userIdController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: const InputDecoration(
-                                        labelText: 'User Id',
-                                        labelStyle: TextStyle(
-                                          color: Color.fromARGB(255, 98, 126, 112),
-                                        ),
-                                        prefixIcon: Icon(
-                                          Icons.person,
-                                          color: Color.fromARGB(255, 98, 126, 112),
-                                        ),
-                                      ),
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please Provide Your User Id';
-                                        }
-                                        if (value.contains("@")) {
-                                          return 'Please Provide Your Valid User Id';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
+                                  // User Id field
+                                  TextFormField(
+                                    autofocus: false,
+                                    controller: _userIdController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: const InputDecoration(labelText: 'User Id', labelStyle: TextStyle(color: Color.fromARGB(255, 98, 126, 112)), prefixIcon: Icon(Icons.person, color: Color.fromARGB(255, 98, 126, 112))),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please Provide Your User Id';
+                                      }
+                                      if (value.contains("@")) {
+                                        return 'Please Provide Your Valid User Id';
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(height: 20),
 
-                                    // Password Field
-                                    TextFormField(
-                                      obscureText: _obscureText,
-                                      controller: _passwordController,
-                                      decoration: InputDecoration(
-                                        labelText: 'Password',
-                                        labelStyle: const TextStyle(
-                                          color: Color.fromARGB(255, 98, 126, 112),
-                                        ),
-                                        prefixIcon: const Icon(
-                                          Icons.vpn_key,
-                                          color: Color.fromARGB(255, 98, 126, 112),
-                                        ),
-                                        suffixIcon: _obscureText == true
-                                            ? IconButton(
+                                  // Password Field
+                                  TextFormField(
+                                    obscureText: _obscureText,
+                                    controller: _passwordController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Password',
+                                      labelStyle: const TextStyle(color: Color.fromARGB(255, 98, 126, 112)),
+                                      prefixIcon: const Icon(Icons.vpn_key, color: Color.fromARGB(255, 98, 126, 112)),
+                                      suffixIcon:
+                                          _obscureText == true
+                                              ? IconButton(
                                                 onPressed: () {
-                                                  setState(
-                                                    () {
-                                                      _obscureText = false;
-                                                    },
-                                                  );
+                                                  setState(() {
+                                                    _obscureText = false;
+                                                  });
                                                 },
-                                                icon: const Icon(
-                                                  Icons.visibility_off,
-                                                  size: 20,
-                                                  color: Colors.grey,
-                                                ))
-                                            : IconButton(
+                                                icon: const Icon(Icons.visibility_off, size: 20, color: Colors.grey),
+                                              )
+                                              : IconButton(
                                                 onPressed: () {
                                                   setState(() {
                                                     _obscureText = true;
                                                   });
                                                 },
-                                                icon: const Icon(
-                                                  Icons.remove_red_eye,
-                                                  size: 20,
-                                                  color: Colors.black,
-                                                ),
+                                                icon: const Icon(Icons.remove_red_eye, size: 20, color: Colors.black),
                                               ),
-                                      ),
-                                      keyboardType: TextInputType.emailAddress,
-                                      textInputAction: TextInputAction.done,
-                                      validator: (value) {
-                                        // RegExp regexp = RegExp(r'^.{6,}$');
-                                        if (value!.isEmpty) {
-                                          return 'Please enter your password.';
-                                        }
-                                        // if (value.length >= 6) {
-                                        //   return 'Password is too short ,please expand';
-                                        // }
-                                        return null;
-                                      },
                                     ),
-                                    // SizedBox(height: screenHeight / 60),
-                                  ],
-                                ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.done,
+                                    validator: (value) {
+                                      // RegExp regexp = RegExp(r'^.{6,}$');
+                                      if (value!.isEmpty) {
+                                        return 'Please enter your password.';
+                                      }
+                                      // if (value.length >= 6) {
+                                      //   return 'Password is too short ,please expand';
+                                      // }
+                                      return null;
+                                    },
+                                  ),
+                                  // SizedBox(height: screenHeight / 60),
+                                ],
                               ),
-                              SizedBox(
-                                height: 40.0,
-                              ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
+                            ),
+                            SizedBox(height: 40.0),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  bool result = await NetworkConnecticity.checkConnectivity();
+
+                                  if (result == true) {
+                                    final userid = box.get("USER_ID");
+                                    // debugPrint(
+                                    //     "User Iddddddddddadssdfs:$userid");
+
+                                    dmPath(deviceId, deviceBrand, deviceModel, _companyIdController.text.trim().toUpperCase(), _userIdController.text.trim(), _passwordController.text.trim(), context);
+                                  } else {
                                     setState(() {
-                                      isLoading = true;
+                                      isLoading = false;
                                     });
-                                    bool result = await NetworkConnecticity.checkConnectivity();
+                                    AllServices().messageForUser('No Internet Connection\nPlease check your internet connection.');
 
-                                    if (result == true) {
-                                      final userid = box.get("USER_ID");
-                                      // debugPrint(
-                                      //     "User Iddddddddddadssdfs:$userid");
-
-                                      dmPath(deviceId, deviceBrand, deviceModel, _companyIdController.text.trim().toUpperCase(), _userIdController.text.trim(), _passwordController.text.trim(), context);
-                                    } else {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      AllServices().messageForUser('No Internet Connection\nPlease check your internet connection.');
-
-                                      // debugPrint(InternetConnectionChecker()
-                                      //     .lastTryResults);
-                                    }
-                                  } else {}
-                                },
-                                child: const Text(
-                                  'Login',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
+                                    // debugPrint(InternetConnectionChecker()
+                                    //     .lastTryResults);
+                                  }
+                                } else {}
+                              },
+                              child: const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
+                ),
 
-                  SizedBox(
-                    height: 50,
-                    child: Column
-                      (
-                      children: [
-                        update_app_notification == '' ? SizedBox.shrink() : Center(child: GestureDetector(onTap : (){
-                          AllServices().showMap(update_app_url);
-                        }, child: Container(color: Colors.red, height: 20, width: double.infinity, child: Text(textAlign: TextAlign.center,"Please click here to download new version", style: TextStyle(color: Colors.white),)))),
-                        Container(
-                          height: 30,
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.0,
+                SizedBox(
+                  height: 50,
+                  child: Column(
+                    children: [
+                      update_app_notification == ''
+                          ? SizedBox.shrink()
+                          : Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                AllServices().showMap(update_app_url);
+                              },
+                              child: Container(color: Colors.red, height: 20, width: double.infinity, child: Text(textAlign: TextAlign.center, "Please click here to download new version", style: TextStyle(color: Colors.white))),
+                            ),
                           ),
-                          decoration: BoxDecoration(color: Colors.green.shade300),
-                          child: Text(
-                            "$appVersion",
-                            style: TextStyle(color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
+                      Container(height: 30, alignment: Alignment.centerRight, padding: EdgeInsets.symmetric(horizontal: 12.0), decoration: BoxDecoration(color: Colors.green.shade300), child: Text("$appVersion", style: TextStyle(color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
+          ),
+        );
   }
 
   // buildShowDialog(BuildContext context) {
@@ -488,16 +421,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       debugPrint(
-
-      //"dmpath::http://192.168.100.219:8000/physician_api/dmpath_test/get_dmpath?cid=$cid"
-      "dmpath::https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid"
+        //"dmpath::http://192.168.100.219:8000/physician_api/dmpath_test/get_dmpath?cid=$cid"
+        //"dmpath::http://192.168.100.198:8000/physician_api/dmpath_test/get_dmpath?cid=$cid",
+        "dmpath::https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid",
       );
       final http.Response response = await http.get(
         Uri.parse(
-             //'http://192.168.100.219:8000/physician_api/dmpath_test/get_dmpath?cid=$cid'),
-            "https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid"),
+          //'http://192.168.100.219:8000/physician_api/dmpath_test/get_dmpath?cid=$cid'),
+          "https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid",
+          // "http://192.168.100.198:8000/physician_api/dmpath_test/get_dmpath?cid=$cid",
+        ),
       );
-      log(json.decode(response.body).toString(),name: 'bodyyyy');
+      log(json.decode(response.body).toString(), name: 'bodyyyy');
       var userInfo = json.decode(response.body);
       print('userinfo::$userInfo');
 
@@ -512,46 +447,46 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         print(status);
         var login_url = status['login_url'];
-        String sync_url = status['sync_url']?? '';
-        String submit_url = status['submit_url']??'';
-        String report_sales_url = status['report_sales_url']??'';
-        String report_dcr_url = status['report_dcr_url']??'';
-        String report_rx_url = status['report_rx_url']??'';
-        String photo_submit_url = status['photo_submit_url']??'';
-        String photo_url = status['photo_url']??'';
-        String leave_request_url = status['leave_request_url']??'';
-        String leave_report_url = status['leave_report_url']??'';
-        String plugin_url = status['plugin_url']??'';
-        String board_meeting_submit_url = status['board_meeting_submit_url']??'';
-        String visit_office_add_url = status['visit_office_add_url']??'';
-        String visit_office_edit_url = status['visit_office_edit_url']??'';
-        String tour_plan_url = status['tour_plan_url']??'';
-        String tour_compliance_url = status['tour_compliance_url']??'';
-        String client_url = status['client_url']??'';
-        String doctor_url = status['doctor_url']??'';
-        String doctor_edit_url = status['doctor_edit_url']??'';
-        String microunion_url = status['microunion_url']??'';
-        String activity_log_url = status['activity_log_url']??'';
-        String user_sales_coll_ach_url = status['user_sales_coll_ach_url']??'';
-        String client_outst_url = status['client_outst_url']??'';
-        String user_area_url = status['user_area_url']??'';
-        String os_details_url = status['os_details_url']??'';
-        String ord_history_url = status['ord_history_url']??'';
-        String inv_history_url = status['inv_history_url']??'';
-        String client_edit_url = status['client_edit_url']??'';
-        String timer_track_url = status['timer_track_url']??'';
-        String exp_type_url = status['exp_type_url']??'';
-        String exp_submit_url = status['exp_submit_url']??'';
-        String report_exp_url = status['report_exp_url']??'';
-        String report_exp_log = status['report_exp_log']??'';
-        String report_outst_url = status['report_outst_url']??'';
-        String report_last_ord_url = status['report_last_ord_url']??'';
-        String report_last_doc_visit_url = status['report_last_doc_visit_url']??'';
-        String report_last_inv_url = status['report_last_inv_url']??'';
-        String exp_approval_url = status['exp_approval_url']??'';
-        String sync_notice_url = status['sync_notice_url']??'';
-        String report_atten_url = status['report_atten_url']??'';
-        String approval_url = status['approval_url']??'';
+        String sync_url = status['sync_url'] ?? '';
+        String submit_url = status['submit_url'] ?? '';
+        String report_sales_url = status['report_sales_url'] ?? '';
+        String report_dcr_url = status['report_dcr_url'] ?? '';
+        String report_rx_url = status['report_rx_url'] ?? '';
+        String photo_submit_url = status['photo_submit_url'] ?? '';
+        String photo_url = status['photo_url'] ?? '';
+        String leave_request_url = status['leave_request_url'] ?? '';
+        String leave_report_url = status['leave_report_url'] ?? '';
+        String plugin_url = status['plugin_url'] ?? '';
+        String board_meeting_submit_url = status['board_meeting_submit_url'] ?? '';
+        String visit_office_add_url = status['visit_office_add_url'] ?? '';
+        String visit_office_edit_url = status['visit_office_edit_url'] ?? '';
+        String tour_plan_url = status['tour_plan_url'] ?? '';
+        String tour_compliance_url = status['tour_compliance_url'] ?? '';
+        String client_url = status['client_url'] ?? '';
+        String doctor_url = status['doctor_url'] ?? '';
+        String doctor_edit_url = status['doctor_edit_url'] ?? '';
+        String microunion_url = status['microunion_url'] ?? '';
+        String activity_log_url = status['activity_log_url'] ?? '';
+        String user_sales_coll_ach_url = status['user_sales_coll_ach_url'] ?? '';
+        String client_outst_url = status['client_outst_url'] ?? '';
+        String user_area_url = status['user_area_url'] ?? '';
+        String os_details_url = status['os_details_url'] ?? '';
+        String ord_history_url = status['ord_history_url'] ?? '';
+        String inv_history_url = status['inv_history_url'] ?? '';
+        String client_edit_url = status['client_edit_url'] ?? '';
+        String timer_track_url = status['timer_track_url'] ?? '';
+        String exp_type_url = status['exp_type_url'] ?? '';
+        String exp_submit_url = status['exp_submit_url'] ?? '';
+        String report_exp_url = status['report_exp_url'] ?? '';
+        String report_exp_log = status['report_exp_log'] ?? '';
+        String report_outst_url = status['report_outst_url'] ?? '';
+        String report_last_ord_url = status['report_last_ord_url'] ?? '';
+        String report_last_doc_visit_url = status['report_last_doc_visit_url'] ?? '';
+        String report_last_inv_url = status['report_last_inv_url'] ?? '';
+        String exp_approval_url = status['exp_approval_url'] ?? '';
+        String sync_notice_url = status['sync_notice_url'] ?? '';
+        String report_atten_url = status['report_atten_url'] ?? '';
+        String approval_url = status['approval_url'] ?? '';
         String late_attendance_url = status['late_attendance_url'] ?? "";
         String order_approval_url = status['order_approval_url'] ?? "";
         String order_list_url = status['order_list_url'] ?? "";
@@ -563,18 +498,16 @@ class _LoginScreenState extends State<LoginScreen> {
         String ppm_url = status['ppm_url'] ?? "";
         String activity_log_areawise_url = status['activity_log_areawise_url'] ?? "";
 
-        String prescriptionReportUrl=status['prescription_report_url'] ?? '';
+        String prescriptionReportUrl = status['prescription_report_url'] ?? '';
         print('prescription report url: $prescriptionReportUrl');
-        String visiReportUrl=status['visit_report_url'] ?? '';
+        String visiReportUrl = status['visit_report_url'] ?? '';
         print('visit report url: $visiReportUrl');
-        String patientCallBoardMeetingReportUrl=status['board_meeting_report_url'] ?? '';
+        String patientCallBoardMeetingReportUrl = status['board_meeting_report_url'] ?? '';
         print('board meeting report url: $patientCallBoardMeetingReportUrl');
-        String examUrl=status['exam_url'] ?? '';
+        String examUrl = status['exam_url'] ?? '';
         print('exam url: $examUrl');
-        String examResultUrl=status['exam_result_url'] ?? '';
+        String examResultUrl = status['exam_result_url'] ?? '';
         print('exam result url: $examResultUrl');
-
-
 
         // //todo Add HIVe,
 
@@ -636,8 +569,6 @@ class _LoginScreenState extends State<LoginScreen> {
         await box.put('exam_url', examUrl);
         await box.put('exam_result_url', examResultUrl);
 
-
-
         // await box.put('late_attendance_report_url',late_attendance_report_url);
         await secureStorage.write(key: 'timer_track_url', value: timer_track_url.toString());
 
@@ -653,15 +584,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future login(String? deviceId, String? deviceBrand, String? deviceModel, String cid, String userId, String password, String loginUrl, BuildContext context) async {
     version = 'v03';
-    String _url =
-        '$loginUrl?cid=$cid&user_id=$userId&user_pass=$password&device_id=$deviceId&device_brand=$deviceBrand&device_model=${deviceModel}_${version}&app_version=${appVersion}'; /// main url
-         //'http://192.168.100.219:8000/physician_api/api_login/check_user?cid=$cid&user_id=$userId&user_pass=$password&device_id=$deviceId&device_brand=$deviceBrand&device_model=${deviceModel}_${version}&app_version=${appVersion}'; //check local url
+    String _url = '$loginUrl?cid=$cid&user_id=$userId&user_pass=$password&device_id=$deviceId&device_brand=$deviceBrand&device_model=${deviceModel}_${version}&app_version=${appVersion}';
+
+    /// main url
+    //'http://192.168.100.219:8000/physician_api/api_login/check_user?cid=$cid&user_id=$userId&user_pass=$password&device_id=$deviceId&device_brand=$deviceBrand&device_model=${deviceModel}_${version}&app_version=${appVersion}'; //check local url
+    // var _url = 'http://192.168.100.198:8000/physician_api/api_login/check_user?cid=$cid&user_id=$userId&user_pass=$password&device_id=$deviceId&device_brand=$deviceBrand&device_model=${deviceModel}_${version}&app_version=${appVersion}'; //check local url
     print('login url:::$_url');
     debugPrint(_url);
     try {
-      final http.Response response = await http.get(
-        Uri.parse(_url),
-      );
+      final http.Response response = await http.get(Uri.parse(_url));
 
       // final Map<String, dynamic> jsonresponse = json.decode(response.body);
 
@@ -682,21 +613,19 @@ class _LoginScreenState extends State<LoginScreen> {
         String mobile_no = userInfo['mobile_no'];
         String? logo_url_1 = userInfo['logo_url_1'] ?? null;
         String? logo_url_2 = userInfo['logo_url_2'] ?? null;
-        List market_name= userInfo['market_list'] ?? [];
+        List market_name = userInfo['market_list'] ?? [];
         String marketList = market_name
             .map((market) => market.values.first) // Extract the first value from each map
             .join(',');
 
-        List branch= userInfo['branch_list'] ?? [];
+        List branch = userInfo['branch_list'] ?? [];
         print('branch list: $branch');
-
-
 
         List area_name = userInfo['area_name'] ?? [];
         String user_level = userInfo['user_level'] ?? "";
 
-
         String areaName = area_name.map((area) => area.values.first).join(',');
+
         ///example market name with id DOHAR 1  NARISA BAZAR(D1NGA04M01) commented///
         // String marketList = market_name
         //     .map((market) => "${market.values.first}(${market.keys.first})") // Combine value and key
@@ -745,18 +674,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
         List rx_type_list = userInfo['rx_type_list'];
 
-
         List sales_type_list = userInfo['sales_type_list'] ?? [];
         print('saleeesss::$sales_type_list}');
-        List patient_type_list=userInfo['patient_type_list'] ??[];
+        List patient_type_list = userInfo['patient_type_list'] ?? [];
         print('patienttttt::$patient_type_list}');
-        List system_name_list=userInfo['system_name_list'] ?? [];
+        List system_name_list = userInfo['system_name_list'] ?? [];
         print('system nameee::$system_name_list}');
         List system_diseases_list = userInfo['system_diseases_list'] ?? [];
         print('system disease list::$system_diseases_list');
-        List patient_temperament_list=userInfo['patient_temperament_list'] ?? [];
+        List patient_temperament_list = userInfo['patient_temperament_list'] ?? [];
         print('patient temperamenttt::$patient_temperament_list');
-        List district_thana_list= userInfo['district_thana_list'] ?? [];
+        List district_thana_list = userInfo['district_thana_list'] ?? [];
         print('District Thana List:: $district_thana_list');
 
         bool order_flag = userInfo['order_flag'];
@@ -776,7 +704,9 @@ class _LoginScreenState extends State<LoginScreen> {
         bool doc_flag = userInfo['doc_flag'];
         bool doc_edit_flag = userInfo['doc_edit_flag'];
         // bool notice_auto_scroll_flag = userInfo['notice_auto_scroll_flag'] ?? false;
-        bool notice_auto_scroll_flag = userInfo['notice_auto_scroll_flag'] ?? false; ///false kore dite hbe
+        bool notice_auto_scroll_flag = userInfo['notice_auto_scroll_flag'] ?? false;
+
+        ///false kore dite hbe
         bool attendance_approval_flag = userInfo['attendance_approval_flag'] ?? false;
         bool order_approval_flag = userInfo['order_approval_flag'] ?? false;
         String meter_reading_last = userInfo['meter_reading_last'] ?? '0';
@@ -788,7 +718,9 @@ class _LoginScreenState extends State<LoginScreen> {
         bool auto_day_end = userInfo['auto_day_end'] ?? false;
         String startTime = userInfo['start_time'] ?? '';
         String endTime = userInfo['end_time'] ?? '';
-        bool check_in_flag = userInfo['check_in_flag'] ?? false; ///newly added
+        bool check_in_flag = userInfo['check_in_flag'] ?? false;
+
+        ///newly added
         bool target_sales_achievement_flag = userInfo['target_sales_achievement_flag'] ?? false;
         int notice_api_timer = userInfo['notice_timer'] ?? 60;
         bool expense_flag = userInfo['expense_flag'] ?? false;
@@ -796,14 +728,14 @@ class _LoginScreenState extends State<LoginScreen> {
         await AuthServices.checkExistingUser(user_id);
 
         //todo User basis level ar jonnno
-//
+        //
         // List ff_list = userInfo['ff_list'];
         // ff_user_list.clear();
         // for (var element in ff_list) {
         //   ff_user_list.add(element);
         // }
         // box.put('ff_list', ff_user_list);
-//
+        //
         user_basis_level_list.clear();
         box.put('user_basis_level_list', user_basis_level_list);
         if (userInfo['exp_approval_flag'] == true) {
@@ -829,22 +761,21 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         salesTypeList.clear();
-        for(var element in sales_type_list){
+        for (var element in sales_type_list) {
           salesTypeList.add(element);
         }
         patientTypeList.clear();
-        for(var element in patient_type_list){
+        for (var element in patient_type_list) {
           patientTypeList.add(element);
         }
         systemNameList.clear();
-        for(var element in system_name_list){
+        for (var element in system_name_list) {
           systemNameList.add(element);
         }
         patientTemperamentList.clear();
-        for(var element in patient_temperament_list){
+        for (var element in patient_temperament_list) {
           patientTemperamentList.add(element);
         }
-
 
         exp_reject_reasonList.clear();
         for (var element in exp_reject_reason) {
@@ -869,8 +800,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (buttonNames != null) {
           await putButtonNames(buttonNames);
         }
-        await box.put('update_new_app','');
-        await box.put('update_new_app_url','');
+        await box.put('update_new_app', '');
+        await box.put('update_new_app_url', '');
 
         await box.put('CID', cid);
         await box.put("USER_ID", user_id);
@@ -907,9 +838,6 @@ class _LoginScreenState extends State<LoginScreen> {
         await box.put('dcr_discussion', dcr_discussion);
         await box.put('promo_flag', promo_flag);
 
-
-
-
         await box.put('leave_flag', leave_flag);
         await box.put('notice_flag', notice_flag);
         await box.put('notice_auto_scroll_flag', notice_auto_scroll_flag);
@@ -933,7 +861,6 @@ class _LoginScreenState extends State<LoginScreen> {
         await box.put('exp_reject_reason', exp_reject_reasonList);
         await box.put('cause_for_non_execution', causeForNonExecution);
 
-
         await box.put('expense_category_list', expense_category_list);
         await box.put('transport_mode', transport_mode);
         await Boxes.allData().put('withoutMReading', false);
@@ -950,17 +877,19 @@ class _LoginScreenState extends State<LoginScreen> {
         await secureStorage.write(key: 'password', value: password.toString().trim());
         await secureStorage.write(key: 'background_service', value: background_service.toString());
         await secureStorage.write(key: 'device_mac', value: deviceId.toString());
-        await secureStorage.write(key: 'notice_api_hit' , value: 'true');///for background notice api hit
+        await secureStorage.write(key: 'notice_api_hit', value: 'true');
+
+        ///for background notice api hit
 
         ///already attendance
         if (startTime != '') {
           box.put('attendance', DateFormat('yyyy-MM-dd').format(DateTime.now()));
           box.put('attendanceUserId', user_id.toString());
-          await secureStorage.write(key: 'notice_api_hit' , value: 'true');
+          await secureStorage.write(key: 'notice_api_hit', value: 'true');
         }
         if (startTime != '' && endTime != '') {
           box.put('attendance', '');
-          await secureStorage.write(key: 'notice_api_hit' , value: 'true');
+          await secureStorage.write(key: 'notice_api_hit', value: 'true');
         }
         await box.put('startTime', startTime);
         await box.put('endTime', endTime);
@@ -979,16 +908,7 @@ class _LoginScreenState extends State<LoginScreen> {
         List clientToken = Hive.box("dcrListData").values.toList();
 
         if (clientToken.isNotEmpty && savedUserId == userId) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyHomePage(
-                userName: userName,
-                user_id: user_id,
-                userPassword: password,
-              ),
-            ),
-          );
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(userName: userName, user_id: user_id, userPassword: password)));
         } else {
           // if (background_service == true) {
           //   restartBackgroundService();
@@ -1028,34 +948,21 @@ class _LoginScreenState extends State<LoginScreen> {
           await Hive.box("dcrDiscussionListData").clear();
           // deleteChace();
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => SyncDataTabScreen(
-                cid: cid,
-                userId: user_id,
-                userPassword: password,
-              ),
-            ),
-          );
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SyncDataTabScreen(cid: cid, userId: user_id, userPassword: password)));
         }
-      } 
-      else if (userInfo['ret_str'].toString().toLowerCase().contains('please download new version') && status == 'Failed')
-        {
+      } else if (userInfo['ret_str'].toString().toLowerCase().contains('please download new version') && status == 'Failed') {
+        int index = userInfo['ret_str'].toString().indexOf("http");
 
-          int index = userInfo['ret_str'].toString().indexOf("http");
+        update_app_notification = userInfo['ret_str'].toString().substring(0, index).trim();
+        debugPrint(update_app_notification);
 
-          update_app_notification = userInfo['ret_str'].toString().substring(0, index).trim();
-          debugPrint(update_app_notification);
-
-          update_app_url = userInfo['ret_str'].toString().substring(index).trim();
-          debugPrint(update_app_url);
-          await box.put('update_new_app',update_app_notification);
-          await box.put('update_new_app_url',update_app_url);
-          // AllServices().messageForUser(userInfo['ret_str'].toString());
-          setState(() {});
-        }
-      else {
+        update_app_url = userInfo['ret_str'].toString().substring(index).trim();
+        debugPrint(update_app_url);
+        await box.put('update_new_app', update_app_notification);
+        await box.put('update_new_app_url', update_app_url);
+        // AllServices().messageForUser(userInfo['ret_str'].toString());
+        setState(() {});
+      } else {
         AllServices().messageForUser(userInfo['ret_str'].toString());
       }
     } on Exception catch (_) {
@@ -1066,7 +973,4 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
-
 }
-
-
