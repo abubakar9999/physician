@@ -385,7 +385,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Container(color: Colors.red, height: 20, width: double.infinity, child: Text(textAlign: TextAlign.center, "Please click here to download new version", style: TextStyle(color: Colors.white))),
                             ),
                           ),
-                      Container(height: 30, alignment: Alignment.centerRight, padding: EdgeInsets.symmetric(horizontal: 12.0), decoration: BoxDecoration(color: Colors.green.shade300), child: Text("$appVersion", style: TextStyle(color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
+                      Container(height: 30, alignment: Alignment.centerRight, padding: EdgeInsets.symmetric(horizontal: 12.0), decoration: BoxDecoration(color: Colors.blue), child: Text("$appVersion", style: TextStyle(color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
                     ],
                   ),
                 ),
