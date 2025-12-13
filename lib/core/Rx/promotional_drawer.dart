@@ -19,8 +19,7 @@ class PromotionalDrawer extends StatefulWidget {
   //final List doctorPpmlist;
   final List<DcrGSPDataModel> tempList2;
 
-   const PromotionalDrawer({
-    super.key,required this.uniqueId, required this.tempList, required this.tempListFunc,required this.tempList1, required this.tempList2, });
+  const PromotionalDrawer({super.key, required this.uniqueId, required this.tempList, required this.tempListFunc, required this.tempList1, required this.tempList2});
 
   @override
   State<PromotionalDrawer> createState() => _PromotionalDrawerState();
@@ -33,15 +32,13 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
   String userPassword = '';
   final myDataBox = Boxes.allData();
 
-  bool isGiftExpanded=false;
-  bool isSampleExpanded=false;
+  bool isGiftExpanded = false;
+  bool isSampleExpanded = false;
   bool isPPMExpanded = false;
-
 
   final Map<String, TextEditingController> giftControllersMap = {};
   final Map<String, TextEditingController> sampleControllersMap = {};
   final Map<String, TextEditingController> ppmControllersMap = {};
-
 
   List doctorGiftList = [];
   List doctorSampleList = [];
@@ -57,17 +54,15 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
   List<dynamic> apiSampleList = [];
   List<dynamic> apiPPMList = [];
 
-
-
   @override
   void initState() {
     super.initState();
     if (mounted) {
       setState(() {
-        cid = myDataBox.get("CID") ;
-        userId = myDataBox.get("USER_ID") ;
-        userPassword = myDataBox.get("PASSWORD") ;
-        syncUrl=myDataBox.get('sync_url');
+        cid = myDataBox.get("CID");
+        userId = myDataBox.get("USER_ID");
+        userPassword = myDataBox.get("PASSWORD");
+        syncUrl = myDataBox.get('sync_url');
       });
 
       fetchGiftData();
@@ -125,8 +120,8 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
     //     }
     //   });
     // }
-
   }
+
   @override
   void dispose() {
     for (var controller in giftControllersMap.values) {
@@ -191,9 +186,9 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
 
       final response = await http.get(Uri.parse(url));
       var jsonResponseData = jsonDecode(response.body);
-      String status=jsonResponseData['res_data']['status'];
+      String status = jsonResponseData['res_data']['status'];
 
-      if (status=="Success") {
+      if (status == "Success") {
         //final jsonResponseData = jsonDecode(response.body);
         final resData = jsonResponseData['res_data'];
         apiGiftList = resData['giftList'];
@@ -220,7 +215,6 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
       isGiftLoading = false;
     });
   }
-
 
   // Future<void> fetchSampleData()async {
   //   setState(() {
@@ -266,16 +260,16 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
     });
 
     try {
-      final url=
+      final url =
           //"http://192.168.100.219:8000/physician_api/api_gift_sample_ppm/get_phy_sample?cid=$cid&user_id=$userId&user_pass=$userPassword";
           "${syncUrl}api_gift_sample_ppm/get_phy_sample?cid=$cid&user_id=$userId&user_pass=$userPassword";
       print('URL: $url');
 
       final response = await http.get(Uri.parse(url));
       var jsonResponseData = jsonDecode(response.body);
-      String status= jsonResponseData['res_data']['status'];
+      String status = jsonResponseData['res_data']['status'];
 
-      if (status=="Success") {
+      if (status == "Success") {
         //Map<String, dynamic> jsonResponseData = jsonDecode(response.body);
         Map<String, dynamic> resData = jsonResponseData['res_data'];
         apiSampleList = resData['sampleList'];
@@ -302,7 +296,6 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
       isSampleLoading = false;
     });
   }
-
 
   // Future<void> fetchPPMData()async {
   //   setState(() {
@@ -365,9 +358,9 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
 
       final response = await http.get(Uri.parse(url));
       var jsonResponseData = jsonDecode(response.body);
-      String status=jsonResponseData['res_data']['status'];
+      String status = jsonResponseData['res_data']['status'];
 
-      if (status=="Success") {
+      if (status == "Success") {
         final resData = jsonResponseData['res_data'];
         apiPPMList = resData['ppmList'];
 
@@ -394,47 +387,25 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
       child: Drawer(
         child: Container(
           color: Colors.white,
           child: Column(
             children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 138, 201, 149),
-                ),
-                child:  Center(
-                  child: Text(
-                    'Promotional Item',
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.white.withOpacity(0.7),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10,),
+              Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 14), decoration: const BoxDecoration(color: Colors.blue), child: const Center(child: Text('Promotional Item', style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.w500)))),
+              const SizedBox(height: 10),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(height: 10,),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: ExpansionTile(
-                          trailing: Icon(
-                            isGiftExpanded
-                                ? Icons.arrow_circle_up_outlined
-                                : Icons.arrow_circle_down_outlined,
-                            color: Colors.white,
-                          ),
+                          trailing: Icon(isGiftExpanded ? Icons.arrow_circle_up_outlined : Icons.arrow_circle_down_outlined, color: Colors.white),
                           onExpansionChanged: (expanded) {
                             setState(() {
                               isGiftExpanded = expanded;
@@ -448,150 +419,101 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
                           backgroundColor: Colors.black,
                           collapsedIconColor: Colors.white,
                           iconColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          collapsedShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          title: const Center(
-                            child: Text(
-                              'Gift',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          children: isGiftLoading?
-                          [
-                          const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(child: CircularProgressIndicator(
-                              color: Colors.white,
-                            )),
-                          )
-                          ]:
-                          apiGiftList.isNotEmpty
-                              ? apiGiftList.map((gift) {
-                            final key = gift['gift_id'] + gift['promo_type'];
-                            final controller = giftControllersMap[key]!;
-                            return Container(
-                              color: Colors.white,
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                gift['gift_name'],
-                                                style: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          title: const Center(child: Text('Gift', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          children:
+                              isGiftLoading
+                                  ? [const Padding(padding: EdgeInsets.all(16.0), child: Center(child: CircularProgressIndicator(color: Colors.white)))]
+                                  : apiGiftList.isNotEmpty
+                                  ? apiGiftList.map((gift) {
+                                    final key = gift['gift_id'] + gift['promo_type'];
+                                    final controller = giftControllersMap[key]!;
+                                    return Container(
+                                      color: Colors.white,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(gift['gift_name'], style: const TextStyle(fontSize: 16)),
+                                                      const SizedBox(width: 6),
+                                                      gift['gift_left_qty'] == 0
+                                                          ? const SizedBox.shrink()
+                                                          : Text(
+                                                            //'(${gift['gift_left_qty']}/${gift['gift_total_qty']})',
+                                                            '(${gift['gift_left_qty']})',
+                                                            style: const TextStyle(color: Colors.red),
+                                                          ),
+                                                    ],
+                                                  ),
+                                                  Text('${gift['gift_id']}', style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                                                ],
                                               ),
-                                              const SizedBox(width: 6),
-                                              gift['gift_left_qty']==0 ? const SizedBox.shrink() : Text(
-                                                //'(${gift['gift_left_qty']}/${gift['gift_total_qty']})',
-                                                '(${gift['gift_left_qty']})',
-                                                style: const TextStyle(color: Colors.red),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              flex: 1,
+                                              child: TextFormField(
+                                                controller: controller,
+                                                readOnly: gift['gift_left_qty'] == 0,
+                                                onTap: () {
+                                                  if (gift['gift_left_qty'] == 0) {
+                                                    Fluttertoast.showToast(msg: 'Item is not available', backgroundColor: Colors.red);
+                                                  }
+                                                },
+                                                keyboardType: TextInputType.number,
+                                                maxLength: 4,
+                                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(counterText: '', border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)), isDense: true, contentPadding: const EdgeInsets.all(10)),
+                                                onChanged: (value) {
+                                                  setState(() {});
+                                                  final quantity = int.tryParse(value) ?? 0;
+                                                  final leftQty = gift['gift_left_qty'] ?? 0;
+
+                                                  if (quantity > leftQty) {
+                                                    Fluttertoast.showToast(msg: 'Only $leftQty items are available', backgroundColor: Colors.red);
+                                                    controller.text = leftQty.toString();
+                                                    controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+                                                    return;
+                                                  }
+
+                                                  final model = DcrGSPDataModel(
+                                                    uiqueKey: widget.uniqueId,
+                                                    quantity: quantity,
+                                                    giftName: gift['gift_name'],
+                                                    giftId: gift['gift_id'],
+                                                    giftType: gift['promo_type'], // e.g., 'Gift'
+                                                  );
+
+                                                  widget.tempList.removeWhere((item) => item.giftId == model.giftId && item.giftType == model.giftType);
+                                                  if (quantity > 0) {
+                                                    widget.tempList.add(model);
+                                                  }
+                                                },
                                               ),
-                                            ],
-                                          ),
-                                          Text(
-                                            '${gift['gift_id']}',
-                                            style: const TextStyle(
-                                                fontSize: 13, color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: controller,
-                                        readOnly: gift['gift_left_qty']==0,
-                                        onTap: (){
-                                          if(gift['gift_left_qty']==0){
-                                            Fluttertoast.showToast(msg: 'Item is not available',backgroundColor: Colors.red);
-                                          }
-                                        },
-                                        keyboardType: TextInputType.number,
-                                        maxLength: 4,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
-                                        textAlign: TextAlign.center,
-                                        decoration: InputDecoration(
-                                          counterText: '',
-                                          border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(4)),
-                                          isDense: true,
-                                          contentPadding: const EdgeInsets.all(10),
+                                            ),
+                                          ],
                                         ),
-                                        onChanged: (value) {
-                                          setState(() {});
-                                          final quantity = int.tryParse(value) ?? 0;
-                                          final leftQty = gift['gift_left_qty'] ?? 0;
-
-                                          if (quantity > leftQty) {
-                                            Fluttertoast.showToast(
-                                              msg: 'Only $leftQty items are available',
-                                              backgroundColor: Colors.red,
-                                            );
-                                            controller.text = leftQty.toString();
-                                            controller.selection = TextSelection.fromPosition(
-                                              TextPosition(offset: controller.text.length),
-                                            );
-                                            return;
-                                          }
-
-                                          final model = DcrGSPDataModel(
-                                            uiqueKey: widget.uniqueId,
-                                            quantity: quantity,
-                                            giftName: gift['gift_name'],
-                                            giftId: gift['gift_id'],
-                                            giftType: gift['promo_type'], // e.g., 'Gift'
-                                          );
-
-                                          widget.tempList.removeWhere((item) =>
-                                          item.giftId == model.giftId &&
-                                              item.giftType == model.giftType);
-                                          if (quantity > 0) {
-                                            widget.tempList.add(model);
-                                          }
-                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList()
-                              : [
-                            const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text('No results found'),
-                            ),
-                          ],
+                                    );
+                                  }).toList()
+                                  : [const Padding(padding: EdgeInsets.all(8), child: Text('No results found'))],
                         ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: ExpansionTile(
-                          trailing: Icon(
-                            isSampleExpanded
-                                ? Icons.arrow_circle_up_outlined
-                                : Icons.arrow_circle_down_outlined,
-                            color: Colors.white,
-                          ),
+                          trailing: Icon(isSampleExpanded ? Icons.arrow_circle_up_outlined : Icons.arrow_circle_down_outlined, color: Colors.white),
                           onExpansionChanged: (expanded) {
                             setState(() {
                               isSampleExpanded = expanded;
@@ -605,148 +527,104 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
                           backgroundColor: Colors.black,
                           collapsedIconColor: Colors.white,
                           iconColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          collapsedShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          title: const Center(
-                            child: Text(
-                              'Sample',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          children: isSampleLoading
-                              ? [
-                            const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Center(child: CircularProgressIndicator(
-                                color: Colors.white,
-                              )),
-                            )
-                          ]
-                              : apiSampleList.isNotEmpty
-                              ? apiSampleList.map((sample) {
-                            final key = sample['sample_id'] + sample['promo_type'];
-                            final controller = sampleControllersMap[key]!;
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          title: const Center(child: Text('Sample', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          children:
+                              isSampleLoading
+                                  ? [const Padding(padding: EdgeInsets.all(16.0), child: Center(child: CircularProgressIndicator(color: Colors.white)))]
+                                  : apiSampleList.isNotEmpty
+                                  ? apiSampleList.map((sample) {
+                                    final key = sample['sample_id'] + sample['promo_type'];
+                                    final controller = sampleControllersMap[key]!;
 
-                            return Container(
-                              color: Colors.white,
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(sample['sample_name'],
-                                                  style: const TextStyle(fontSize: 16)),
-                                              const SizedBox(width: 6),
-                                              sample['sample_left_qty']==0 ? const SizedBox.shrink() : Text(
-                                                  //'(${sample['sample_left_qty']}/${sample['sample_total_qty']})',
-                                                  '(${sample['sample_left_qty']})',
-                                                  style:
-                                                  const TextStyle(color: Colors.red)),
-                                            ],
-                                          ),
-                                          Text(sample['sample_id'],
-                                              style: const TextStyle(
-                                                  fontSize: 13, color: Colors.grey)),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: controller,
-                                        readOnly: sample['sample_left_qty']==0,
-                                        onTap: (){
-                                          if(sample['sample_left_qty']==0){
-                                            Fluttertoast.showToast(msg: 'Item is not available',backgroundColor: Colors.red);
-                                          }
-                                        },
-                                        keyboardType: TextInputType.number,
-                                        maxLength: 4,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
-                                        textAlign: TextAlign.center,
-                                        decoration: InputDecoration(
-                                          counterText: '',
-                                          border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(4)),
-                                          isDense: true,
-                                          contentPadding: const EdgeInsets.all(10),
+                                    return Container(
+                                      color: Colors.white,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(sample['sample_name'], style: const TextStyle(fontSize: 16)),
+                                                      const SizedBox(width: 6),
+                                                      sample['sample_left_qty'] == 0
+                                                          ? const SizedBox.shrink()
+                                                          : Text(
+                                                            //'(${sample['sample_left_qty']}/${sample['sample_total_qty']})',
+                                                            '(${sample['sample_left_qty']})',
+                                                            style: const TextStyle(color: Colors.red),
+                                                          ),
+                                                    ],
+                                                  ),
+                                                  Text(sample['sample_id'], style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              flex: 1,
+                                              child: TextFormField(
+                                                controller: controller,
+                                                readOnly: sample['sample_left_qty'] == 0,
+                                                onTap: () {
+                                                  if (sample['sample_left_qty'] == 0) {
+                                                    Fluttertoast.showToast(msg: 'Item is not available', backgroundColor: Colors.red);
+                                                  }
+                                                },
+                                                keyboardType: TextInputType.number,
+                                                maxLength: 4,
+                                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(counterText: '', border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)), isDense: true, contentPadding: const EdgeInsets.all(10)),
+                                                onChanged: (value) {
+                                                  setState(() {});
+                                                  final quantity = int.tryParse(value) ?? 0;
+                                                  final leftQty = sample['sample_left_qty'] ?? 0;
+
+                                                  if (quantity > leftQty) {
+                                                    Fluttertoast.showToast(msg: 'Only $leftQty items are available', backgroundColor: Colors.red);
+                                                    controller.text = leftQty.toString();
+                                                    controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+                                                    return;
+                                                  }
+
+                                                  final model = DcrGSPDataModel(
+                                                    uiqueKey: widget.uniqueId,
+                                                    quantity: quantity,
+                                                    giftName: sample['sample_name'],
+                                                    giftId: sample['sample_id'],
+                                                    //giftType: 'SAMPLE',
+                                                    giftType: sample['promo_type'],
+                                                  );
+
+                                                  widget.tempList1.removeWhere((item) => item.giftId == model.giftId && item.giftType == model.giftType);
+
+                                                  if (quantity > 0) {
+                                                    widget.tempList1.add(model);
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        onChanged: (value) {
-                                          setState(() {});
-                                          final quantity = int.tryParse(value) ?? 0;
-                                          final leftQty = sample['sample_left_qty'] ?? 0;
-
-                                          if (quantity > leftQty) {
-                                            Fluttertoast.showToast(
-                                              msg: 'Only $leftQty items are available',
-                                              backgroundColor: Colors.red,
-                                            );
-                                            controller.text = leftQty.toString();
-                                            controller.selection = TextSelection.fromPosition(
-                                              TextPosition(offset: controller.text.length),
-                                            );
-                                            return;
-                                          }
-
-
-                                          final model = DcrGSPDataModel(
-                                            uiqueKey: widget.uniqueId,
-                                            quantity: quantity,
-                                            giftName: sample['sample_name'],
-                                            giftId: sample['sample_id'],
-                                            //giftType: 'SAMPLE',
-                                            giftType: sample['promo_type'],
-                                          );
-
-                                          widget.tempList1.removeWhere((item) =>
-                                          item.giftId == model.giftId &&
-                                              item.giftType == model.giftType);
-
-                                          if (quantity > 0) {
-                                            widget.tempList1.add(model);
-                                          }
-                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList()
-                              : [
-                            const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text('No results found'),
-                            )
-                          ],
+                                    );
+                                  }).toList()
+                                  : [const Padding(padding: EdgeInsets.all(8), child: Text('No results found'))],
                         ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(height: 10),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: ExpansionTile(
-                          trailing: Icon(
-                            isPPMExpanded ? Icons.arrow_circle_up_outlined : Icons.arrow_circle_down_outlined,
-                            color: Colors.white,
-                          ),
+                          trailing: Icon(isPPMExpanded ? Icons.arrow_circle_up_outlined : Icons.arrow_circle_down_outlined, color: Colors.white),
                           onExpansionChanged: (expanded) {
                             setState(() {
                               isPPMExpanded = expanded;
@@ -760,132 +638,99 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
                           backgroundColor: Colors.black,
                           collapsedIconColor: Colors.white,
                           iconColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          collapsedShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          title: const Center(
-                            child: Text(
-                              'PPM',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          children: isPPMLoading?
-                          [
-                          const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(child: CircularProgressIndicator(
-                              color: Colors.white,
-                            )),
-                          )
-                          ]:
-                          apiPPMList.isNotEmpty
-                              ? apiPPMList.map((ppm) {
-                            final key = ppm['ppm_id'] + ppm['promo_type'];
-                            final controller = ppmControllersMap[key]!;
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          title: const Center(child: Text('PPM', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          children:
+                              isPPMLoading
+                                  ? [const Padding(padding: EdgeInsets.all(16.0), child: Center(child: CircularProgressIndicator(color: Colors.white)))]
+                                  : apiPPMList.isNotEmpty
+                                  ? apiPPMList.map((ppm) {
+                                    final key = ppm['ppm_id'] + ppm['promo_type'];
+                                    final controller = ppmControllersMap[key]!;
 
-                            return Container(
-                              color: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(ppm['ppm_name'], style: const TextStyle(fontSize: 16)),
-                                              const SizedBox(width: 6),
-                                              ppm['ppm_left_qty']==0 ? const SizedBox.shrink() : Text(
-                                                //'(${ppm['ppm_left_qty']}/${ppm['ppm_total_qty']})',
-                                                '(${ppm['ppm_left_qty']})',
-                                                style: const TextStyle(color: Colors.red),
+                                    return Container(
+                                      color: Colors.white,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(ppm['ppm_name'], style: const TextStyle(fontSize: 16)),
+                                                      const SizedBox(width: 6),
+                                                      ppm['ppm_left_qty'] == 0
+                                                          ? const SizedBox.shrink()
+                                                          : Text(
+                                                            //'(${ppm['ppm_left_qty']}/${ppm['ppm_total_qty']})',
+                                                            '(${ppm['ppm_left_qty']})',
+                                                            style: const TextStyle(color: Colors.red),
+                                                          ),
+                                                    ],
+                                                  ),
+                                                  Text(ppm['ppm_id'], style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                          Text(ppm['ppm_id'], style: const TextStyle(fontSize: 13, color: Colors.grey)),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: controller,
-                                        readOnly: ppm['ppm_left_qty']==0,
-                                        onTap: (){
-                                          if(ppm['ppm_left_qty']==0){
-                                            Fluttertoast.showToast(msg: 'Item is not available',backgroundColor: Colors.red);
-                                          }
-                                        },
-                                        keyboardType: TextInputType.number,
-                                        maxLength: 4,
-                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                        textAlign: TextAlign.center,
-                                        decoration: InputDecoration(
-                                          counterText: '',
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
-                                          isDense: true,
-                                          contentPadding: const EdgeInsets.all(10),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              flex: 1,
+                                              child: TextFormField(
+                                                controller: controller,
+                                                readOnly: ppm['ppm_left_qty'] == 0,
+                                                onTap: () {
+                                                  if (ppm['ppm_left_qty'] == 0) {
+                                                    Fluttertoast.showToast(msg: 'Item is not available', backgroundColor: Colors.red);
+                                                  }
+                                                },
+                                                keyboardType: TextInputType.number,
+                                                maxLength: 4,
+                                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(counterText: '', border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)), isDense: true, contentPadding: const EdgeInsets.all(10)),
+                                                onChanged: (value) {
+                                                  setState(() {});
+                                                  final quantity = int.tryParse(value) ?? 0;
+                                                  final leftQty = ppm['ppm_left_qty'] ?? 0;
+
+                                                  if (quantity > leftQty) {
+                                                    Fluttertoast.showToast(msg: 'Only $leftQty items are available', backgroundColor: Colors.red);
+                                                    controller.text = leftQty.toString();
+                                                    controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+                                                    return;
+                                                  }
+
+                                                  final model = DcrGSPDataModel(
+                                                    uiqueKey: widget.uniqueId,
+                                                    quantity: quantity,
+                                                    giftName: ppm['ppm_name'],
+                                                    giftId: ppm['ppm_id'],
+                                                    // giftType: 'PPM',
+                                                    giftType: ppm['promo_type'],
+                                                  );
+
+                                                  widget.tempList2.removeWhere((item) => item.giftId == model.giftId && item.giftType == model.giftType);
+
+                                                  if (quantity > 0) {
+                                                    widget.tempList2.add(model);
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        onChanged: (value) {
-                                          setState(() {});
-                                          final quantity = int.tryParse(value) ?? 0;
-                                          final leftQty = ppm['ppm_left_qty'] ?? 0;
-
-                                          if (quantity > leftQty) {
-                                            Fluttertoast.showToast(
-                                              msg: 'Only $leftQty items are available',
-                                              backgroundColor: Colors.red,
-                                            );
-                                            controller.text = leftQty.toString();
-                                            controller.selection = TextSelection.fromPosition(
-                                              TextPosition(offset: controller.text.length),
-                                            );
-                                            return;
-                                          }
-
-                                          final model = DcrGSPDataModel(
-                                            uiqueKey: widget.uniqueId,
-                                            quantity: quantity,
-                                            giftName: ppm['ppm_name'],
-                                            giftId: ppm['ppm_id'],
-                                            // giftType: 'PPM',
-                                            giftType: ppm['promo_type'],
-                                          );
-
-                                          widget.tempList2.removeWhere(
-                                                  (item) => item.giftId == model.giftId && item.giftType == model.giftType);
-
-                                          if (quantity > 0) {
-                                            widget.tempList2.add(model);
-                                          }
-                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList()
-                              : [
-                            const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text('No results found'),
-                            )
-                          ],
+                                    );
+                                  }).toList()
+                                  : [const Padding(padding: EdgeInsets.all(8), child: Text('No results found'))],
                         ),
                       ),
-
                     ],
                   ),
                 ),
@@ -896,6 +741,4 @@ class _PromotionalDrawerState extends State<PromotionalDrawer> {
       ),
     );
   }
-
 }
-

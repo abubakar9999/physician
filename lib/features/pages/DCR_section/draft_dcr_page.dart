@@ -59,7 +59,7 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text('Draft Visit'), centerTitle: true),
+      appBar: AppBar(title: const Text('Draft Visit', style: TextStyle(color: Colors.white)), centerTitle: true, backgroundColor: Colors.blue),
       body: SafeArea(
         child: ValueListenableBuilder(
           valueListenable: Boxes.dcrUsers().listenable(),
@@ -75,12 +75,7 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
 
   Widget genContent(List<DcrDataModel> user) {
     if (user.isEmpty) {
-      return const Center(
-        child: Text(
-          "No Data Found",
-          style: TextStyle(fontSize: 20),
-        ),
-      );
+      return const Center(child: Text("No Data Found", style: TextStyle(fontSize: 20)));
     } else {
       return ListView.builder(
         itemCount: user.length,
@@ -97,7 +92,6 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
             String removeSpace = user[index].image!.substring(space + 1);
             finalImage = removeSpace.replaceAll("'", '');
           }
-
 
           return GestureDetector(
             onTap: () {},
@@ -117,12 +111,7 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
                         //   fit: BoxFit.cover,
                         //   image: FileImage(File(finalImage)),
                         // ),
-                        child: finalImage != null && File(finalImage).existsSync()
-                            ? Image(
-                          fit: BoxFit.cover,
-                          image: FileImage(File(finalImage)),
-                        )
-                            : const Icon(Icons.image_not_supported, size: 50),
+                        child: finalImage != null && File(finalImage).existsSync() ? Image(fit: BoxFit.cover, image: FileImage(File(finalImage))) : const Icon(Icons.image_not_supported, size: 50),
                       ),
                     ),
                     Expanded(
@@ -136,16 +125,8 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
                           //   style: const TextStyle(
                           //       fontWeight: FontWeight.bold, fontSize: 18),
                           // ),
-                          Text(
-                            "${user[index].docName} (${user[index].docId}) ",
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Text(
-                            user[index].areaName,
-                            style: const TextStyle(fontSize: 13),
-                          ),
+                          Text("${user[index].docName} (${user[index].docId}) ", overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(user[index].areaName, style: const TextStyle(fontSize: 13)),
                         ],
                       ),
                     ),
@@ -163,8 +144,7 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text("Confirm"),
-                                content: const Text(
-                                    "Are you sure you want to Delete the Doctor?"),
+                                content: const Text("Are you sure you want to Delete the Doctor?"),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -189,14 +169,8 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
                             },
                           );
                         },
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                        label: const Text(
-                          "Delete",
-                          style: TextStyle(color: Colors.red),
-                        ),
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        label: const Text("Delete", style: TextStyle(color: Colors.red)),
                       ),
                       TextButton.icon(
                         onPressed: () {
@@ -211,57 +185,43 @@ class _DraftDCRScreenState extends State<DraftDCRScreen> {
                           final dcrKey = user[index].uiqueKey;
 
                           filteredOrder = [];
-                          addedDcrGSPList
-                              .where((item) => item.uiqueKey == dcrKey)
-                              .forEach(
-                            (item) {
-                              final temp = DcrGSPDataModel(
-                                  uiqueKey: item.uiqueKey,
-                                  quantity: item.quantity,
-                                  giftName: item.giftName,
-                                  giftId: item.giftId,
-                                  giftType: item.giftType);
-                              filteredOrder.add(temp);
-                            },
-                          );
+                          addedDcrGSPList.where((item) => item.uiqueKey == dcrKey).forEach((item) {
+                            final temp = DcrGSPDataModel(uiqueKey: item.uiqueKey, quantity: item.quantity, giftName: item.giftName, giftId: item.giftId, giftType: item.giftType);
+                            filteredOrder.add(temp);
+                          });
 
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => DcrGiftSamplePpmPage(
-                                ck: 'isCheck',
-                                dcrKey: dcrKey,
-                                uniqueId: dcrKey,
-                                draftOrderItem: filteredOrder,
-                                officeName: user[index].docName,
-                                officeId: user[index].docId,
-                                areaName: user[index].areaName,
-                                areaId: user[index].areaId,
-                                address: user[index].address,
-                                dVisitedWith: vititedwith ?? "",
-                                note: note ?? "",
-                                nonExcution: nonExcution ?? "",
-                                selectedDeliveryTime: selectedDeliveryTime ?? "",
-                                image1: user[index].image ?? '',
-                                visitedPerson: user[index].visitedPerson ?? '',
-                                phnNum: user[index].phoneNum!.toInt(),
-                                orgName: user[index].organizationName ?? '',
-                                category: user[index].category ?? '',
-                                brandId: user[index].brandId ?? '',
-                              ),
+                              builder:
+                                  (_) => DcrGiftSamplePpmPage(
+                                    ck: 'isCheck',
+                                    dcrKey: dcrKey,
+                                    uniqueId: dcrKey,
+                                    draftOrderItem: filteredOrder,
+                                    officeName: user[index].docName,
+                                    officeId: user[index].docId,
+                                    areaName: user[index].areaName,
+                                    areaId: user[index].areaId,
+                                    address: user[index].address,
+                                    dVisitedWith: vititedwith ?? "",
+                                    note: note ?? "",
+                                    nonExcution: nonExcution ?? "",
+                                    selectedDeliveryTime: selectedDeliveryTime ?? "",
+                                    image1: user[index].image ?? '',
+                                    visitedPerson: user[index].visitedPerson ?? '',
+                                    phnNum: user[index].phoneNum!.toInt(),
+                                    orgName: user[index].organizationName ?? '',
+                                    category: user[index].category ?? '',
+                                    brandId: user[index].brandId ?? '',
+                                  ),
                             ),
                           );
 
                           print(selectedDeliveryTime);
                         },
-                        icon: const Icon(
-                          Icons.arrow_forward_outlined,
-                          color: Colors.blue,
-                        ),
-                        label: const Text(
-                          "Details",
-                          style: TextStyle(color: Colors.blue),
-                        ),
+                        icon: const Icon(Icons.arrow_forward_outlined, color: Colors.blue),
+                        label: const Text("Details", style: TextStyle(color: Colors.blue)),
                       ),
                     ],
                   ),

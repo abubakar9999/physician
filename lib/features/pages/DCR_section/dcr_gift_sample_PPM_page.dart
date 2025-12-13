@@ -622,7 +622,7 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
           resizeToAvoidBottomInset: false,
           key: _drawerKey,
           appBar: AppBar(
-            backgroundColor: const Color.fromARGB(255, 138, 201, 149),
+            backgroundColor: Colors.blue,
 
             leading: IconButton(
               onPressed: () {
@@ -630,7 +630,7 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
               },
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
-            title: const Text('Visit', style: TextStyle(color: Color.fromARGB(255, 27, 56, 34), fontWeight: FontWeight.w500, fontSize: 20)),
+            title: const Text('Visit', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20)),
             centerTitle: true,
           ),
           endDrawer: Drawer(
@@ -639,7 +639,7 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
               children: [
                 DrawerHeader(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(color: Color.fromARGB(255, 138, 201, 149)),
+                  decoration: const BoxDecoration(color: Colors.blue),
                   child: Column(
                     children: [
                       // logo_url_2 != null ?  CachedNetworkImage(
@@ -648,7 +648,7 @@ class _DcrGiftSamplePpmPageState extends State<DcrGiftSamplePpmPage> {
                       //   errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
                       // )
                       //     : Image.asset("assets/images/mRep7_logo.png"),
-                      Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain, height: screenHeight * .075),
+                      Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain, height: screenHeight * .10),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

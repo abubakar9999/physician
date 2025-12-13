@@ -30,17 +30,12 @@ const COLOR_Red1 = Color(0xffC62C2C);
 const COLOR_Red2 = Color(0xff7D3E3E);
 const COLOR_LightPurple = Color(0xff6251A2);
 
-const TEXTSTYLE_Headline4 =
-    TextStyle(color: COLOR_White, fontWeight: FontWeight.w400, fontSize: 34);
-const TEXTSTYLE_Headline5 =
-    TextStyle(color: COLOR_White, fontWeight: FontWeight.w400, fontSize: 24);
-const TEXTSTYLE_Headline6 =
-    TextStyle(color: COLOR_White, fontWeight: FontWeight.w500, fontSize: 20);
-const TEXTSTYLE_Headline18 =
-    TextStyle(color: COLOR_White, fontWeight: FontWeight.w400, fontSize: 18);
+const TEXTSTYLE_Headline4 = TextStyle(color: COLOR_White, fontWeight: FontWeight.w400, fontSize: 34);
+const TEXTSTYLE_Headline5 = TextStyle(color: COLOR_White, fontWeight: FontWeight.w400, fontSize: 24);
+const TEXTSTYLE_Headline6 = TextStyle(color: COLOR_White, fontWeight: FontWeight.w500, fontSize: 20);
+const TEXTSTYLE_Headline18 = TextStyle(color: COLOR_White, fontWeight: FontWeight.w400, fontSize: 18);
 
-const TEXTSTYLE_Headline13 =
-    TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 13);
+const TEXTSTYLE_Headline13 = TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 13);
 
 DateTime getCurrentDateTime(String time) {
   return DateTime.parse(time);
@@ -53,13 +48,7 @@ ThemeData defaultTheme = ThemeData(
   // bottomNavigationBarTheme:
   //     const BottomNavigationBarThemeData(backgroundColor: COLOR_SECONDARY),
   // primaryColor: COLOR_PRIMARY,
-  appBarTheme: const AppBarTheme(
-    color: Color.fromARGB(255, 138, 201, 149),
-    titleTextStyle: TextStyle(
-        color: Color.fromARGB(255, 27, 56, 34),
-        fontWeight: FontWeight.w500,
-        fontSize: 20),
-  ),
+  appBarTheme: const AppBarTheme(color: Colors.blue, titleTextStyle: TextStyle(color: Color.fromARGB(255, 27, 56, 34), fontWeight: FontWeight.w500, fontSize: 20)),
   // drawerTheme:
   //     DrawerThemeData(backgroundColor: Color.fromARGB(255, 138, 201, 149))
   // bottomAppBarColor: COLOR_SECONDARY,

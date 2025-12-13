@@ -184,7 +184,7 @@ class _DxdrawerState extends State<Dxdrawer> {
           color: Colors.grey.withOpacity(0.7),
           child: Column(
             children: [
-              Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 14), decoration: const BoxDecoration(color: Color.fromARGB(255, 138, 201, 149)), child: Center(child: Text('Diagnosis', style: TextStyle(fontSize: 22, color: Colors.white.withOpacity(0.7), fontWeight: FontWeight.w500)))),
+              Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 14), decoration: const BoxDecoration(color: Colors.blue), child: Center(child: Text('Diagnosis', style: TextStyle(fontSize: 22, color: Colors.white.withOpacity(0.7), fontWeight: FontWeight.w500)))),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {

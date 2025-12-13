@@ -65,7 +65,7 @@ class _DoctorTerritoryPageState extends State<BranchSelectiionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(centerTitle: true, title: const Text("Branch")),
+      appBar: AppBar(centerTitle: true, title: const Text("Branch", style: TextStyle(color: Colors.white)), backgroundColor: Colors.blue),
       body: Column(
         children: [
           Padding(
@@ -105,7 +105,7 @@ class _DoctorTerritoryPageState extends State<BranchSelectiionScreen> {
                       shrinkWrap: true,
                       itemCount: foundUsers.length,
                       itemBuilder: (context, index) {
-                       final raw = foundUsers[index]["branch"].toString();
+                        final raw = foundUsers[index]["branch"].toString();
 
                         // remove quotes + outer spaces
                         final cleaned = raw.replaceAll("'", "").trim();
@@ -120,7 +120,6 @@ class _DoctorTerritoryPageState extends State<BranchSelectiionScreen> {
                         print("FD US $foundUsers");
                         print('foundUsers:${foundUsers.length}');
                         print('xx:${foundUsers[index]["branch"]}');
-                        
 
                         return InkWell(
                           onTap: () async {

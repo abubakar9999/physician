@@ -87,10 +87,10 @@ class _SyncDataTabScreenState extends State<SyncDataTabScreen> {
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       backgroundColor: const Color(0xffD8E5F1),
-      appBar: AppBar(title: const Text('Sync Data'), centerTitle: true),
+      appBar: AppBar(title: const Text('Sync Data', style: TextStyle(color: Colors.white)), centerTitle: true, backgroundColor: Colors.blue),
       body:
           _loading
-              ? const Center(child: CircularProgressIndicator(color: Colors.blueGrey))
+              ? const Center(child: CircularProgressIndicator(color: Colors.blue))
               : SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
@@ -118,7 +118,7 @@ class _SyncDataTabScreenState extends State<SyncDataTabScreen> {
                                   _submitToastforOrder3();
                                 }
                               },
-                              color: Colors.teal.withOpacity(.5),
+                              color: const Color.fromARGB(255, 123, 189, 243),
                               title: 'Sync ALL',
                               sizeWidth: screenWidth,
                             ),
@@ -375,7 +375,7 @@ class _SyncDataTabScreenState extends State<SyncDataTabScreen> {
                                   ),
                                 );
                               },
-                              color: const Color(0xff56CCF2).withOpacity(.4),
+                              color: const Color.fromARGB(255, 123, 189, 243),
                               title: 'Go to Home Page',
                               sizeWidth: screenWidth,
                             ),
@@ -396,14 +396,15 @@ class _SyncDataTabScreenState extends State<SyncDataTabScreen> {
       debugPrint(
         //"dmpath1::http://192.168.100.219:8000/physician_api/dmpath_test/get_dmpath?cid=$cid"
         // "dmpath1::http://192.168.100.198:8000/physician_api/dmpath_test/get_dmpath?cid=$cid",
-        "dmpath1::https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid"
+        "dmpath1::https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid",
       );
       final http.Response response = await http.get(
         Uri.parse(
           //"http://192.168.100.219:8000/physician_api/dmpath_test/get_dmpath?cid=$cid")
           //"http://http://192.168.100.198:8000/physician_api/dmpath_test/get_dmpath?cid=$cid",
-        //),
-         "https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid")
+          //),
+          "https://w05.yeapps.com/dmpath/dmpath_phy/get_dmpath?cid=$cid",
+        ),
       );
 
       var userInfo = json.decode(response.body);

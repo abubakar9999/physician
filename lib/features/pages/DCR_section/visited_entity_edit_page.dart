@@ -19,19 +19,7 @@ class VisitedEntityEditScreen extends StatefulWidget {
   final String designation;
   final String address;
 
-  const VisitedEntityEditScreen({
-    Key? key,
-    required this.officeId,
-    required this.branchName,
-    required this.branchId,
-    required this.officeName,
-    required this.phnNumber,
-    required this.district,
-    required this.thana,
-    required this.organization,
-    required this.designation,
-    required this.address,
-  }) : super(key: key);
+  const VisitedEntityEditScreen({Key? key, required this.officeId, required this.branchName, required this.branchId, required this.officeName, required this.phnNumber, required this.district, required this.thana, required this.organization, required this.designation, required this.address}) : super(key: key);
 
   @override
   State<VisitedEntityEditScreen> createState() => _VisitedEntityEditScreenState();
@@ -89,28 +77,21 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
 
       if (widget.district.isNotEmpty) {
         try {
-          selectedDistrict = districtName.firstWhere(
-                (element) => element.toLowerCase().trim() == widget.district.toLowerCase().trim(),
-          );
+          selectedDistrict = districtName.firstWhere((element) => element.toLowerCase().trim() == widget.district.toLowerCase().trim());
         } catch (e) {
           debugPrint('No matching district found for: ${widget.district}');
         }
       }
 
       if (selectedDistrict != null) {
-        final defaultDistrictData = districtThanaList.firstWhere(
-              (element) => element['district_name'] == selectedDistrict,
-          orElse: () => {'thana_name': []},
-        );
+        final defaultDistrictData = districtThanaList.firstWhere((element) => element['district_name'] == selectedDistrict, orElse: () => {'thana_name': []});
         final thana = defaultDistrictData['thana_name'];
         if (thana is List) {
           thanaNames = thana.map((e) => e.toString()).toList();
 
           if (widget.thana.isNotEmpty) {
             try {
-              selectedThana = thanaNames.firstWhere(
-                    (element) => element.toLowerCase().trim() == widget.thana.toLowerCase().trim(),
-              );
+              selectedThana = thanaNames.firstWhere((element) => element.toLowerCase().trim() == widget.thana.toLowerCase().trim());
             } catch (e) {
               debugPrint('No matching thana found for: ${widget.thana}');
             }
@@ -150,17 +131,17 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
     if (_formKey.currentState!.validate() && selectedDistrict != null && selectedThana != null) {
       final uri = Uri.parse(
         '$visit_office_edit_url'
-            '?cid=$cid'
-            '&user_id=$userId'
-            '&user_pass=$userPassword'
-            '&office_id=${widget.officeId.trim()}'
-            '&office_name=${officeController.text.trim()}'
-            '&office_phone=${phoneController.text.trim()}'
-            '&company_name=${organizationController.text.trim()}'
-            '&designation=${designationController.text.trim()}'
-            '&district=${selectedDistrict!.trim()}'
-            '&thana=${selectedThana!.trim()}'
-            '&office_address=${addressController.text.trim()}',
+        '?cid=$cid'
+        '&user_id=$userId'
+        '&user_pass=$userPassword'
+        '&office_id=${widget.officeId.trim()}'
+        '&office_name=${officeController.text.trim()}'
+        '&office_phone=${phoneController.text.trim()}'
+        '&company_name=${organizationController.text.trim()}'
+        '&designation=${designationController.text.trim()}'
+        '&district=${selectedDistrict!.trim()}'
+        '&thana=${selectedThana!.trim()}'
+        '&office_address=${addressController.text.trim()}',
       );
 
       debugPrint('url:$uri');
@@ -173,29 +154,18 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
         final response = await http.get(uri);
 
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Entity updated successfully")),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Entity updated successfully")));
 
           await visitOffice(context);
 
-          final updatedList = Hive.box('mpoForDoctor').values
-              .toList()
-              .where((e) => e['branch'].toString().contains(widget.branchId))
-              .map((e) => e['office_list'])
-              .expand((e) => e)
-              .toList();
+          final updatedList = Hive.box('mpoForDoctor').values.toList().where((e) => e['branch'].toString().contains(widget.branchId)).map((e) => e['office_list']).expand((e) => e).toList();
 
           Navigator.pop(context, updatedList);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: ${response.reasonPhrase}")),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${response.reasonPhrase}")));
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Connection error: $e")),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Connection error: $e")));
       } finally {
         setState(() {
           isSubmitting = false;
@@ -204,241 +174,142 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Visited Entity Edit"),
-        backgroundColor: const Color.fromARGB(255, 138, 201, 149),
-        actions: [
-          IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
-        ],
-      ),
-      body: isSubmitting
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(14),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              buildLabel("Visited Office/ Person"),
-              buildReadOnlyField(officeController),
-              buildLabel("Branch"),
-              buildReadOnlyField(branchController),
-              buildLabel("District"),
-              DropdownButtonFormField2<String>(
-                isExpanded: true,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                value: selectedDistrict,
-                validator: (value) => value == null ? 'Please select a District' : null,
-                items: districtName.map((district) {
-                  return DropdownMenuItem<String>(
-                    value: district,
-                    child: Text(district),
-                  );
-                }).toList(),
-                selectedItemBuilder: (context) {
-                  return districtName.map((district) {
-                    return Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        district,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    );
-                  }).toList();
-                },
-                onChanged: (value) {
-                  setState(() {
-                    selectedDistrict = value;
-                    selectedThana = null;
+      appBar: AppBar(title: const Text("Visited Entity Edit"), backgroundColor: Colors.blue, actions: [IconButton(icon: const Icon(Icons.menu), onPressed: () {})]),
+      body:
+          isSubmitting
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(14),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: [
+                      buildLabel("Visited Office/ Person"),
+                      buildReadOnlyField(officeController),
+                      buildLabel("Branch"),
+                      buildReadOnlyField(branchController),
+                      buildLabel("District"),
+                      DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+                        value: selectedDistrict,
+                        validator: (value) => value == null ? 'Please select a District' : null,
+                        items:
+                            districtName.map((district) {
+                              return DropdownMenuItem<String>(value: district, child: Text(district));
+                            }).toList(),
+                        selectedItemBuilder: (context) {
+                          return districtName.map((district) {
+                            return Align(alignment: Alignment.centerLeft, child: Text(district, overflow: TextOverflow.ellipsis, maxLines: 1));
+                          }).toList();
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDistrict = value;
+                            selectedThana = null;
 
-                    final matched = districtThanaList.firstWhere(
-                          (element) => element['district_name'] == value,
-                      orElse: () => {'thana_name': []},
-                    );
+                            final matched = districtThanaList.firstWhere((element) => element['district_name'] == value, orElse: () => {'thana_name': []});
 
-                    final thana = matched['thana_name'];
-                    if (thana is List) {
-                      thanaNames = thana.map((e) => e.toString()).toList();
-                    } else {
-                      thanaNames = [];
-                    }
-                  });
-                  _districtSearchController.clear();
-                },
-                dropdownSearchData: DropdownSearchData(
-                  searchController: _districtSearchController,
-                  searchInnerWidgetHeight: 50,
-                  searchInnerWidget: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _districtSearchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search district...',
-                        border: OutlineInputBorder(),
+                            final thana = matched['thana_name'];
+                            if (thana is List) {
+                              thanaNames = thana.map((e) => e.toString()).toList();
+                            } else {
+                              thanaNames = [];
+                            }
+                          });
+                          _districtSearchController.clear();
+                        },
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _districtSearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Padding(padding: const EdgeInsets.all(8.0), child: TextField(controller: _districtSearchController, decoration: const InputDecoration(hintText: 'Search district...', border: OutlineInputBorder()))),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value!.toLowerCase().contains(searchValue.toLowerCase());
+                          },
+                        ),
                       ),
-                    ),
-                  ),
-                  searchMatchFn: (item, searchValue) {
-                    return item.value!.toLowerCase().contains(searchValue.toLowerCase());
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-              buildLabel("Thana"),
-              DropdownButtonFormField2<String>(
-                isExpanded: true,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                value: selectedThana,
-                validator: (value) => value == null ? 'Please select a Thana' : null,
-                items: thanaNames.map((thana) {
-                  return DropdownMenuItem<String>(
-                    value: thana,
-                    child: Text(thana),
-                  );
-                }).toList(),
-                selectedItemBuilder: (context) {
-                  return thanaNames.map((thana) {
-                    return Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        thana,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                      const SizedBox(height: 10),
+                      buildLabel("Thana"),
+                      DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+                        value: selectedThana,
+                        validator: (value) => value == null ? 'Please select a Thana' : null,
+                        items:
+                            thanaNames.map((thana) {
+                              return DropdownMenuItem<String>(value: thana, child: Text(thana));
+                            }).toList(),
+                        selectedItemBuilder: (context) {
+                          return thanaNames.map((thana) {
+                            return Align(alignment: Alignment.centerLeft, child: Text(thana, overflow: TextOverflow.ellipsis, maxLines: 1));
+                          }).toList();
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            selectedThana = value;
+                          });
+                          _thanaSearchController.clear();
+                        },
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _thanaSearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Padding(padding: const EdgeInsets.all(8.0), child: TextField(controller: _thanaSearchController, decoration: const InputDecoration(hintText: 'Search thana...', border: OutlineInputBorder()))),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value!.toLowerCase().contains(searchValue.toLowerCase());
+                          },
+                        ),
                       ),
-                    );
-                  }).toList();
-                },
-                onChanged: (value) {
-                  setState(() {
-                    selectedThana = value;
-                  });
-                  _thanaSearchController.clear();
-                },
-                dropdownSearchData: DropdownSearchData(
-                  searchController: _thanaSearchController,
-                  searchInnerWidgetHeight: 50,
-                  searchInnerWidget: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _thanaSearchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search thana...',
-                        border: OutlineInputBorder(),
+                      const SizedBox(height: 10),
+                      buildLabel("Phone"),
+                      buildTextField(
+                        phoneController,
+                        onTap: () {
+                          if (phoneController.text.isEmpty) {
+                            phoneController.text = '88';
+                            phoneController.selection = TextSelection.fromPosition(TextPosition(offset: phoneController.text.length));
+                          }
+                        },
+                        onChanged: (value) {
+                          if (!value.startsWith('88')) {
+                            phoneController.text = '88';
+                            phoneController.selection = TextSelection.fromPosition(TextPosition(offset: phoneController.text.length));
+                          }
+                        },
                       ),
-                    ),
+                      buildLabel("Organization/ Company"),
+                      buildTextField(organizationController),
+                      buildLabel("Designation"),
+                      buildTextField(designationController),
+                      buildLabel("Address"),
+                      buildTextField(addressController),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          submitEditedOffice();
+                        },
+                        style: ElevatedButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))), padding: const EdgeInsets.all(18), backgroundColor: const Color.fromARGB(255, 138, 201, 149)),
+                        child: const Center(child: Text("Submit", style: TextStyle(fontSize: 16))),
+                      ),
+                    ],
                   ),
-                  searchMatchFn: (item, searchValue) {
-                    return item.value!.toLowerCase().contains(searchValue.toLowerCase());
-                  },
                 ),
               ),
-              const SizedBox(height: 10),
-              buildLabel("Phone"),
-              buildTextField(
-                phoneController,
-                onTap: () {
-                  if (phoneController.text.isEmpty) {
-                    phoneController.text = '88';
-                    phoneController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: phoneController.text.length),
-                    );
-                  }
-                },
-                onChanged: (value) {
-                  if (!value.startsWith('88')) {
-                    phoneController.text = '88';
-                    phoneController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: phoneController.text.length),
-                    );
-                  }
-                },
-              ),
-              buildLabel("Organization/ Company"),
-              buildTextField(organizationController),
-              buildLabel("Designation"),
-              buildTextField(designationController),
-              buildLabel("Address"),
-              buildTextField(addressController),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  submitEditedOffice();
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  padding: const EdgeInsets.all(18),
-                  backgroundColor: const Color.fromARGB(255, 138, 201, 149),
-                ),
-                child: const Center(
-                  child: Text("Submit", style: TextStyle(fontSize: 16)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
   Widget buildLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 6, bottom: 2),
-      child: Row(
-        children: [
-          Text(text),
-          const Text(
-            ' *',
-            style: TextStyle(color: Colors.red),
-          ),
-        ],
-      ),
-    );
+    return Padding(padding: const EdgeInsets.only(top: 6, bottom: 2), child: Row(children: [Text(text), const Text(' *', style: TextStyle(color: Colors.red))]));
   }
 
   Widget buildTextField(TextEditingController controller, {Function(String)? onChanged, VoidCallback? onTap}) {
-    return TextFormField(
-      onTap: onTap,
-      onChanged: onChanged,
-      controller: controller,
-      validator: (val) => (val == null || val.isEmpty) ? 'Required field' : null,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-      ),
-    );
+    return TextFormField(onTap: onTap, onChanged: onChanged, controller: controller, validator: (val) => (val == null || val.isEmpty) ? 'Required field' : null, decoration: const InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10)))));
   }
 
   Widget buildReadOnlyField(TextEditingController controller) {
-    return TextFormField(
-      controller: controller,
-      readOnly: true,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        fillColor: Color(0xFFEDEDED),
-        filled: true,
-      ),
-    );
+    return TextFormField(controller: controller, readOnly: true, decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10))), fillColor: Color(0xFFEDEDED), filled: true));
   }
 }
 
@@ -761,5 +632,3 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
 //     );
 //   }
 // }
-
-

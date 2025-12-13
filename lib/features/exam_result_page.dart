@@ -203,9 +203,9 @@ class _ExamResultPageState extends State<ExamResultPage>  with WidgetsBindingObs
         appBar: AppBar(
           centerTitle: true,
           foregroundColor: Colors.white,
+          backgroundColor: Colors.blue,
           title: const Text(
-            'Result',
-            style: TextStyle(),
+            'Result',style: TextStyle(color: Colors.white),
           ),
           actions: [
             Row(

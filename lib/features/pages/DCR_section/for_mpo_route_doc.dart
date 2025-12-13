@@ -64,7 +64,7 @@ class _DoctorTerritoryPageState extends State<DoctorTerritoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(centerTitle: true, title: const Text("Branch")),
+      appBar: AppBar(centerTitle: true, title: const Text("Branch", style: TextStyle(color: Colors.white)), backgroundColor: Colors.blue),
       body: Column(
         children: [
           Padding(

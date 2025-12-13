@@ -1186,7 +1186,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                                         },
                                         title: buttonNames?.get('seen_rx_capture') == "" ? 'Prescription Capture' : buttonNames?.get('seen_rx_capture') ?? 'Prescription Capture',
                                         sizeWidth: screenWidth,
-                                        inputColor: const Color(0xff70BA85).withOpacity(.3),
+                                        inputColor:const Color(0xff56CCF2).withOpacity(.3),
                                       ),
                                     ),
                                   ],
@@ -1211,7 +1211,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                                             title: buttonNames?.get('draft_seen_rx') == "" ? 'Draft Prescription' : buttonNames?.get('draft_seen_rx') ?? 'Draft Prescription',
                                             sizeWidth: screenWidth,
                                             //inputColor: Colors.white,
-                                            inputColor: const Color(0xff70BA85).withOpacity(.3),
+                                            inputColor: const Color(0xff56CCF2).withOpacity(.3),
                                           ),
                                           Boxes.rxdDoctor().length == 0
                                               ? const SizedBox.shrink()
@@ -1232,7 +1232,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                                         title: buttonNames?.get('seen_rx_report') == "" ? 'Prescription Report' : buttonNames?.get('seen_rx_report') ?? 'Prescription Report',
                                         sizeWidth: screenWidth,
                                         //inputColor: Colors.white,
-                                        inputColor: const Color(0xff70BA85).withOpacity(.3),
+                                        inputColor: const Color(0xff56CCF2).withOpacity(.3),
                                       ),
                                     ),
                                   ],

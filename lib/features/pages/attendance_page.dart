@@ -190,7 +190,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with WidgetsBinding
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: AppBar(title: const Text("Attendance"), centerTitle: true),
+        appBar: AppBar(title: const Text("Attendance", style: TextStyle(color: Colors.white)), centerTitle: true, backgroundColor: Colors.blue),
         endDrawer: Drawer(
           child: SizedBox(
             child: ListView(
@@ -638,7 +638,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> with WidgetsBinding
                               isLoading == true
                                   ? const CircularProgressIndicator()
                                   : ElevatedButton(
-                                    style: ElevatedButton.styleFrom(foregroundColor: Colors.white, backgroundColor: attendance.isEmpty ? Colors.green.shade400 : Colors.blueGrey, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0)),
+                                    style: ElevatedButton.styleFrom(foregroundColor: Colors.white, backgroundColor: attendance.isEmpty ? Colors.blue : Colors.blueGrey, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0)),
                                     onPressed: () async {
                                       setState(() {
                                         isLoading = true;

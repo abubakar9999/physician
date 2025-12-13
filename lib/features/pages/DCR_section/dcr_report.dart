@@ -7,17 +7,13 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../data/datasources/local_storage/boxes.dart';
 
-
-
 class VisitReportPage extends StatefulWidget {
-  VisitReportPage({
-    super.key,
-  });
+  VisitReportPage({super.key});
   @override
   State<VisitReportPage> createState() => _VisitReportPageState();
 }
 
-class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingObserver  {
+class _VisitReportPageState extends State<VisitReportPage> with WidgetsBindingObserver {
   final databox = Boxes.allData();
   String cid = '';
   String userId = '';
@@ -44,109 +40,107 @@ class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingO
 
     _lastSuccessfulUrl = '$visiReportUrl?cid=$cid&user_id=$userId&user_pass=$userPassword';
 
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            if (mounted){
-              setState(() {
-                this.progress = progress;
-              });}
-          },
-
-          onPageStarted: (String url) {
-            log('onPageStarted: $url');
-            if (mounted){
-              setState(() {
-                progress = 0;
-                _isLoading = true;
-                _hasError = false;
-              });}
-          },
-          onPageFinished: (String url) {
-            log('onPageFinished: $url');
-            if (mounted){
-              setState(() {
-                progress = 100;
-                _isLoading = false;
-                _lastSuccessfulUrl = url;
-              });}
-          },
-          onWebResourceError: (WebResourceError error) {
-            log('onWebResourceError: URL: ${error.url}, Code: ${error.errorCode}, Description: ${error.description}');
-            if (mounted){
-              setState(() {
-                _isLoading = false;
-                _hasError = true;
-              });}
-
-            if (error.errorCode == -2) {
-              log('onWebResourceError: Detected ERR_CACHE_MISS. Attempting to reload WebView.');
-              controller.reload();
-              Fluttertoast.showToast(
-                msg: "reload again",
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.BOTTOM,
-                backgroundColor: Colors.orange,
-                textColor: Colors.white,
-              );
-            } else {
-              // Fluttertoast.showToast(
-              //   msg: "page reload failed: ${error.description}",
-              //   toastLength: Toast.LENGTH_LONG,
-              //   gravity: ToastGravity.BOTTOM,
-              //   backgroundColor: Colors.red,
-              //   textColor: Colors.white,
-              // );
-            }
-
-          },
-          onNavigationRequest: (NavigationRequest request) async {
-            final uri = Uri.parse(request.url);
-            final scheme = uri.scheme;
-            log('onNavigationRequest: Intercepted URL: $uri, Scheme: $scheme');
-
-            if (scheme == 'intent') {
-              log('onNavigationRequest: Detected intent scheme. Attempting to launch externally.');
-              final String uriString = uri.toString();
-              final String fallbackUrlPrefix = 'S.browser_fallback_url=';
-              int startIndex = uriString.indexOf(fallbackUrlPrefix);
-
-              if (startIndex != -1) {
-                startIndex += fallbackUrlPrefix.length;
-                int endIndex = uriString.indexOf(';', startIndex);
-                if (endIndex == -1) {
-                  endIndex = uriString.length;
+    controller =
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onProgress: (int progress) {
+                if (mounted) {
+                  setState(() {
+                    this.progress = progress;
+                  });
                 }
-                String encodedFallbackUrl = uriString.substring(startIndex, endIndex);
-                String decodedFallbackUrl = Uri.decodeComponent(encodedFallbackUrl);
-                log('onNavigationRequest: Extracted fallback URL: $decodedFallbackUrl');
-                _launchUrlExternal(Uri.parse(decodedFallbackUrl));
-              } else {
+              },
+
+              onPageStarted: (String url) {
+                log('onPageStarted: $url');
+                if (mounted) {
+                  setState(() {
+                    progress = 0;
+                    _isLoading = true;
+                    _hasError = false;
+                  });
+                }
+              },
+              onPageFinished: (String url) {
+                log('onPageFinished: $url');
+                if (mounted) {
+                  setState(() {
+                    progress = 100;
+                    _isLoading = false;
+                    _lastSuccessfulUrl = url;
+                  });
+                }
+              },
+              onWebResourceError: (WebResourceError error) {
+                log('onWebResourceError: URL: ${error.url}, Code: ${error.errorCode}, Description: ${error.description}');
+                if (mounted) {
+                  setState(() {
+                    _isLoading = false;
+                    _hasError = true;
+                  });
+                }
+
+                if (error.errorCode == -2) {
+                  log('onWebResourceError: Detected ERR_CACHE_MISS. Attempting to reload WebView.');
+                  controller.reload();
+                  Fluttertoast.showToast(msg: "reload again", toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM, backgroundColor: Colors.orange, textColor: Colors.white);
+                } else {
+                  // Fluttertoast.showToast(
+                  //   msg: "page reload failed: ${error.description}",
+                  //   toastLength: Toast.LENGTH_LONG,
+                  //   gravity: ToastGravity.BOTTOM,
+                  //   backgroundColor: Colors.red,
+                  //   textColor: Colors.white,
+                  // );
+                }
+              },
+              onNavigationRequest: (NavigationRequest request) async {
+                final uri = Uri.parse(request.url);
+                final scheme = uri.scheme;
+                log('onNavigationRequest: Intercepted URL: $uri, Scheme: $scheme');
+
+                if (scheme == 'intent') {
+                  log('onNavigationRequest: Detected intent scheme. Attempting to launch externally.');
+                  final String uriString = uri.toString();
+                  final String fallbackUrlPrefix = 'S.browser_fallback_url=';
+                  int startIndex = uriString.indexOf(fallbackUrlPrefix);
+
+                  if (startIndex != -1) {
+                    startIndex += fallbackUrlPrefix.length;
+                    int endIndex = uriString.indexOf(';', startIndex);
+                    if (endIndex == -1) {
+                      endIndex = uriString.length;
+                    }
+                    String encodedFallbackUrl = uriString.substring(startIndex, endIndex);
+                    String decodedFallbackUrl = Uri.decodeComponent(encodedFallbackUrl);
+                    log('onNavigationRequest: Extracted fallback URL: $decodedFallbackUrl');
+                    _launchUrlExternal(Uri.parse(decodedFallbackUrl));
+                  } else {
+                    _launchUrlExternal(uri);
+                  }
+                  return NavigationDecision.prevent;
+                }
+
+                if (scheme == 'https' && uri.host.contains('google.com') && uri.path.contains('maps')) {
+                  log('onNavigationRequest: Detected HTTPS Google Maps URL. Attempting to launch externally.');
+                  _launchUrlExternal(uri);
+                  return NavigationDecision.prevent;
+                }
+
+                if (['http', 'https'].contains(scheme)) {
+                  log('onNavigationRequest: Allowing internal navigation for scheme: $scheme');
+                  return NavigationDecision.navigate;
+                }
+
+                log('onNavigationRequest: Attempting to launch general external URL for scheme: $scheme');
                 _launchUrlExternal(uri);
-              }
-              return NavigationDecision.prevent;
-            }
-
-            if (scheme == 'https' && uri.host.contains('google.com') && uri.path.contains('maps')) {
-              log('onNavigationRequest: Detected HTTPS Google Maps URL. Attempting to launch externally.');
-              _launchUrlExternal(uri);
-              return NavigationDecision.prevent;
-            }
-
-            if (['http', 'https'].contains(scheme)) {
-              log('onNavigationRequest: Allowing internal navigation for scheme: $scheme');
-              return NavigationDecision.navigate;
-            }
-
-            log('onNavigationRequest: Attempting to launch general external URL for scheme: $scheme');
-            _launchUrlExternal(uri);
-            return NavigationDecision.prevent;
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(_lastSuccessfulUrl!));
+                return NavigationDecision.prevent;
+              },
+            ),
+          )
+          ..loadRequest(Uri.parse(_lastSuccessfulUrl!));
   }
 
   @override
@@ -154,7 +148,6 @@ class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingO
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
 
   Future<void> _launchUrlExternal(Uri uri) async {
     try {
@@ -165,25 +158,13 @@ class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingO
       } else {
         log('_launchUrlExternal: Failed to launch external URL: $uri. No app found.');
         if (context.mounted) {
-          Fluttertoast.showToast(
-            msg: "found not app",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-          );
+          Fluttertoast.showToast(msg: "found not app", toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM, backgroundColor: Colors.red, textColor: Colors.white);
         }
       }
     } catch (e) {
       log('_launchUrlExternal: Error launching external URL $uri: $e');
       if (context.mounted) {
-        Fluttertoast.showToast(
-          msg: "error: ${e.toString()}",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        Fluttertoast.showToast(msg: "error: ${e.toString()}", toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM, backgroundColor: Colors.red, textColor: Colors.white);
       }
     }
   }
@@ -194,21 +175,27 @@ class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingO
 
     return WillPopScope(
       onWillPop: () async {
-        if (await controller.canGoBack()) {
-          controller.goBack();
-          return false;
-        } else {
-          return true;
-        }
+        return false;
+        // if (await controller.canGoBack()) {
+        //   controller.goBack();
+        //   return false;
+        // } else {
+        //   return true;
+        // }
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.home),
+          ),
+          automaticallyImplyLeading: false,
           centerTitle: true,
           foregroundColor: Colors.white,
-          title: const Text(
-            'Visit Report',
-            style: TextStyle(),
-          ),
+          backgroundColor: Colors.blue,
+          title: const Text('Visit Report', style: TextStyle(color: Colors.white)),
           actions: [
             Row(
               children: <Widget>[
@@ -233,12 +220,13 @@ class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingO
                 //     },
                 //     icon: const Icon(Icons.arrow_forward_ios)),
                 IconButton(
-                    onPressed: () {
-                      controller.reload();
-                    },
-                    icon: const Icon(Icons.replay))
+                  onPressed: () {
+                    controller.reload();
+                  },
+                  icon: const Icon(Icons.replay),
+                ),
               ],
-            )
+            ),
           ],
         ),
         body: Stack(
@@ -254,25 +242,14 @@ class _VisitReportPageState extends State<VisitReportPage>  with WidgetsBindingO
             //   )
             // else
             WebViewWidget(controller: controller),
-            if (_isLoading)
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
-            if (progress < 100)
-              LinearProgressIndicator(
-                backgroundColor: Colors.green,
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-                value: progress / 100.0,
-              )
+            if (_isLoading) const Center(child: CircularProgressIndicator()),
+            if (progress < 100) LinearProgressIndicator(backgroundColor: Colors.green, valueColor: const AlwaysStoppedAnimation<Color>(Colors.green), value: progress / 100.0),
           ],
         ),
       ),
     );
   }
-
 }
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter_inappwebview/flutter_inappwebview.dart';

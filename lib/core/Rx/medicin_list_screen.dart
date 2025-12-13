@@ -20,15 +20,7 @@ class MedicinListScreen extends StatefulWidget {
   String img1;
   Function(List<MedicineListModel>) tempListFunc;
 
-  MedicinListScreen({
-    Key? key,
-    required this.medicineData,
-    required this.tempList,
-    required this.counter,
-    required this.tempListFunc,
-    required this.img,
-    required this.img1,
-  }) : super(key: key);
+  MedicinListScreen({Key? key, required this.medicineData, required this.tempList, required this.counter, required this.tempListFunc, required this.img, required this.img1}) : super(key: key);
 
   @override
   State<MedicinListScreen> createState() => _MedicinListScreenState();
@@ -116,18 +108,9 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
     //   foundUsers;
     //   // results = foundUsers;
     // } else {
-    var starts = foundUsers
-        .where((s) =>
-            s['name'].toLowerCase().startsWith(enteredKeyword.toLowerCase()))
-        .toList();
+    var starts = foundUsers.where((s) => s['name'].toLowerCase().startsWith(enteredKeyword.toLowerCase())).toList();
 
-    var contains = foundUsers
-        .where((s) =>
-            s['name'].toLowerCase().contains(enteredKeyword.toLowerCase()) &&
-            !s['name'].toLowerCase().startsWith(enteredKeyword.toLowerCase()))
-        .toList()
-      ..sort(
-          (a, b) => a['name'].toLowerCase().compareTo(b['name'].toLowerCase()));
+    var contains = foundUsers.where((s) => s['name'].toLowerCase().contains(enteredKeyword.toLowerCase()) && !s['name'].toLowerCase().startsWith(enteredKeyword.toLowerCase())).toList()..sort((a, b) => a['name'].toLowerCase().compareTo(b['name'].toLowerCase()));
 
     results = [...starts, ...contains];
     // }
@@ -179,44 +162,15 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
         resizeToAvoidBottomInset: false,
         drawerEnableOpenDragGesture: true,
         // endDrawerEnableOpenDragGesture: true,
-        appBar: AppBar(
-          leading: const BackButton(color: Colors.white),
-          backgroundColor: const Color.fromARGB(255, 138, 201, 149),
-          title: const Text('Prescription Medicine-List '),
-          titleTextStyle: const TextStyle(
-              color: Color.fromARGB(255, 27, 56, 34),
-              fontWeight: FontWeight.w500,
-              fontSize: 20),
-          centerTitle: true,
-        ),
+        appBar: AppBar(leading: const BackButton(color: Colors.white), backgroundColor: Colors.blue, title: const Text('Prescription Medicine-List '), titleTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20), centerTitle: true),
 
         drawer: buildDrawerWidget(context),
 
         body: Column(
           children: [
             widget.img == null
-                ? SizedBox(
-                    height: MediaQuery.of(context).size.height / 2,
-                    width: MediaQuery.of(context).size.width,
-                    child: PhotoView(
-                      imageProvider: FileImage(File(widget.img1)),
-                      enableRotation: true,
-                      filterQuality: FilterQuality.high,
-                      enablePanAlways: false,
-                      maxScale: 4.0,
-                    ),
-                  )
-                : SizedBox(
-                    height: MediaQuery.of(context).size.height / 2,
-                    width: MediaQuery.of(context).size.width / 1,
-                    child: PhotoView(
-                      imageProvider: FileImage(widget.img!),
-                      enableRotation: true,
-                      filterQuality: FilterQuality.high,
-                      enablePanAlways: false,
-                      maxScale: 4.0,
-                    ),
-                  ),
+                ? SizedBox(height: MediaQuery.of(context).size.height / 2, width: MediaQuery.of(context).size.width, child: PhotoView(imageProvider: FileImage(File(widget.img1)), enableRotation: true, filterQuality: FilterQuality.high, enablePanAlways: false, maxScale: 4.0))
+                : SizedBox(height: MediaQuery.of(context).size.height / 2, width: MediaQuery.of(context).size.width / 1, child: PhotoView(imageProvider: FileImage(widget.img!), enableRotation: true, filterQuality: FilterQuality.high, enablePanAlways: false, maxScale: 4.0)),
           ],
         ),
         // floatingActionButton: FloatingActionButton(
@@ -263,7 +217,7 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
                               // color: Colors.blue,
                             ),
                           ),
-                          const Text("Medicine")
+                          const Text("Medicine"),
                         ],
                       ),
                     ),
@@ -279,38 +233,27 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
                         Stack(
                           alignment: Alignment.topLeft,
                           children: [
-                            SizedBox(
-                                height: 50,
-                                width: 50,
-                                child: Image.asset(
-                                  "assets/images/done.png",
-                                  height: 60,
-                                  width: 60,
-                                  fit: BoxFit.cover,
-                                )),
+                            SizedBox(height: 50, width: 50, child: Image.asset("assets/images/done.png", height: 60, width: 60, fit: BoxFit.cover)),
                             Positioned(
-                                child: Container(
-                              height: 25,
-                              width: 25,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Center(
+                              child: Container(
+                                height: 25,
+                                width: 25,
+                                decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(15)),
+                                child: Center(
                                   child: Text(
-                                // numberOfFinalMed().toString(),
-                                finalAdd.isNotEmpty
-                                    ? data.toString()
-                                    : items.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              )),
-                            )),
+                                    // numberOfFinalMed().toString(),
+                                    finalAdd.isNotEmpty ? data.toString() : items.toString(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        const Text('Done')
+                        const Text('Done'),
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -350,122 +293,96 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: 'Search Medicine',
-                      suffixIcon: searchController.text.isEmpty &&
-                              searchController.text == ''
-                          ? const Icon(Icons.search)
-                          : IconButton(
-                              onPressed: () {
-                                searchController.clear();
-                                runFilter('');
-                                setState(() {});
-                              },
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Colors.black,
-                                // size: 28,
+                      suffixIcon:
+                          searchController.text.isEmpty && searchController.text == ''
+                              ? const Icon(Icons.search)
+                              : IconButton(
+                                onPressed: () {
+                                  searchController.clear();
+                                  runFilter('');
+                                  setState(() {});
+                                },
+                                icon: const Icon(
+                                  Icons.clear,
+                                  color: Colors.black,
+                                  // size: 28,
+                                ),
                               ),
-                            ),
                     ),
                   ),
                 ),
               ),
               foundUsers.isNotEmpty
                   ? Expanded(
-                      flex: 9,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: foundUsers.length,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final pressAttention =
-                                pressedActivity[foundUsers[index]['item_id']];
-                            bool isSelectedItem = false;
-                            for (int i = 0; i < widget.tempList.length; i++) {
-                              if (widget.tempList[i].itemId ==
-                                  foundUsers[index]['item_id']) {
-                                isSelectedItem = true;
-                              }
+                    flex: 9,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: foundUsers.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final pressAttention = pressedActivity[foundUsers[index]['item_id']];
+                        bool isSelectedItem = false;
+                        for (int i = 0; i < widget.tempList.length; i++) {
+                          if (widget.tempList[i].itemId == foundUsers[index]['item_id']) {
+                            isSelectedItem = true;
+                          }
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            // PressAttention = bool? where its selected == true, unselected == false, according to  item id of the list
+
+                            setState(() => pressedActivity[foundUsers[index]['item_id']] = !pressAttention!);
+
+                            selectedMed = foundUsers[index];
+                            if (pressedActivity[selectedMed['item_id']] == true) {
+                              finalAdd.add(selectedMed);
+                            } else {
+                              finalAdd.remove(selectedMed);
                             }
-
-                            return GestureDetector(
-                              onTap: () {
-                                // PressAttention = bool? where its selected == true, unselected == false, according to  item id of the list
-
-                                setState(() => pressedActivity[foundUsers[index]
-                                    ['item_id']] = !pressAttention!);
-
-                                selectedMed = foundUsers[index];
-                                if (pressedActivity[selectedMed['item_id']] ==
-                                    true) {
-                                  finalAdd.add(selectedMed);
-                                } else {
-                                  finalAdd.remove(selectedMed);
-                                }
-                                mycount();
-                                // debugPrint(selectedMed);
-                                // debugPrint(finalAdd);
-                                // mycount(finalAdd);
-                              },
-                              child: Card(
-                                elevation: 10,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                      color: Colors.white70, width: 1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      // flex: 9,
-                                      child: Container(
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          color:
-                                              pressAttention! || isSelectedItem
-                                                  ? const Color(0xff70BA85)
-                                                      .withOpacity(.7)
-                                                  : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    '${foundUsers[index]['name']} ',
-                                                    // '(${foundUsers[index]['item_id']})',
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 30, 66, 77),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ),
+                            mycount();
+                            // debugPrint(selectedMed);
+                            // debugPrint(finalAdd);
+                            // mycount(finalAdd);
+                          },
+                          child: Card(
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.white70, width: 1), borderRadius: BorderRadius.circular(10)),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  // flex: 9,
+                                  child: Container(
+                                    height: 80,
+                                    decoration: BoxDecoration(color: pressAttention! || isSelectedItem ? const Color.fromARGB(255, 85, 148, 243).withOpacity(.7) : Colors.white, borderRadius: BorderRadius.circular(15)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                '${foundUsers[index]['name']} ',
+                                                // '(${foundUsers[index]['item_id']})',
+                                                style: const TextStyle(color: Color.fromARGB(255, 30, 66, 77), fontWeight: FontWeight.bold, fontSize: 18),
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
-                    )
-                  : const Text(
-                      'No data found',
-                      style: TextStyle(fontSize: 24),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
+                  )
+                  : const Text('No data found', style: TextStyle(fontSize: 24)),
               // DrawerHeader(
               //   decoration: const BoxDecoration(
               //     color: Color.fromARGB(255, 138, 201, 149),
@@ -486,16 +403,7 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
     //                       !pressAttention!);
     // if (pressedActivity[selectedMed['item_id']] == true) {
     finalAdd.forEach((element) {
-      final temp = MedicineListModel(
-          strength: element['strength'],
-          name: element['name'],
-          generic: element['generic'],
-          brand: element['brand'],
-          company: element['company'],
-          formation: element['formation'],
-          uiqueKey: widget.counter,
-          itemId: element['item_id'],
-          quantity: 1);
+      final temp = MedicineListModel(strength: element['strength'], name: element['name'], generic: element['generic'], brand: element['brand'], company: element['company'], formation: element['formation'], uiqueKey: widget.counter, itemId: element['item_id'], quantity: 1);
       final tempItemId = temp.itemId;
       print(temp);
 
@@ -528,16 +436,7 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
 
   mycount() {
     finalAdd.forEach((element) {
-      final temp = MedicineListModel(
-          strength: element['strength'],
-          name: element['name'],
-          generic: element['generic'],
-          brand: element['brand'],
-          company: element['company'],
-          formation: element['formation'],
-          uiqueKey: widget.counter,
-          itemId: element['item_id'],
-          quantity: 1);
+      final temp = MedicineListModel(strength: element['strength'], name: element['name'], generic: element['generic'], brand: element['brand'], company: element['company'], formation: element['formation'], uiqueKey: widget.counter, itemId: element['item_id'], quantity: 1);
       setState(() {
         final tempItemId = temp.itemId;
 
@@ -554,16 +453,7 @@ class _MedicinListScreenState extends State<MedicinListScreen> {
   }
 
   addOrphanMedicine() {
-    final newitem = MedicineListModel(
-        strength: "",
-        name: medicineController.text,
-        generic: "",
-        brand: "",
-        company: "",
-        formation: "",
-        uiqueKey: widget.counter,
-        itemId: "0",
-        quantity: 1);
+    final newitem = MedicineListModel(strength: "", name: medicineController.text, generic: "", brand: "", company: "", formation: "", uiqueKey: widget.counter, itemId: "0", quantity: 1);
     // final tempItemId = newitem.itemId;
 
     // widget.tempList
@@ -590,13 +480,7 @@ class ZoomForRxImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Center(
-        child: Hero(
-            tag: 'imageHero',
-            child: PhotoView(
-              imageProvider: FileImage(img!),
-            )),
-      ),
+      child: Center(child: Hero(tag: 'imageHero', child: PhotoView(imageProvider: FileImage(img!)))),
       onTap: () {
         Navigator.pop(context);
       },
@@ -611,9 +495,7 @@ class ZoomForRxDraftImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: PhotoView(
-        imageProvider: FileImage(File(draftFinalImage!)),
-      ),
+      child: PhotoView(imageProvider: FileImage(File(draftFinalImage!))),
       // child:Hero (
       //   tag: 'imageForDraft',
       //   child: PhotoView(

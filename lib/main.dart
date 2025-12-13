@@ -31,7 +31,8 @@ var SameDeviceId;
 //var appVersion = "v-20250729";
 // var appVersion = "v-20250730";
 // var appVersion = "v-20250901";
-var appVersion = "v-20251123";
+// var appVersion = "v-20251123";
+var appVersion = "v-20251213";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

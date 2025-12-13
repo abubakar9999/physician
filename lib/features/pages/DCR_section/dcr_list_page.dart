@@ -168,7 +168,7 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 138, 201, 149),
+        backgroundColor: Colors.blue,
         // flexibleSpace: Container(
         //   decoration: const BoxDecoration(
         //     // LinearGradient
@@ -187,7 +187,7 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
           },
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
-        title: const Text('Visited Entity list'),
+        title: const Text('Visited Entity list', style: TextStyle(color: Colors.white)),
         titleTextStyle: const TextStyle(color: Color.fromARGB(255, 27, 56, 34), fontWeight: FontWeight.w500, fontSize: 20),
         centerTitle: true,
       ),
@@ -196,7 +196,7 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: const BoxDecoration(color: Color.fromARGB(255, 138, 201, 149)),
+              decoration: const BoxDecoration(color: Colors.blue),
               child: Column(
                 children: [
                   // logo_url_2 != null ?  CachedNetworkImage(
@@ -205,7 +205,7 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
                   //   errorWidget: (context, url, error) => Image.asset("assets/images/mRep7_logo.png"),
                   // )
                   //     : Image.asset("assets/images/mRep7_logo.png"),
-                  Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain, height: screenHeight * .075),
+                  Image.asset('assets/images/c_logo_1.png', fit: BoxFit.contain, height: screenHeight * .15),
                   SizedBox(height: 8),
                   // Image.asset('assets/images/mRep7_logo.png'),
                   // Expanded(

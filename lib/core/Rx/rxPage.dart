@@ -839,7 +839,8 @@ class _RxPageState extends State<RxPage> {
                     },
                   ),
                   automaticallyImplyLeading: false,
-                  title: const Text('Prescription Capture'),
+                  title: const Text('Prescription Capture', style: TextStyle(color: Colors.white)),
+                  backgroundColor: Colors.blue,
                 ),
                 body: SafeArea(
                   child: Column(

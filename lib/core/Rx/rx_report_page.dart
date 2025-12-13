@@ -178,28 +178,36 @@ class _PrescriptionReportPageState extends State<PrescriptionReportPage> with Wi
 
     return WillPopScope(
       onWillPop: () async {
-        if (await controller.canGoBack()) {
-          //   // Debounce / lock: ignore repeated presses within 600ms
-          // final now = DateTime.now();
-          // if (_isBackLocked || now.difference(_lastBackAttempt) < Duration(milliseconds: 600)) {
-          //   // ignore
-          //   return false; // consumed the back event
-          // }
-          // _isBackLocked = true;
-          // _lastBackAttempt = now;
-          // perform goBack
-          await controller.goBack();
-          return false;
-        } else {
-          return true;
-        }
+        return false;
+        // if (await controller.canGoBack()) {
+        //   //   // Debounce / lock: ignore repeated presses within 600ms
+        //   // final now = DateTime.now();
+        //   // if (_isBackLocked || now.difference(_lastBackAttempt) < Duration(milliseconds: 600)) {
+        //   //   // ignore
+        //   //   return false; // consumed the back event
+        //   // }
+        //   // _isBackLocked = true;
+        //   // _lastBackAttempt = now;
+        //   // perform goBack
+        //   await controller.goBack();
+        //   return false;
+        // } else {
+        //   return true;
+        // }
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.home),
+          ),
           centerTitle: true,
           foregroundColor: Colors.white,
-          automaticallyImplyLeading: true,
-          title: const Text('Prescription Report', style: TextStyle()),
+          automaticallyImplyLeading: false,
+          title: const Text('Prescription Report', style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.blue,
           actions: [
             Row(
               children: <Widget>[

@@ -4,16 +4,13 @@ import 'package:flutter/material.dart';
 import '../person_wise_activity.dart';
 import '../structure_wise_activity.dart';
 
-
 class ActivityLog extends StatelessWidget {
   const ActivityLog({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Activity Log"),
-      ),
+      appBar: AppBar(backgroundColor: Colors.blue, title: const Text("Activity Log", style: TextStyle(color: Colors.white))),
       body: SizedBox(
         width: double.infinity,
         child: Column(
@@ -50,10 +47,7 @@ class ActivityLog extends StatelessWidget {
             //     ),
             //   ),
             // ),
-        
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 1,
@@ -63,26 +57,13 @@ class ActivityLog extends StatelessWidget {
                 width: 260,
                 child: TextButton.icon(
                   onPressed: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => PersonWiseActivity(),
-                    ));
+                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => PersonWiseActivity()));
                   },
-                  label: const FittedBox(
-                    child: Text(
-                      'Person wise Activity',
-                      style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  icon: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 28,
-                  ),
+                  label: const FittedBox(child: Text('Person wise Activity', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500))),
+                  icon: const Icon(Icons.person, color: Colors.white, size: 28),
                 ),
               ),
             ),
-
-        
           ],
         ),
       ),
