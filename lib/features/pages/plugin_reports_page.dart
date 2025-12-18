@@ -175,18 +175,26 @@ class _PlugInReportsPageState extends State<PlugInReportsPage> with WidgetsBindi
 
     return WillPopScope(
       onWillPop: () async {
-        if (await controller.canGoBack()) {
-          controller.goBack();
-          return false;
-        } else {
-          return true;
-        }
+        return false;
+        // if (await controller.canGoBack()) {
+        //   controller.goBack();
+        //   return false;
+        // } else {
+        //   return true;
+        // }
       },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           foregroundColor: Colors.white,
           backgroundColor: Colors.blue,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.home),
+          ),
           title: const Text('Plug-In & Reports', style: TextStyle(color: Colors.white)),
           actions: [
             Row(

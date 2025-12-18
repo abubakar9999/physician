@@ -175,15 +175,23 @@ class _BoardMeetingReportState extends State<BoardMeetingReport> with WidgetsBin
 
     return WillPopScope(
       onWillPop: () async {
-        if (await controller.canGoBack()) {
-          controller.goBack();
-          return false;
-        } else {
-          return true;
-        }
+        return false;
+        // if (await controller.canGoBack()) {
+        //   controller.goBack();
+        //   return false;
+        // } else {
+        //   return true;
+        // }
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.home),
+          ),
+          automaticallyImplyLeading: false,
           centerTitle: true,
           foregroundColor: Colors.white,
           backgroundColor: Colors.blue,
