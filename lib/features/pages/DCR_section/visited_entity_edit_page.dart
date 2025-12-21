@@ -15,11 +15,13 @@ class VisitedEntityEditScreen extends StatefulWidget {
   final int phnNumber;
   final String district;
   final String thana;
+  final String selectedCat;
+  final String selectdSubCat;
   final String organization;
   final String designation;
   final String address;
 
-  const VisitedEntityEditScreen({Key? key, required this.officeId, required this.branchName, required this.branchId, required this.officeName, required this.phnNumber, required this.district, required this.thana, required this.organization, required this.designation, required this.address}) : super(key: key);
+  const VisitedEntityEditScreen({Key? key, required this.officeId, required this.branchName, required this.branchId, required this.officeName, required this.phnNumber, required this.district, required this.thana, required this.selectdSubCat, required this.selectedCat, required this.organization, required this.designation, required this.address}) : super(key: key);
 
   @override
   State<VisitedEntityEditScreen> createState() => _VisitedEntityEditScreenState();
@@ -38,13 +40,19 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController _districtSearchController = TextEditingController();
   final TextEditingController _thanaSearchController = TextEditingController();
+  final TextEditingController _categorySearchController = TextEditingController();
+  final TextEditingController _subCategorySearchController = TextEditingController();
 
   List<dynamic> districtThanaList = [];
   List<String> districtName = [];
   List<String> thanaNames = [];
-
+  List<dynamic> categorySubCategoryList = [];
+  List<String> categoryNames = [];
+  List<String> subCategoryList = [];
   String? selectedDistrict;
   String? selectedThana;
+  String? selectedCatogry;
+  String? selectedSubCategory;
 
   String cid = '';
   String userId = '';
@@ -103,6 +111,45 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
         thanaNames = [];
       }
     }
+
+    // for cat sub cat
+
+    categorySubCategoryList = dataBox.get('cat_subcategory_list', defaultValue: []);
+    print("Category Sub Category List :: $categorySubCategoryList");
+    if (categorySubCategoryList.isNotEmpty) {
+      categoryNames = categorySubCategoryList.map<String>((e) => e['category_name'].toString()).toList();
+
+      selectedCatogry = null;
+      selectedSubCategory = null;
+
+      if (widget.selectedCat.isNotEmpty) {
+        try {
+          selectedCatogry = categoryNames.firstWhere((element) => element.toLowerCase().trim() == widget.selectedCat.toLowerCase().trim());
+        } catch (e) {
+          debugPrint('No matching category found for: ${widget.selectedCat}');
+        }
+      }
+
+      if (selectedCatogry != null) {
+        final defaultSystem = categorySubCategoryList.firstWhere((element) => element['category_name'] == selectedCatogry, orElse: () => {'sub_category_list': []});
+        final subcat = defaultSystem['sub_category_list'];
+        if (subcat is List) {
+          subCategoryList = subcat.map((e) => e.toString()).toList();
+          if (widget.selectdSubCat.isNotEmpty) {
+            try {
+              selectedSubCategory = subCategoryList.firstWhere((element) => element.toLowerCase().trim() == widget.selectdSubCat.toLowerCase().trim());
+            } catch (e) {
+              debugPrint('No matching subcategory found for: ${widget.selectdSubCat}');
+            }
+          }
+        } else {
+          subCategoryList = [];
+        }
+      } else {
+        subCategoryList = [];
+      }
+    }
+    print("Sub Cat List $subCategoryList");
   }
 
   Future<void> visitOffice(BuildContext contexts) async {
@@ -141,6 +188,8 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
         '&designation=${designationController.text.trim()}'
         '&district=${selectedDistrict!.trim()}'
         '&thana=${selectedThana!.trim()}'
+        '&category=${selectedCatogry!.trim()}'
+        '&sub_category=${selectedSubCategory!.trim()}'
         '&office_address=${addressController.text.trim()}',
       );
 
@@ -257,6 +306,83 @@ class _VisitedEntityEditScreenState extends State<VisitedEntityEditScreen> {
                           searchController: _thanaSearchController,
                           searchInnerWidgetHeight: 50,
                           searchInnerWidget: Padding(padding: const EdgeInsets.all(8.0), child: TextField(controller: _thanaSearchController, decoration: const InputDecoration(hintText: 'Search thana...', border: OutlineInputBorder()))),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value!.toLowerCase().contains(searchValue.toLowerCase());
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      buildLabel("Category"),
+                      DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+                        //hint: const Text('District'),
+                        value: selectedCatogry,
+                        validator: (value) => value == null ? 'Please select a Catagory' : null,
+                        items:
+                            categoryNames.map((category) {
+                              return DropdownMenuItem<String>(value: category, child: Text(category));
+                            }).toList(),
+                        selectedItemBuilder: (context) {
+                          return categoryNames.map((category) {
+                            return Align(alignment: Alignment.centerLeft, child: Text(category, overflow: TextOverflow.ellipsis, maxLines: 1));
+                          }).toList();
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCatogry = value;
+                            selectedSubCategory = null;
+
+                            final matched = categorySubCategoryList.firstWhere((element) => element['category_name'] == value, orElse: () => {'sub_category_list': []});
+
+                            final thana = matched['sub_category_list'];
+                            if (thana is List) {
+                              subCategoryList = thana.map((e) => e.toString()).toList();
+                            } else {
+                              subCategoryList = [];
+                            }
+                            print('Selected Category $selectedCatogry');
+                          });
+                          _categorySearchController.clear();
+                        },
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _categorySearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Padding(padding: const EdgeInsets.all(8.0), child: TextField(controller: _categorySearchController, decoration: const InputDecoration(hintText: 'Search category...', border: OutlineInputBorder()))),
+                          searchMatchFn: (item, searchValue) {
+                            return item.value!.toLowerCase().contains(searchValue.toLowerCase());
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      buildLabel("Sub Category "),
+
+                      DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+                        //hint: const Text('Thana'),
+                        value: selectedSubCategory,
+                        validator: (value) => value == null ? 'Please select Sub Category' : null,
+                        items:
+                            subCategoryList.map((subCategory) {
+                              return DropdownMenuItem<String>(value: subCategory, child: Text(subCategory));
+                            }).toList(),
+                        selectedItemBuilder: (context) {
+                          return subCategoryList.map((subCategory) {
+                            return Align(alignment: Alignment.centerLeft, child: Text(subCategory, overflow: TextOverflow.ellipsis, maxLines: 1));
+                          }).toList();
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            selectedSubCategory = value;
+                          });
+                          _subCategorySearchController.clear();
+                          print("Selected Sub Category :: $selectedSubCategory");
+                        },
+                        dropdownSearchData: DropdownSearchData(
+                          searchController: _subCategorySearchController,
+                          searchInnerWidgetHeight: 50,
+                          searchInnerWidget: Padding(padding: const EdgeInsets.all(8.0), child: TextField(controller: _subCategorySearchController, decoration: const InputDecoration(hintText: 'Search sub category...', border: OutlineInputBorder()))),
                           searchMatchFn: (item, searchValue) {
                             return item.value!.toLowerCase().contains(searchValue.toLowerCase());
                           },

@@ -276,11 +276,12 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   @override
   void initState() {
     super.initState();
-    loadExamCount();
-    getLatLong();
-    print('getlatlon:$getLatLong()');
-    AllServices().getPermission();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      loadExamCount();
+      getLatLong();
+      print('getlatlon:$getLatLong()');
+      AllServices().getPermission();
       if (mydatabox.get('auto_day_end') == true && mydatabox.get('attendance').toString() != AllServices().getTodayDate()) {
         log('auto day end new date');
         mydatabox.put('attendance', '');
@@ -1186,7 +1187,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                                         },
                                         title: buttonNames?.get('seen_rx_capture') == "" ? 'Prescription Capture' : buttonNames?.get('seen_rx_capture') ?? 'Prescription Capture',
                                         sizeWidth: screenWidth,
-                                        inputColor:const Color(0xff56CCF2).withOpacity(.3),
+                                        inputColor: const Color(0xff56CCF2).withOpacity(.3),
                                       ),
                                     ),
                                   ],

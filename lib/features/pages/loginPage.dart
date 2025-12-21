@@ -686,6 +686,8 @@ class _LoginScreenState extends State<LoginScreen> {
         print('patient temperamenttt::$patient_temperament_list');
         List district_thana_list = userInfo['district_thana_list'] ?? [];
         print('District Thana List:: $district_thana_list');
+        List cat_subcategory_list = userInfo['cat_subcategory_list'] ?? [];
+        print("Cat Subcategory List :: $cat_subcategory_list");
 
         bool order_flag = userInfo['order_flag'];
         bool dcr_flag = userInfo['dcr_flag'];
@@ -857,6 +859,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await box.put('system_diseases_list', system_diseases_list);
         await box.put('patient_temperament_list', patientTemperamentList);
         await box.put('district_thana_list', district_thana_list);
+        await box.put('cat_subcategory_list', cat_subcategory_list);
 
         await box.put('exp_reject_reason', exp_reject_reasonList);
         await box.put('cause_for_non_execution', causeForNonExecution);

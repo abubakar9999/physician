@@ -417,6 +417,8 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
                                             MaterialPageRoute(
                                               builder:
                                                   (context) => VisitedEntityEditScreen(
+                                                    selectdSubCat: "${foundUsers[index]['sub_category'] ?? ''}",
+                                                    selectedCat: "${foundUsers[index]['category'] ?? ''}",
                                                     officeId: "${foundUsers[index]['office_id'] ?? ''}",
                                                     officeName: '${foundUsers[index]['office_name']}',
                                                     branchId: '${widget.branchId}',
@@ -474,7 +476,7 @@ class _DcrListPageState extends State<DcrListPage> with WidgetsBindingObserver {
                                           ),
                                         );
                                       },
-                                      child: CustomerListCardWidget(clientName: foundUsers[index]['office_name'] ?? '', clientId: foundUsers[index]['office_id'] ?? '', docDegree: foundUsers[index]['category'].toString().isNotEmpty ? '(${foundUsers[index]['category'] ?? ''})' : 'None', address: foundUsers[index]['address'] ?? ''),
+                                      child: CustomerListCardWidget(orgName: foundUsers[index]['org_name'] ?? '', clientName: foundUsers[index]['office_name'] ?? '', clientId: foundUsers[index]['office_id'] ?? '', cat: foundUsers[index]['category'].toString().isNotEmpty ? '(${foundUsers[index]['category'] ?? ''})' : 'None', address: foundUsers[index]['address'] ?? ''),
                                     ),
                                   ),
                                 ],
